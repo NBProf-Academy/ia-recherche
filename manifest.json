@@ -2,13 +2,20 @@
   "name": "Outils IA — Doctorants",
   "short_name": "OutilsIA",
   "description": "14 outils IA essentiels pour les travaux de recherche scientifique",
-  "start_url": "./index.html",
+  "start_url": "/ia-recherche/",
+  "scope": "/ia-recherche/",
   "display": "standalone",
   "background_color": "#03040a",
   "theme_color": "#6ee7f7",
   "orientation": "portrait-primary",
-  "lang": "fr",
-  "categories": ["education", "productivity", "research"],
+  "lang": "fr-FR",
+
+  "categories": [
+    "education",
+    "productivity",
+    "research"
+  ],
+
   "icons": [
     {
       "src": "icon-192.png",
@@ -23,18 +30,20 @@
       "purpose": "any maskable"
     }
   ],
+
   "screenshots": [],
+
   "shortcuts": [
     {
       "name": "Recherche Académique",
       "short_name": "Recherche",
-      "url": "./index.html#recherche",
+      "url": "/ia-recherche/#recherche",
       "description": "Outils de recherche académique"
     },
     {
       "name": "Bibliographie",
       "short_name": "Biblio",
-      "url": "./index.html#biblio",
+      "url": "/ia-recherche/#biblio",
       "description": "Gestionnaires bibliographiques"
     }
   ]
