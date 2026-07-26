@@ -1,7 +1,7 @@
 {
-  "name": "Outils IA — Doctorants",
-  "short_name": "OutilsIA",
-  "description": "14 outils IA essentiels pour les travaux de recherche scientifique",
+  "name": "NBProf IA Recherche",
+  "short_name": "NBProf IA",
+  "description": "Application intelligente gratuite pour accompagner les doctorants et chercheurs dans leurs travaux scientifiques avec les outils d’intelligence artificielle",
   "start_url": "/ia-recherche/",
   "scope": "/ia-recherche/",
   "display": "standalone",
