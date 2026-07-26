@@ -12,7 +12,7 @@
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="icon-192.png"/>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <title>Outils IA · Doctorants</title>
+  <title>NBProf IA Recherche</title>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -536,7 +536,7 @@ function scrollToTop() {
 
 // Share
 async function shareApp() {
-  const data = { title: 'Outils IA pour Doctorants', text: '14 outils IA essentiels pour la recherche scientifique — par Prof. Noamane Boulahcen', url: window.location.href };
+  const data = { title: 'NBProf IA Recherche', text: '14 outils IA essentiels pour la recherche scientifique — par Prof. Noamane Boulahcen', url: window.location.href };
   if (navigator.share) {
     try { await navigator.share(data); } catch(e) {}
   } else {
