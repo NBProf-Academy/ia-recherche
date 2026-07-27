@@ -334,6 +334,42 @@
       font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted);
     }
     .no-results.show { display: block; }
+    .install-card {
+    cursor:pointer;
+    transition:.3s;
+}
+
+.install-card:hover {
+    transform:translateY(-5px);
+}
+
+
+.install-btn {
+
+    display:inline-block;
+
+    margin-top:15px;
+
+    padding:12px 25px;
+
+    border-radius:30px;
+
+    background:#6ee7f7;
+
+    color:#03040a;
+
+    font-weight:700;
+
+    font-size:.9rem;
+
+}
+
+
+.install-card h3 {
+
+    margin-bottom:10px;
+
+}
   </style>
 </head>
 <body>
@@ -345,12 +381,29 @@
 <div class="toast" id="toast">📶 Mode hors ligne activé</div>
 
 <!-- Install banner -->
-<div class="install-banner" id="installBanner">
-  <div class="icon">📱</div>
-  <div class="text">
-    <strong>Installer l'application</strong>
-    <span>Accès rapide depuis votre écran d'accueil</span>
-  </div>
+<a href="#installation" class="tool-card install-card">
+
+    <div class="tool-icon">
+        📱
+    </div>
+
+    <div>
+        <h3>
+            Installer NBProf IA
+        </h3>
+
+        <p>
+            Installer l'application sur votre téléphone
+            ou ordinateur pour un accès rapide.
+        </p>
+
+        <span class="install-btn">
+            🚀 Installer maintenant
+        </span>
+
+    </div>
+
+</a>
   <button class="install-btn" id="installBtn">Installer</button>
   <button class="dismiss-btn" id="dismissBtn">✕</button>
 </div>
