@@ -1,20 +1,25 @@
 {
+  "id": "/ia-recherche/",
   "name": "NBProf IA Recherche",
   "short_name": "NBProf IA",
-  "description": "Application intelligente gratuite pour accompagner les doctorants et chercheurs dans leurs travaux scientifiques avec les outils d’intelligence artificielle",
+  "description": "Plateforme intelligente dédiée aux doctorants, chercheurs et étudiants pour accélérer la recherche scientifique grâce aux outils d’intelligence artificielle.",
+
   "start_url": "/ia-recherche/",
   "scope": "/ia-recherche/",
+
   "display": "standalone",
+
   "background_color": "#03040a",
   "theme_color": "#6ee7f7",
+
   "orientation": "portrait-primary",
+
   "lang": "fr-FR",
-  "id": "/ia-recherche/",
 
   "categories": [
     "education",
-    "productivity",
-    "research"
+    "research",
+    "productivity"
   ],
 
   "icons": [
@@ -32,20 +37,25 @@
     }
   ],
 
-  "screenshots": [],
+  "screenshots": [
+    {
+      "src": "capture-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
 
   "shortcuts": [
     {
-      "name": "Recherche Académique",
+      "name": "Recherche académique",
       "short_name": "Recherche",
-      "url": "/ia-recherche/#recherche",
-      "description": "Outils de recherche académique"
+      "url": "/ia-recherche/#recherche"
     },
     {
-      "name": "Bibliographie",
+      "name": "Bibliographie IA",
       "short_name": "Biblio",
-      "url": "/ia-recherche/#biblio",
-      "description": "Gestionnaires bibliographiques"
+      "url": "/ia-recherche/#biblio"
     }
   ]
 }
