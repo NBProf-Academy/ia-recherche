@@ -1,1 +1,649 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#03040a"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="NBProf IA"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="description" content="14 outils IA essentiels pour les doctorants — recherche, bibliographie, présentations."/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<link rel="apple-touch-startup-image" href="splash.png">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <title>NBProf IA Recherche</title>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #03040a;
+      --surface: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.09);
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --c1: #6ee7f7;
+      --c2: #a78bfa;
+      --c3: #34d399;
+      --c4: #fb923c;
+      --c5: #f472b6;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      padding-top: var(--safe-top);
+      padding-bottom: calc(80px + var(--safe-bottom));
+    }
+
+    /* ── Background ── */
+    .bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 10%, rgba(110,231,247,0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 85% 85%, rgba(167,139,250,0.07) 0%, transparent 55%),
+        #03040a;
+    }
+    .grid-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+
+    /* ── Install Banner ── */
+    .install-banner {
+      position: fixed; bottom: calc(72px + var(--safe-bottom)); left: 12px; right: 12px;
+      z-index: 100;
+      background: linear-gradient(135deg, rgba(110,231,247,0.15), rgba(167,139,250,0.15));
+      border: 1px solid rgba(110,231,247,0.3);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+      backdrop-filter: blur(20px);
+      transform: translateY(120px);
+      transition: transform 0.4s cubic-bezier(.23,1,.32,1);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .install-banner.show { transform: translateY(0); }
+    .install-banner .icon { font-size: 1.5rem; flex-shrink: 0; }
+    .install-banner .text { flex: 1; }
+    .install-banner .text strong { font-size: 0.82rem; color: #fff; display: block; }
+    .install-banner .text span { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+    .install-btn {
+      background: var(--c1); color: #03040a;
+      border: none; border-radius: 10px;
+      padding: 8px 14px;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.75rem;
+      cursor: pointer; flex-shrink: 0;
+      transition: opacity 0.2s;
+    }
+    .install-btn:active { opacity: 0.7; }
+    .dismiss-btn {
+      background: none; border: none; color: var(--muted);
+      font-size: 1.1rem; cursor: pointer; flex-shrink: 0; padding: 4px;
+    }
+
+    /* ── Offline toast ── */
+    .toast {
+      position: fixed; top: calc(16px + var(--safe-top)); left: 50%; transform: translateX(-50%) translateY(-80px);
+      z-index: 200;
+      background: #1a1a2e; border: 1px solid var(--c3);
+      border-radius: 100px; padding: 8px 18px;
+      font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--c3);
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── Main content ── */
+    .wrapper {
+      position: relative; z-index: 1;
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 0 14px;
+    }
+
+    /* ── Header ── */
+    .header {
+      padding: 2rem 0 1.5rem;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--c1);
+      background: rgba(110,231,247,0.08);
+      border: 1px solid rgba(110,231,247,0.2);
+      padding: 5px 14px; border-radius: 100px;
+      margin-bottom: 1rem;
+      animation: fadeDown 0.7s ease both;
+    }
+    .header h1 {
+      font-size: clamp(1.8rem, 7vw, 2.8rem);
+      font-weight: 800; letter-spacing: -0.03em; line-height: 1.1;
+      animation: fadeDown 0.7s 0.1s ease both;
+    }
+    .header h1 span {
+      background: linear-gradient(135deg, var(--c1), var(--c2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .header p {
+      margin-top: 0.7rem; font-family: 'Space Mono', monospace;
+      font-size: 0.7rem; color: var(--muted); line-height: 1.6;
+      animation: fadeDown 0.7s 0.2s ease both;
+    }
+
+    /* ── Stats bar ── */
+    .stats {
+      display: flex; gap: 8px; margin-bottom: 1.5rem;
+      animation: fadeDown 0.7s 0.3s ease both;
+    }
+    .stat {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 8px; text-align: center;
+    }
+    .stat .num { font-size: 1.2rem; font-weight: 800; color: #fff; }
+    .stat .lbl { font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ── Search ── */
+    .search-wrap {
+      position: relative; margin-bottom: 1.5rem;
+      animation: fadeDown 0.7s 0.35s ease both;
+    }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; opacity: 0.4; pointer-events: none; }
+    .search-input {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 13px 14px 13px 40px;
+      color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.78rem;
+      outline: none; transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .search-input:focus { border-color: rgba(110,231,247,0.4); }
+    .search-input::placeholder { color: var(--muted); }
+
+    /* ── Category tabs ── */
+    .tabs-wrap {
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; margin-bottom: 1.5rem;
+      animation: fadeDown 0.7s 0.4s ease both;
+    }
+    .tabs-wrap::-webkit-scrollbar { display: none; }
+    .tabs {
+      display: flex; gap: 8px; padding-bottom: 2px;
+      width: max-content;
+    }
+    .tab {
+      font-family: 'Space Mono', monospace; font-size: 0.65rem;
+      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 7px 14px; border-radius: 100px;
+      border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted);
+      cursor: pointer; white-space: nowrap;
+      transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+    }
+    .tab.active {
+      background: var(--tab-color, var(--c1));
+      border-color: var(--tab-color, var(--c1));
+      color: #03040a;
+    }
+    .tab:active { opacity: 0.7; }
+
+    /* ── Section label ── */
+    .section-lbl {
+      font-family: 'Space Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px; margin-top: 6px;
+      padding-left: 6px; border-left: 2px solid var(--c2);
+    }
+
+    /* ── Cards ── */
+    .cards { display: flex; flex-direction: column; gap: 10px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      position: relative; overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      animation: cardUp 0.5s ease both;
+      display: none;
+    }
+    .card.visible { display: block; }
+    .card:active { transform: scale(0.98); }
+
+    .card::after {
+      content: '';
+      position: absolute; top: 0; left: 16px; right: 16px;
+      height: 2px; border-radius: 0 0 3px 3px;
+      background: var(--cc, var(--c1)); opacity: 0.8;
+    }
+
+    .card-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+    .card-ico {
+      width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0;
+      background: var(--ico-bg, rgba(110,231,247,0.1));
+      border: 1px solid var(--ico-border, rgba(110,231,247,0.2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .card-info { flex: 1; min-width: 0; }
+    .card-name { font-size: 1rem; font-weight: 700; color: #fff; line-height: 1.2; }
+    .card-cat {
+      font-family: 'Space Mono', monospace; font-size: 0.58rem;
+      color: var(--cc, var(--c1)); text-transform: uppercase; letter-spacing: 0.1em;
+      margin-top: 2px;
+    }
+    .card-desc {
+      font-family: 'Space Mono', monospace; font-size: 0.68rem;
+      color: var(--muted); line-height: 1.65; margin-bottom: 12px;
+    }
+    .card-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Space Mono', monospace; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--cc, var(--c1));
+      border: 1px solid var(--cc, var(--c1));
+      border-radius: 10px; padding: 9px 16px;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .card-link:active { background: var(--cc, var(--c1)); color: #03040a; }
+
+    /* Color classes */
+    .cc1 { --cc: #6ee7f7; --ico-bg: rgba(110,231,247,0.1); --ico-border: rgba(110,231,247,0.2); }
+    .cc2 { --cc: #a78bfa; --ico-bg: rgba(167,139,250,0.1); --ico-border: rgba(167,139,250,0.2); }
+    .cc3 { --cc: #f472b6; --ico-bg: rgba(244,114,182,0.1); --ico-border: rgba(244,114,182,0.2); }
+    .cc4 { --cc: #fb923c; --ico-bg: rgba(251,146,60,0.1);  --ico-border: rgba(251,146,60,0.2);  }
+    .cc5 { --cc: #34d399; --ico-bg: rgba(52,211,153,0.1);  --ico-border: rgba(52,211,153,0.2);  }
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+      background: rgba(3,4,10,0.92); backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-around;
+      padding: 10px 0 calc(10px + var(--safe-bottom));
+    }
+    .nav-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      background: none; border: none; cursor: pointer;
+      padding: 6px 16px; border-radius: 12px;
+      transition: opacity 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-btn:active { opacity: 0.6; }
+    .nav-btn .ico { font-size: 1.3rem; }
+    .nav-btn .lbl { font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--muted); letter-spacing: 0.05em; }
+    .nav-btn.active .lbl { color: var(--c1); }
+
+    /* ── Footer / Signature ── */
+    .sig {
+      margin: 2rem 0 1rem;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 14px 18px;
+    }
+    .sig-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--c1), var(--c2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800; color: #03040a; flex-shrink: 0;
+    }
+    .sig-name { font-size: 0.85rem; font-weight: 700; color: #fff; }
+    .sig-mail {
+      font-family: 'Space Mono', monospace; font-size: 0.62rem;
+      color: var(--c1); text-decoration: none; display: block; margin-top: 1px;
+    }
+    .footer-note {
+      text-align: center; font-family: 'Space Mono', monospace;
+      font-size: 0.6rem; color: var(--muted); letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes cardUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* No results */
+    .no-results {
+      text-align: center; padding: 3rem 1rem; display: none;
+      font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted);
+    }
+    .no-results.show { display: block; }
+    .install-card {
+    cursor:pointer;
+    transition:.3s;
+}
+
+.install-card:hover {
+    transform:translateY(-5px);
+}
+
+
+.install-btn {
+
+    display:inline-block;
+
+    margin-top:15px;
+
+    padding:12px 25px;
+
+    border-radius:30px;
+
+    background:#6ee7f7;
+
+    color:#03040a;
+
+    font-weight:700;
+
+    font-size:.9rem;
+
+}
+
+
+.install-card h3 {
+
+    margin-bottom:10px;
+
+}
+  </style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="grid-bg"></div>
+
+<!-- Offline/Online toast -->
+<div class="toast" id="toast">📶 Mode hors ligne activé</div>
+
+<!-- Install banner -->
+<a href="#installation" class="tool-card install-card">
+
+    <div class="tool-icon">
+        📱
+    </div>
+
+    <div>
+        <h3>
+            Installer NBProf IA
+        </h3>
+
+        <p>
+            Installer l'application sur votre téléphone
+            ou ordinateur pour un accès rapide.
+        </p>
+
+        <span class="install-btn">
+            🚀 Installer maintenant
+        </span>
+
+    </div>
+
+</a>
+  <button class="install-btn" id="installBtn">Installer</button>
+  <button class="dismiss-btn" id="dismissBtn">✕</button>
+</div>
+
+<div class="wrapper">
+  <!-- Header -->
+  <header class="header">
+    <div class="badge">Pour les Doctorants · 2026</div>
+    <h1>Outils <span>IA</span><br>Recherche</h1>
+    <p>14 plateformes essentielles<br>pour vos travaux scientifiques</p>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="num">14</div><div class="lbl">Outils</div></div>
+    <div class="stat"><div class="num">5</div><div class="lbl">Catégories</div></div>
+    <div class="stat"><div class="num">100%</div><div class="lbl">Gratuit</div></div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="search" id="searchInput" placeholder="Rechercher un outil..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-wrap">
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-cat="all" style="--tab-color:#6ee7f7">Tous</button>
+      <button class="tab" data-cat="recherche" style="--tab-color:#6ee7f7">🔍 Recherche</button>
+      <button class="tab" data-cat="lecture" style="--tab-color:#a78bfa">📖 Lecture</button>
+      <button class="tab" data-cat="viz" style="--tab-color:#f472b6">🗺️ Visualisation</button>
+      <button class="tab" data-cat="presentation" style="--tab-color:#fb923c">🎬 Présentation</button>
+      <button class="tab" data-cat="biblio" style="--tab-color:#34d399">📚 Bibliographie</button>
+    </div>
+  </div>
+
+  <!-- Cards container -->
+  <div id="cardsContainer"></div>
+  <div class="no-results" id="noResults">Aucun outil trouvé 🔍</div>
+
+  <!-- Last updated badge -->
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.2);border-radius:14px;padding:12px 16px;margin-bottom:12px;">
+    <span style="font-size:1.1rem;">🟢</span>
+    <div>
+      <div style="font-family:'Space Mono',monospace;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.15em;color:#34d399;margin-bottom:2px;">Application active</div>
+      <div style="font-family:'Space Mono',monospace;font-size:0.65rem;color:#9ca3af;">Dernière mise à jour : <span style="color:#e8eaf0;font-weight:700;">Mai 2026</span></div>
+    </div>
+    <div style="margin-left:auto;text-align:right;">
+      <div style="font-family:'Space Mono',monospace;font-size:0.6rem;color:#34d399;">✓ 14 outils vérifiés</div>
+      <div style="font-family:'Space Mono',monospace;font-size:0.6rem;color:#6b7280;margin-top:2px;">Prochaine révision : 2027</div>
+    </div>
+  </div>
+  <!-- Signature -->
+  <div class="sig">
+    <div class="sig-avatar">NB</div>
+    <div>
+      <div class="sig-name">Prof. Noamane Boulahcen</div>
+      <a class="sig-mail" href="mailto:noamane73@gmail.com">noamane73@gmail.com</a>
+    </div>
+  </div>
+  <div class="footer-note">✦ Contenu libre · Partagez avec tous les chercheurs ✦</div>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="scrollToTop()">
+    <span class="ico">🏠</span><span class="lbl">Accueil</span>
+  </button>
+  <button class="nav-btn" onclick="filterCat('recherche')">
+    <span class="ico">🔍</span><span class="lbl">Recherche</span>
+  </button>
+  <button class="nav-btn" onclick="filterCat('biblio')">
+    <span class="ico">📚</span><span class="lbl">Biblio</span>
+  </button>
+  <button class="nav-btn" onclick="shareApp()">
+    <span class="ico">🔗</span><span class="lbl">Partager</span>
+  </button>
+</nav>
+
+<script>
+// ── Data ──
+const tools = [
+  { name:'Perplexity', cat:'recherche', ico:'⚡', cc:'cc1', desc:'Moteur de recherche académique assisté par IA. Synthétise rapidement des informations scientifiques. Idéal pour accélérer la revue de littérature.', url:'https://www.perplexity.ai' },
+  { name:'Consensus', cat:'recherche', ico:'🎯', cc:'cc1', desc:'Analyse d\'articles scientifiques à partir de questions de recherche. Identifie rapidement les conclusions dominantes dans la littérature.', url:'https://consensus.app' },
+  { name:'Scite', cat:'recherche', ico:'🔬', cc:'cc1', desc:'Analyse intelligente des citations scientifiques. Vérifie si une étude est soutenue, discutée ou contestée par d\'autres travaux.', url:'https://scite.ai' },
+  { name:'ResearchRabbit', cat:'recherche', ico:'🐇', cc:'cc1', desc:'Découverte scientifique via des réseaux d\'articles et d\'auteurs. Identifie de nouvelles références pertinentes dans votre domaine.', url:'https://www.researchrabbit.ai' },
+  { name:'Google Scholar', cat:'recherche', ico:'🌐', cc:'cc1', desc:'Fonctionnalités avancées pour l\'exploration académique. Suivez les citations, auteurs et tendances scientifiques récentes.', url:'https://scholar.google.com' },
+  { name:'Scopus AI', cat:'recherche', ico:'📊', cc:'cc1', desc:'Extension intelligente de Scopus avec analyse IA. Synthèses rapides et analyses bibliométriques avancées.', url:'https://www.scopus.com/ai' },
+  { name:'SciSpace', cat:'lecture', ico:'🚀', cc:'cc2', desc:'Lit, résume et explique des articles scientifiques complexes. Comprend rapidement des méthodologies et concepts techniques.', url:'https://typeset.io' },
+  { name:'NotebookLM', cat:'lecture', ico:'📓', cc:'cc2', desc:'Interagissez avec vos propres documents académiques. Synthèse, organisation des notes et préparation de travaux scientifiques.', url:'https://notebooklm.google.com' },
+  { name:'Connected Papers', cat:'viz', ico:'🕸️', cc:'cc3', desc:'Visualisation graphique des relations entre publications. Comprenez l\'évolution d\'un champ de recherche et les liens entre articles clés.', url:'https://www.connectedpapers.com' },
+  { name:'Napkin AI', cat:'viz', ico:'✏️', cc:'cc3', desc:'Transforme des idées en schémas et représentations visuelles. Très utile pour illustrer des modèles théoriques et conceptuels.', url:'https://www.napkin.ai' },
+  { name:'Gamma AI', cat:'presentation', ico:'⚡', cc:'cc4', desc:'Création automatisée de présentations académiques et professionnelles. Préparez rapidement soutenances, conférences et exposés.', url:'https://gamma.app' },
+  { name:'EndNote', cat:'biblio', ico:'📖', cc:'cc5', desc:'Logiciel de gestion bibliographique universitaire. Organisez automatiquement vos références et insérez-les dans vos documents.', url:'https://endnote.com' },
+  { name:'Mendeley', cat:'biblio', ico:'🤝', cc:'cc5', desc:'Gestionnaire de références et réseau académique collaboratif. Classez et annotez vos articles scientifiques facilement.', url:'https://www.mendeley.com' },
+  { name:'Zotero', cat:'biblio', ico:'🆓', cc:'cc5', desc:'Solution gratuite et open source de gestion bibliographique. Collectez, organisez, annotez et citez vos sources avec facilité.', url:'https://www.zotero.org' },
+];
+
+const catLabels = { recherche:'Recherche & Analyse', lecture:'Lecture & Notes', viz:'Visualisation', presentation:'Présentations', biblio:'Bibliographie' };
+let activecat = 'all', searchTerm = '';
+
+function renderCards() {
+  const container = document.getElementById('cardsContainer');
+  const noResults = document.getElementById('noResults');
+  container.innerHTML = '';
+
+  const filtered = tools.filter(t => {
+    const matchCat = activecat === 'all' || t.cat === activecat;
+    const matchSearch = !searchTerm || t.name.toLowerCase().includes(searchTerm) || t.desc.toLowerCase().includes(searchTerm);
+    return matchCat && matchSearch;
+  });
+
+  if (!filtered.length) { noResults.classList.add('show'); return; }
+  noResults.classList.remove('show');
+
+  // Group by category
+  const groups = {};
+  filtered.forEach(t => { if (!groups[t.cat]) groups[t.cat] = []; groups[t.cat].push(t); });
+
+  let delay = 0;
+  Object.entries(groups).forEach(([cat, items]) => {
+    if (activecat === 'all') {
+      const lbl = document.createElement('div');
+      lbl.className = 'section-lbl';
+      lbl.textContent = catLabels[cat] || cat;
+      container.appendChild(lbl);
+    }
+    const grid = document.createElement('div');
+    grid.className = 'cards';
+    items.forEach((t, i) => {
+      const card = document.createElement('div');
+      card.className = `card ${t.cc} visible`;
+      card.style.animationDelay = (delay * 0.06) + 's';
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-ico">${t.ico}</div>
+          <div class="card-info">
+            <div class="card-name">${t.name}</div>
+            <div class="card-cat">${catLabels[t.cat]}</div>
+          </div>
+        </div>
+        <p class="card-desc">${t.desc}</p>
+        <a class="card-link" href="${t.url}" target="_blank" rel="noopener">
+          Ouvrir le site
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M1 11L11 1M11 1H4M11 1V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>`;
+      grid.appendChild(card);
+      delay++;
+    });
+    container.appendChild(grid);
+  });
+}
+
+// Tabs
+document.getElementById('tabs').addEventListener('click', e => {
+  const btn = e.target.closest('.tab');
+  if (!btn) return;
+  activecat = btn.dataset.cat;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards();
+});
+
+function filterCat(cat) {
+  activecat = cat;
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.cat === cat);
+  });
+  renderCards();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Search
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchTerm = e.target.value.toLowerCase().trim();
+  renderCards();
+});
+
+function scrollToTop() {
+  activecat = 'all';
+  searchTerm = '';
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.cat === 'all'));
+  renderCards();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Share
+async function shareApp() {
+  const data = { title: 'NBProf IA Recherche', text: '14 outils IA essentiels pour la recherche scientifique — par Prof. Noamane Boulahcen', url: window.location.href };
+  if (navigator.share) {
+    try { await navigator.share(data); } catch(e) {}
+  } else {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      showToast('🔗 Lien copié !', 2000);
+    } catch(e) { alert('Copiez ce lien: ' + window.location.href); }
+  }
+}
+
+function showToast(msg, dur = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// Online/Offline
+window.addEventListener('offline', () => showToast('📴 Hors ligne — contenu en cache'));
+window.addEventListener('online',  () => showToast('✅ Connexion rétablie', 2000));
+
+// PWA Install
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  setTimeout(() => document.getElementById('installBanner').classList.add('show'), 2000);
+});
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('installBanner').classList.remove('show');
+});
+document.getElementById('dismissBtn').addEventListener('click', () => {
+  document.getElementById('installBanner').classList.remove('show');
+});
+window.addEventListener('appinstalled', () => showToast('✅ Application installée !', 3000));
+
+// Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+// Init
+renderCards();
+</script>
+</body>
+</html>
