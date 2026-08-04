@@ -78,3 +78,127 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+/* =====================================
+   Parcours rapides du chercheur
+===================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const goalCards = document.querySelectorAll(".goal-card");
+
+    const goalConfiguration = {
+
+        recherche: {
+            category: "recherche",
+            message: "Outils recommandés pour trouver des articles scientifiques."
+        },
+
+        revue: {
+            category: "lecture",
+            message: "Outils recommandés pour lire, comprendre et synthétiser la littérature."
+        },
+
+        bibliographie: {
+            category: "biblio",
+            message: "Outils recommandés pour organiser vos références bibliographiques."
+        },
+
+        soutenance: {
+            category: "presentation",
+            message: "Outils recommandés pour préparer votre présentation et votre soutenance."
+        }
+
+    };
+
+    goalCards.forEach((card) => {
+
+        card.addEventListener("click", () => {
+
+            const goal = card.dataset.goal;
+            const configuration = goalConfiguration[goal];
+
+            /*
+             * Parcours qui ne possèdent pas encore
+             * de catégorie dans le catalogue actuel.
+             */
+            if (!configuration) {
+
+                const labels = {
+                    redaction: "Le parcours « Rédaction scientifique » sera ajouté prochainement.",
+                    analyse: "Le parcours « Analyse des données » sera ajouté prochainement."
+                };
+
+                if (typeof showToast === "function") {
+                    showToast(
+                        labels[goal] || "Ce parcours est en préparation.",
+                        3500
+                    );
+                } else {
+                    alert(
+                        labels[goal] || "Ce parcours est en préparation."
+                    );
+                }
+
+                return;
+            }
+
+            /*
+             * Réinitialiser la recherche textuelle.
+             */
+            searchTerm = "";
+            activecat = configuration.category;
+
+            const oldSearch =
+                document.getElementById("searchInput");
+
+            const hubSearch =
+                document.getElementById("hubSearch");
+
+            if (oldSearch) {
+                oldSearch.value = "";
+            }
+
+            if (hubSearch) {
+                hubSearch.value = "";
+            }
+
+            /*
+             * Activer le bon onglet.
+             */
+            document
+                .querySelectorAll(".tab")
+                .forEach((tab) => {
+
+                    tab.classList.toggle(
+                        "active",
+                        tab.dataset.cat === configuration.category
+                    );
+
+                });
+
+            /*
+             * Afficher les outils correspondants.
+             */
+            renderCards();
+
+            if (typeof showToast === "function") {
+                showToast(configuration.message, 3000);
+            }
+
+            const resultsArea =
+                document.getElementById("cardsContainer");
+
+            if (resultsArea) {
+
+                resultsArea.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }
+
+        });
+
+    });
+
+});
