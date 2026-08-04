@@ -799,13 +799,61 @@ href="manifest.json">
 
   <div class="header-actions">
 
+    <div class="language-switcher">
+
+  <button
+    type="button"
+    class="header-button language-button"
+    id="languageButton"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls="languageMenu"
+  >
+    <span class="language-globe">🌍</span>
+    <span id="currentLanguageLabel">Français</span>
+    <span class="language-chevron">▾</span>
+  </button>
+
+  <div
+    class="language-menu"
+    id="languageMenu"
+    role="menu"
+    hidden
+  >
+
     <button
       type="button"
-      class="header-button"
-      aria-label="Changer de langue"
+      class="language-option active"
+      data-lang="fr"
+      role="menuitem"
     >
-      FR
+      <span>🇫🇷</span>
+      <span>Français</span>
     </button>
+
+    <button
+      type="button"
+      class="language-option"
+      data-lang="en"
+      role="menuitem"
+    >
+      <span>🇬🇧</span>
+      <span>English</span>
+    </button>
+
+    <button
+      type="button"
+      class="language-option"
+      data-lang="ar"
+      role="menuitem"
+    >
+      <span>🇲🇦</span>
+      <span>العربية</span>
+    </button>
+
+  </div>
+
+</div>
 
     <button
       type="button"
