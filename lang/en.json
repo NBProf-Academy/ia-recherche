@@ -1,0 +1,49 @@
+{
+  "app_name": "NBProf Research Hub",
+  "app_slogan": "From idea to thesis defense",
+  "language": "English",
+
+  "hero_badge": "Your intelligent research assistant",
+  "hero_title_start": "From idea",
+  "hero_title_highlight": "to thesis defense",
+  "hero_description": "Discover the best tools, methods and research pathways for every stage of your scientific work.",
+
+  "search_placeholder": "Search for a tool, method or research stage...",
+  "search_button": "Search",
+
+  "goals_kicker": "Research pathways",
+  "goals_title": "What would you like to do today?",
+  "goals_description": "Choose your objective to discover the most suitable tools and recommendations.",
+
+  "goal_articles_title": "Find scientific papers",
+  "goal_articles_description": "Explore academic literature and identify relevant publications.",
+
+  "goal_literature_title": "Literature review",
+  "goal_literature_description": "Read, compare and synthesize scientific papers.",
+
+  "goal_writing_title": "Scientific writing",
+  "goal_writing_description": "Write your thesis, dissertation or scientific article.",
+
+  "goal_bibliography_title": "Manage references",
+  "goal_bibliography_description": "Organize and cite your references efficiently.",
+
+  "goal_analysis_title": "Analyze data",
+  "goal_analysis_description": "Choose the best software and methods for your data.",
+
+  "goal_defense_title": "Prepare your defense",
+  "goal_defense_description": "Build a clear and convincing presentation.",
+
+  "catalog_kicker": "Smart catalog",
+  "catalog_title": "Recommended tools",
+  "catalog_description": "Browse the most suitable research tools according to your needs.",
+
+  "filter_all": "All",
+  "filter_research": "Research",
+  "filter_reading": "Reading",
+  "filter_visualization": "Visualization",
+  "filter_presentation": "Presentation",
+  "filter_bibliography": "Bibliography",
+
+  "open_tool": "Open website",
+  "no_results": "No tools found"
+}
