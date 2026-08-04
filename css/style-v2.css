@@ -160,3 +160,148 @@ body{
         font-size: 0.65rem;
     }
 }
+/* =====================================
+   Accueil principal V2
+===================================== */
+
+.hub-main {
+    position: relative;
+    z-index: 2;
+
+    width: min(1180px, calc(100% - 32px));
+    margin: 0 auto;
+}
+
+.hub-hero {
+    padding: 80px 20px 55px;
+    text-align: center;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 8px 16px;
+    margin-bottom: 22px;
+
+    color: var(--primary);
+    background: rgba(66, 212, 255, 0.08);
+    border: 1px solid rgba(66, 212, 255, 0.25);
+    border-radius: 999px;
+
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.hub-hero h1 {
+    max-width: 850px;
+    margin: 0 auto;
+
+    font-size: clamp(2.4rem, 7vw, 5rem);
+    line-height: 1.05;
+    letter-spacing: -0.05em;
+}
+
+.hub-hero h1 span {
+    background: linear-gradient(
+        135deg,
+        var(--primary),
+        var(--secondary)
+    );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero-description {
+    max-width: 720px;
+    margin: 24px auto 0;
+
+    color: var(--text);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.7;
+}
+
+.hub-search {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+
+    max-width: 780px;
+    margin: 36px auto 0;
+    padding: 10px;
+
+    background: rgba(17, 24, 39, 0.88);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+}
+
+.hub-search-icon {
+    padding-left: 10px;
+    font-size: 1.1rem;
+}
+
+#hubSearch {
+    width: 100%;
+    min-height: 48px;
+
+    color: var(--white);
+    background: transparent;
+    border: none;
+    outline: none;
+
+    font: inherit;
+}
+
+#hubSearch::placeholder {
+    color: #7f8a9e;
+}
+
+#hubSearchButton {
+    min-height: 48px;
+    padding: 0 22px;
+
+    color: #03040a;
+    background: linear-gradient(
+        135deg,
+        var(--primary),
+        var(--secondary)
+    );
+
+    border: none;
+    border-radius: 12px;
+
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+#hubSearchButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(66, 212, 255, 0.2);
+}
+
+@media (max-width: 620px) {
+
+    .hub-hero {
+        padding: 55px 4px 40px;
+    }
+
+    .hub-search {
+        grid-template-columns: auto 1fr;
+    }
+
+    #hubSearchButton {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+}
