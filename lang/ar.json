@@ -1,0 +1,49 @@
+{
+  "app_name": "NBProf Research Hub",
+  "app_slogan": "من الفكرة إلى المناقشة",
+  "language": "العربية",
+
+  "hero_badge": "مساعدك الذكي في البحث العلمي",
+  "hero_title_start": "من الفكرة إلى",
+  "hero_title_highlight": "المناقشة",
+  "hero_description": "اكتشف أفضل الأدوات والمنهجيات والمسارات البحثية لكل مرحلة من مراحل البحث العلمي.",
+
+  "search_placeholder": "ابحث عن أداة أو منهجية أو مرحلة...",
+  "search_button": "بحث",
+
+  "goals_kicker": "المسارات البحثية",
+  "goals_title": "ماذا تريد أن تفعل اليوم؟",
+  "goals_description": "اختر هدفك لتكتشف الأدوات والنصائح المناسبة.",
+
+  "goal_articles_title": "البحث عن المقالات",
+  "goal_articles_description": "استكشاف الأدبيات العلمية والعثور على أفضل المراجع.",
+
+  "goal_literature_title": "مراجعة الأدبيات",
+  "goal_literature_description": "قراءة ومقارنة وتلخيص الدراسات العلمية.",
+
+  "goal_writing_title": "الكتابة العلمية",
+  "goal_writing_description": "كتابة الرسائل الجامعية والأبحاث العلمية.",
+
+  "goal_bibliography_title": "إدارة المراجع",
+  "goal_bibliography_description": "تنظيم المراجع والاستشهاد بها بطريقة صحيحة.",
+
+  "goal_analysis_title": "تحليل البيانات",
+  "goal_analysis_description": "اختيار أفضل البرامج والمنهجيات لتحليل البيانات.",
+
+  "goal_defense_title": "التحضير للمناقشة",
+  "goal_defense_description": "إعداد عرض تقديمي احترافي للمناقشة.",
+
+  "catalog_kicker": "الدليل الذكي",
+  "catalog_title": "الأدوات الموصى بها",
+  "catalog_description": "اعثر على أفضل أدوات البحث العلمي حسب احتياجاتك.",
+
+  "filter_all": "الكل",
+  "filter_research": "البحث",
+  "filter_reading": "القراءة",
+  "filter_visualization": "التصور",
+  "filter_presentation": "العروض",
+  "filter_bibliography": "المراجع",
+
+  "open_tool": "فتح الموقع",
+  "no_results": "لم يتم العثور على أدوات"
+}
