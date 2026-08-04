@@ -1,0 +1,49 @@
+{
+  "app_name": "NBProf Research Hub",
+  "app_slogan": "De l’idée à la soutenance",
+  "language": "Français",
+
+  "hero_badge": "Assistant intelligent du chercheur",
+  "hero_title_start": "De l’idée à la",
+  "hero_title_highlight": "soutenance",
+  "hero_description": "Trouvez les outils, les méthodes et les parcours adaptés à chaque étape de votre recherche scientifique.",
+
+  "search_placeholder": "Rechercher un outil, une méthode ou une étape...",
+  "search_button": "Rechercher",
+
+  "goals_kicker": "Parcours personnalisés",
+  "goals_title": "Que souhaitez-vous faire aujourd’hui ?",
+  "goals_description": "Choisissez votre objectif pour découvrir les étapes, les outils et les conseils adaptés à votre travail scientifique.",
+
+  "goal_articles_title": "Trouver des articles",
+  "goal_articles_description": "Explorer la littérature et identifier les sources pertinentes.",
+
+  "goal_literature_title": "Faire une revue de littérature",
+  "goal_literature_description": "Lire, comparer, organiser et synthétiser les publications.",
+
+  "goal_writing_title": "Rédiger un travail scientifique",
+  "goal_writing_description": "Structurer un mémoire, une thèse ou un article académique.",
+
+  "goal_bibliography_title": "Gérer mes références",
+  "goal_bibliography_description": "Collecter, classer, annoter et citer correctement les sources.",
+
+  "goal_analysis_title": "Analyser mes données",
+  "goal_analysis_description": "Identifier les méthodes et logiciels adaptés à votre étude.",
+
+  "goal_defense_title": "Préparer ma soutenance",
+  "goal_defense_description": "Construire une présentation claire, convaincante et structurée.",
+
+  "catalog_kicker": "Catalogue intelligent",
+  "catalog_title": "Outils recommandés",
+  "catalog_description": "Filtrez les plateformes selon votre besoin et accédez aux outils les plus adaptés à votre parcours de recherche.",
+
+  "filter_all": "Tous",
+  "filter_research": "Recherche",
+  "filter_reading": "Lecture",
+  "filter_visualization": "Visualisation",
+  "filter_presentation": "Présentation",
+  "filter_bibliography": "Bibliographie",
+
+  "open_tool": "Ouvrir le site",
+  "no_results": "Aucun outil trouvé"
+}
