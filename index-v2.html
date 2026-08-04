@@ -627,6 +627,147 @@ background:#333;
 color:white;
 
 }
+    /* =======================
+      SPLASH SCREEN
+======================= */
+
+#splash-screen{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:#03040A;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+z-index:999999;
+
+transition:opacity .8s;
+
+}
+
+.splash-content{
+
+text-align:center;
+
+color:white;
+
+}
+
+#splash-logo{
+
+width:140px;
+
+height:140px;
+
+animation:logoPulse 2s infinite;
+
+}
+
+.splash-content h1{
+
+margin-top:25px;
+
+font-size:34px;
+
+}
+
+.splash-content p{
+
+margin-top:15px;
+
+opacity:.85;
+
+font-size:18px;
+
+}
+
+.loader{
+
+margin-top:35px;
+
+display:flex;
+
+justify-content:center;
+
+gap:10px;
+
+}
+
+.loader span{
+
+width:12px;
+
+height:12px;
+
+border-radius:50%;
+
+background:#42d4ff;
+
+animation:bounce 1.2s infinite;
+
+}
+
+.loader span:nth-child(2){
+
+animation-delay:.2s;
+
+}
+
+.loader span:nth-child(3){
+
+animation-delay:.4s;
+
+}
+
+@keyframes bounce{
+
+0%,100%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-12px);
+
+}
+
+}
+
+@keyframes logoPulse{
+
+0%{
+
+transform:scale(1);
+
+}
+
+50%{
+
+transform:scale(1.08);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
   </style>
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
 
@@ -639,6 +780,34 @@ href="images/apple-touch-icon.png">
 href="manifest.json">
 </head>
 <body>
+  <!-- Splash Screen -->
+
+<div id="splash-screen">
+
+    <div class="splash-content">
+
+        <img src="icon-512.png" id="splash-logo">
+
+        <h1>NBProf IA Recherche</h1>
+
+        <p>
+            L'intelligence artificielle
+            au service de la recherche scientifique
+        </p>
+
+        <div class="loader">
+
+            <span></span>
+
+            <span></span>
+
+            <span></span>
+
+        </div>
+
+    </div>
+
+</div>
 
 <div class="bg"></div>
 <div class="grid-bg"></div>
@@ -1026,6 +1195,27 @@ window.addEventListener("appinstalled", () => {
     console.log("NBProf IA Recherche installée");
 
     installModal.style.display = "none";
+
+});
+
+</script>
+  <script>
+
+window.addEventListener("load",()=>{
+
+setTimeout(()=>{
+
+const splash=document.getElementById("splash-screen");
+
+splash.style.opacity="0";
+
+setTimeout(()=>{
+
+splash.style.display="none";
+
+},800);
+
+},2200);
 
 });
 
