@@ -792,8 +792,12 @@ href="manifest.json">
 >
 
     <div class="brand-text">
-      <strong>NBProf Research Hub</strong>
-      <span>De l’idée à la soutenance</span>
+      <strong data-i18n="app_name">
+  NBProf Research Hub
+</strong>
+      <span data-i18n="app_slogan">
+  De l’idée à la soutenance
+</span>
     </div>
   </a>
 
@@ -903,19 +907,24 @@ href="manifest.json">
   <!-- Présentation principale -->
   <section class="hub-hero">
 
-    <div class="hero-badge">
-      Assistant intelligent du chercheur
-    </div>
+    <div class="hero-badge" data-i18n="hero_badge">
+  Assistant intelligent du chercheur
+</div>
 
     <h1>
-      De l’idée à la
-      <span>soutenance</span>
-    </h1>
+  <span class="hero-title-start" data-i18n="hero_title_start">
+    De l’idée à la
+  </span>
 
-    <p class="hero-description">
-      Trouvez les outils, les méthodes et les parcours adaptés à chaque
-      étape de votre recherche scientifique.
-    </p>
+  <span class="hero-title-highlight" data-i18n="hero_title_highlight">
+    soutenance
+  </span>
+</h1>
+
+    <p class="hero-description" data-i18n="hero_description">
+  Trouvez les outils, les méthodes et les parcours adaptés à chaque
+  étape de votre recherche scientifique.
+</p>
 
     <div class="hub-search">
 
@@ -924,16 +933,21 @@ href="manifest.json">
       </span>
 
       <input
-        type="search"
-        id="hubSearch"
-        placeholder="Rechercher un outil, une méthode ou une étape..."
-        aria-label="Rechercher dans NBProf Research Hub"
-        autocomplete="off"
-      >
+  type="search"
+  id="hubSearch"
+  placeholder="Rechercher un outil, une méthode ou une étape..."
+  data-i18n-placeholder="search_placeholder"
+  aria-label="Rechercher dans NBProf Research Hub"
+  autocomplete="off"
+>
 
-      <button type="button" id="hubSearchButton">
-        Rechercher
-      </button>
+      <button
+  type="button"
+  id="hubSearchButton"
+  data-i18n="search_button"
+>
+  Rechercher
+</button>
 
     </div>
 
