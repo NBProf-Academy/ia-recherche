@@ -977,5 +977,58 @@ if ("serviceWorker" in navigator) {
   </div>
 
 </div>
+  <script>
+
+let deferredPrompt;
+
+const installModal = document.getElementById("installModal");
+const installButton = document.getElementById("installNow");
+const laterButton = document.getElementById("laterButton");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+
+    e.preventDefault();
+
+    deferredPrompt = e;
+
+    installModal.style.display = "flex";
+
+});
+
+installButton.addEventListener("click", async () => {
+
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === "accepted") {
+
+        console.log("Application installée");
+
+    }
+
+    deferredPrompt = null;
+
+    installModal.style.display = "none";
+
+});
+
+laterButton.addEventListener("click", () => {
+
+    installModal.style.display = "none";
+
+});
+
+window.addEventListener("appinstalled", () => {
+
+    console.log("NBProf IA Recherche installée");
+
+    installModal.style.display = "none";
+
+});
+
+</script>
 </body>
 </html>
