@@ -1,30 +1,32 @@
-const CACHE_NAME = 'nbprof-ia-v2';
+const CACHE_NAME = "nbprof-ia-recherche-v2";
 
-const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+const urlsToCache = [
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
-self.addEventListener('install', event => {
+// Installation
+self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ASSETS))
+      .then(cache => cache.addAll(urlsToCache))
   );
-
   self.skipWaiting();
 });
 
-
-self.addEventListener('activate', event => {
+// Activation
+self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
+        keys.map(key => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
       )
     )
   );
@@ -32,6 +34,13 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
+// Navigation
+self.addEventListener("fetch", event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => response || fetch(event.request))
+  );
+});
 
 self.addEventListener('fetch', event => {
   event.respondWith(
