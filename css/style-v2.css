@@ -554,3 +554,163 @@ margin-bottom:90px;
         font-size: 2rem;
     }
 }
+/* =====================================
+   Outils recommandés V2
+===================================== */
+
+.recommended-tools {
+    padding: 30px 0 100px;
+    scroll-margin-top: 110px;
+}
+
+.tools-heading {
+    margin-bottom: 26px;
+}
+
+.recommended-tools .tabs-wrap {
+    width: 100%;
+    margin-bottom: 30px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.recommended-tools .tabs-wrap::-webkit-scrollbar {
+    display: none;
+}
+
+.recommended-tools .tabs {
+    display: flex;
+    gap: 10px;
+    width: max-content;
+    min-width: 100%;
+    padding-bottom: 4px;
+}
+
+.recommended-tools .tab {
+    flex: 0 0 auto;
+
+    padding: 11px 18px;
+
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
+}
+
+.recommended-tools .tab:hover {
+    transform: translateY(-2px);
+    border-color: var(--tab-color, var(--primary));
+}
+
+.recommended-tools .tab.active {
+    color: #03040a;
+    background: var(--tab-color, var(--primary));
+    border-color: var(--tab-color, var(--primary));
+}
+
+.recommended-tools #cardsContainer {
+    display: grid;
+    gap: 24px;
+}
+
+.recommended-tools .cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.recommended-tools .section-lbl {
+    margin: 28px 0 14px;
+    padding-left: 12px;
+
+    color: var(--primary);
+    border-left: 3px solid var(--secondary);
+
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.recommended-tools .card {
+    display: block;
+    height: 100%;
+    padding: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.065),
+            rgba(255, 255, 255, 0.02)
+        );
+
+    border: 1px solid var(--border);
+    border-radius: 22px;
+
+    transition:
+        transform var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+.recommended-tools .card:hover {
+    transform: translateY(-6px);
+    border-color: var(--cc, var(--primary));
+    box-shadow: 0 24px 55px rgba(0, 0, 0, 0.28);
+}
+
+.recommended-tools .card-name {
+    font-size: 1.12rem;
+}
+
+.recommended-tools .card-desc {
+    min-height: 90px;
+    margin-top: 12px;
+
+    color: var(--text);
+    font-size: 0.82rem;
+    line-height: 1.65;
+}
+
+.no-results {
+    display: none;
+    padding: 50px 20px;
+    color: var(--text);
+    text-align: center;
+}
+
+.no-results.show {
+    display: block;
+}
+
+@media (max-width: 980px) {
+    .recommended-tools .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 620px) {
+    .recommended-tools {
+        padding-bottom: 70px;
+    }
+
+    .recommended-tools .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .recommended-tools .card-desc {
+        min-height: auto;
+    }
+}
