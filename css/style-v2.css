@@ -1,0 +1,59 @@
+/* =====================================
+   NBProf Research Hub V2
+   Style principal
+   Version 2.0
+===================================== */
+
+:root{
+
+    --primary:#42d4ff;
+    --secondary:#7F5AF0;
+
+    --background:#03040A;
+
+    --surface:#111827;
+
+    --surface2:#1F2937;
+
+    --white:#FFFFFF;
+
+    --text:#D1D5DB;
+
+    --border:rgba(255,255,255,.08);
+
+    --radius:20px;
+
+    --transition:.30s;
+
+}
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    background:var(--background);
+
+    color:var(--white);
+
+    font-family:
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+    overflow-x:hidden;
+
+}
