@@ -1002,6 +1002,91 @@ href="manifest.json">
     </div>
 
   </section>
+  <!-- Outils recommandés V2 -->
+<section class="recommended-tools" id="recommendedTools">
+
+  <div class="section-heading tools-heading">
+
+    <div>
+      <span class="section-kicker">
+        Catalogue intelligent
+      </span>
+
+      <h2>
+        Outils recommandés
+      </h2>
+    </div>
+
+    <p>
+      Filtrez les plateformes selon votre besoin et accédez aux outils
+      les plus adaptés à votre parcours de recherche.
+    </p>
+
+  </div>
+
+  <!-- Filtres des catégories -->
+  <div class="tabs-wrap">
+    <div class="tabs" id="tabs">
+
+      <button
+        class="tab active"
+        data-cat="all"
+        style="--tab-color:#6ee7f7"
+      >
+        Tous
+      </button>
+
+      <button
+        class="tab"
+        data-cat="recherche"
+        style="--tab-color:#6ee7f7"
+      >
+        🔍 Recherche
+      </button>
+
+      <button
+        class="tab"
+        data-cat="lecture"
+        style="--tab-color:#a78bfa"
+      >
+        📖 Lecture
+      </button>
+
+      <button
+        class="tab"
+        data-cat="viz"
+        style="--tab-color:#f472b6"
+      >
+        🗺️ Visualisation
+      </button>
+
+      <button
+        class="tab"
+        data-cat="presentation"
+        style="--tab-color:#fb923c"
+      >
+        🎬 Présentation
+      </button>
+
+      <button
+        class="tab"
+        data-cat="biblio"
+        style="--tab-color:#34d399"
+      >
+        📚 Bibliographie
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Résultats générés par JavaScript -->
+  <div id="cardsContainer"></div>
+
+  <div class="no-results" id="noResults">
+    Aucun outil trouvé 🔍
+  </div>
+
+</section>
 
 </main>
 
@@ -1058,16 +1143,7 @@ href="manifest.json">
   </div>
 
   <!-- Tabs -->
-  <div class="tabs-wrap">
-    <div class="tabs" id="tabs">
-      <button class="tab active" data-cat="all" style="--tab-color:#6ee7f7">Tous</button>
-      <button class="tab" data-cat="recherche" style="--tab-color:#6ee7f7">🔍 Recherche</button>
-      <button class="tab" data-cat="lecture" style="--tab-color:#a78bfa">📖 Lecture</button>
-      <button class="tab" data-cat="viz" style="--tab-color:#f472b6">🗺️ Visualisation</button>
-      <button class="tab" data-cat="presentation" style="--tab-color:#fb923c">🎬 Présentation</button>
-      <button class="tab" data-cat="biblio" style="--tab-color:#34d399">📚 Bibliographie</button>
-    </div>
-  </div>
+ 
 
   <!-- Cards container -->
   <div id="cardsContainer"></div>
