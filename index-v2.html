@@ -518,6 +518,115 @@ transform:scale(1);
 }
 
 }
+    .install-modal{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(0,0,0,.75);
+
+display:none;
+
+justify-content:center;
+
+align-items:center;
+
+z-index:99999;
+
+}
+
+.install-box{
+
+width:420px;
+
+max-width:90%;
+
+background:#111827;
+
+border-radius:24px;
+
+padding:35px;
+
+text-align:center;
+
+box-shadow:0 0 40px rgba(0,0,0,.5);
+
+border:1px solid rgba(255,255,255,.08);
+
+}
+
+.install-logo{
+
+width:120px;
+
+margin-bottom:20px;
+
+}
+
+.install-box h2{
+
+margin-bottom:15px;
+
+}
+
+.install-box p{
+
+opacity:.85;
+
+line-height:1.6;
+
+margin-bottom:25px;
+
+}
+
+.install-buttons{
+
+display:flex;
+
+gap:15px;
+
+justify-content:center;
+
+}
+
+.install-buttons button{
+
+padding:14px 24px;
+
+border:none;
+
+border-radius:40px;
+
+cursor:pointer;
+
+font-size:16px;
+
+font-weight:bold;
+
+}
+
+#installNow{
+
+background:linear-gradient(135deg,#00C6FF,#7F5AF0);
+
+color:white;
+
+}
+
+#laterButton{
+
+background:#333;
+
+color:white;
+
+}
   </style>
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
 
@@ -837,5 +946,36 @@ if ("serviceWorker" in navigator) {
     });
 }
 </script>
+<!-- Fenêtre d'installation -->
+
+<div id="installModal" class="install-modal">
+
+  <div class="install-box">
+
+      <img src="icon-512.png" class="install-logo">
+
+      <h2>NBProf IA Recherche</h2>
+
+      <p>
+      Votre assistant intelligent pour la recherche scientifique.
+      Installez l'application pour un accès rapide, une meilleure
+      expérience et un lancement depuis votre écran d'accueil.
+      </p>
+
+      <div class="install-buttons">
+
+          <button id="installNow">
+              Installer maintenant
+          </button>
+
+          <button id="laterButton">
+              Plus tard
+          </button>
+
+      </div>
+
+  </div>
+
+</div>
 </body>
 </html>
