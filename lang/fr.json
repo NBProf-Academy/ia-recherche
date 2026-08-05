@@ -1,6 +1,8 @@
 {
   "app_name": "NBProf Research Hub",
   "app_slogan": "De l’idée à la soutenance",
+  "return_nbprof": "Retour au site NBProf",
+  "notifications_button": "Notifications", "notifications_empty": "Aucune nouvelle notification.",
   "research_notes": "Notes de recherche", "notes_placeholder": "Consignez vos idées, sources à vérifier, décisions et prochaines questions…", "notes_saved": "Notes enregistrées sur cet appareil.", "export_projects": "Exporter mes projets", "export_ready": "Sauvegarde téléchargée.",
   "projects_nav": "Mes projets", "projects_kicker": "Espace chercheur",
   "projects_title": "Mes projets de recherche",

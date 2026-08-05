@@ -45,15 +45,17 @@
     catch(err){console.error(err);if(state)state.innerHTML=`<div class="loading-state">${t('load_error','Erreur de chargement')}</div>`;}
   }
   async function shareApp(){const data={title:t('share_title','NBProf Research Hub'),text:t('share_text',''),url:location.href};if(navigator.share){try{await navigator.share(data);}catch(_){}}else{try{await navigator.clipboard.writeText(location.href);showToast(t('link_copied','Lien copié !'));}catch(_){prompt('URL',location.href);}}}
-  function addProjectsLink(){const actions=$('.header-actions');if(!actions||$('.projects-link'))return;const link=document.createElement('a');link.className='header-button projects-link';link.href='pages/projets.html';link.dataset.i18n='projects_nav';link.dataset.i18nAriaLabel='projects_nav';link.setAttribute('aria-label',t('projects_nav','Mes projets'));link.textContent=t('projects_nav','Mes projets');actions.prepend(link);}
-  function bind(){addProjectsLink();
+  function addProjectsLink(){const actions=$('.header-actions');if(!actions||$('.projects-link'))return;const link=document.createElement('a');link.className='header-button projects-link';link.href='pages/projets.html';link.dataset.i18n='projects_nav';link.dataset.i18nAriaLabel='projects_nav';link.setAttribute('aria-label',t('projects_nav','Mes projets'));link.title=t('projects_nav','Mes projets');link.textContent=t('projects_nav','Mes projets');actions.prepend(link);}
+  function prepareNotification(){const button=$('#aboutBtn');if(!button)return;button.textContent='🔔';button.removeAttribute('data-i18n-aria-label');button.setAttribute('aria-label',t('notifications_button','Notifications'));button.title=t('notifications_button','Notifications');}
+  function addNbprofLink(){const actions=$('.footer-actions');if(!actions||$('.nbprof-return'))return;const link=document.createElement('a');link.className='secondary-button nbprof-return';link.href='https://nbprof.com';link.dataset.i18n='return_nbprof';link.textContent=t('return_nbprof','Retour au site NBProf');actions.append(link);}
+  function bind(){addProjectsLink();prepareNotification();addNbprofLink();
     $('#tabs')?.addEventListener('click',e=>{const tab=e.target.closest('.tab');if(tab)setCategory(tab.dataset.cat);});
     $('#hubSearchButton')?.addEventListener('click',runSearch);
     $('#hubSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')runSearch();});
     $('#hubSearch')?.addEventListener('input',e=>{searchTerm=e.target.value;render();});
     $('.goal-grid')?.addEventListener('click',e=>{const card=e.target.closest('.goal-card');if(card)location.href=`pages/parcours.html?parcours=${encodeURIComponent(card.dataset.journey)}`;});
     $('#shareBtn')?.addEventListener('click',shareApp);
-    $('#aboutBtn')?.addEventListener('click',()=>showToast(t('about_message','NBProf Research Hub')));
+    $('#aboutBtn')?.addEventListener('click',()=>showToast(t('notifications_empty','Aucune nouvelle notification.')));
     window.addEventListener('offline',()=>showToast(`📴 ${t('offline','Mode hors ligne')}`));
     window.addEventListener('online',()=>showToast(`✅ ${t('online','Connexion rétablie')}`));
     window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#installBanner')?.classList.add('show');});

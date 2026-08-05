@@ -46,8 +46,9 @@
     const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `nbprof-projets-${new Date().toISOString().slice(0, 10)}.json`; link.click(); URL.revokeObjectURL(link.href); toast(t('export_ready'));
   }
 
+  function addNbprofFooter() { const main = $('.projects-main'); if (!main || $('.nbprof-project-footer')) return; const footer = document.createElement('footer'); footer.className = 'site-footer nbprof-project-footer'; footer.innerHTML = `<div class="footer-inner"><span class="footer-return-text">NBProf Research Hub</span><a class="secondary-button nbprof-return" href="https://nbprof.com" data-i18n="return_nbprof">${escapeHtml(t('return_nbprof', 'Retour au site NBProf'))}</a></div>`; main.after(footer); }
   function bind() {
-    const hero = $('.projects-hero');
+    const hero = $('.projects-hero'); addNbprofFooter();
     const exportButton = document.createElement('button'); exportButton.className = 'secondary-button export-button'; exportButton.type = 'button'; exportButton.dataset.action = 'export'; exportButton.dataset.i18n = 'export_projects'; exportButton.textContent = t('export_projects'); hero.append(exportButton);
     $('#newProjectButton').addEventListener('click', openDialog); $('#closeDialog').addEventListener('click', closeDialog); $('#cancelDialog').addEventListener('click', closeDialog);
     $('#projectForm').addEventListener('submit', event => { event.preventDefault(); createProject(); });
