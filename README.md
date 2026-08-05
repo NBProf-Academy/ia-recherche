@@ -18,3 +18,7 @@ Si votre site est un dépôt utilisateur publié directement à la racine (`<ide
 `https://<votre-identifiant-github>.github.io/recherche/`
 
 Les chemins sont relatifs : aucun réglage supplémentaire n’est requis pour ce sous-dossier. Après une mise à jour, rechargez la page sans cache afin de renouveler le cache hors connexion.
+
+## Vérification sur ordinateur
+
+Téléversez **l’intégralité** du dossier, en conservant notamment `css/style-v2.css`, `js/` et `sw.js`. Une image de très grande taille au chargement indique généralement qu’une ancienne page ou qu’une feuille de style absente est encore utilisée. Après publication, ouvrez la page avec une actualisation forcée (`Ctrl + F5` sous Windows ; `Cmd + Maj + R` sur Mac). Cette version porte un nouveau cache PWA et remplacera automatiquement l’ancien cache après le premier rechargement en ligne.
