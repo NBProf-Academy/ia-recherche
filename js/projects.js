@@ -14,7 +14,7 @@
   function projectById(projectId) { return projects.find(project => project.id === projectId); }
 
   function emptyState() {
-    return `<div class="empty-projects"><div>🧭</div><h2>${escapeHtml(t('no_projects_title'))}</h2><p>${escapeHtml(t('no_projects_text'))}</p><button class="primary-button" data-action="create">${escapeHtml(t('new_project'))}</button></div>`;
+    return `<div class="empty-projects"><img src="../icon-192.png" alt=""><h2>${escapeHtml(t('no_projects_title'))}</h2><p>${escapeHtml(t('no_projects_text'))}</p></div>`;
   }
 
   function card(project) {
