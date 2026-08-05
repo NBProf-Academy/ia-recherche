@@ -1,27 +1,20 @@
 {
-  "id": "/ia-recherche/",
-  "name": "NBProf IA Recherche",
-  "short_name": "NBProf IA",
-  "description": "Plateforme intelligente dédiée aux doctorants, chercheurs et étudiants pour accélérer la recherche scientifique grâce aux outils d’intelligence artificielle.",
-
-  "start_url": "/ia-recherche/",
-  "scope": "/ia-recherche/",
-
+  "id": "./",
+  "name": "NBProf Research Hub",
+  "short_name": "NBProf Hub",
+  "description": "Parcours, méthodes et outils pour accompagner la recherche scientifique de l’idée à la soutenance.",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-
   "background_color": "#03040a",
-  "theme_color": "#6ee7f7",
-
-  "orientation": "portrait-primary",
-
-  "lang": "fr-FR",
-
+  "theme_color": "#03040a",
+  "orientation": "any",
+  "lang": "fr",
   "categories": [
     "education",
     "research",
     "productivity"
   ],
-
   "icons": [
     {
       "src": "icon-192.png",
@@ -36,26 +29,16 @@
       "purpose": "any maskable"
     }
   ],
-
-  "screenshots": [
-    {
-      "src": "capture-mobile.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
-
   "shortcuts": [
     {
-      "name": "Recherche académique",
-      "short_name": "Recherche",
-      "url": "/ia-recherche/#recherche"
+      "name": "Trouver des articles",
+      "short_name": "Articles",
+      "url": "./pages/parcours.html?parcours=articles"
     },
     {
-      "name": "Bibliographie IA",
-      "short_name": "Biblio",
-      "url": "/ia-recherche/#biblio"
+      "name": "Gérer mes références",
+      "short_name": "Références",
+      "url": "./pages/parcours.html?parcours=bibliography"
     }
   ]
 }
