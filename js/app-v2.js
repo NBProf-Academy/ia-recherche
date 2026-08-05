@@ -45,7 +45,8 @@
     catch(err){console.error(err);if(state)state.innerHTML=`<div class="loading-state">${t('load_error','Erreur de chargement')}</div>`;}
   }
   async function shareApp(){const data={title:t('share_title','NBProf Research Hub'),text:t('share_text',''),url:location.href};if(navigator.share){try{await navigator.share(data);}catch(_){}}else{try{await navigator.clipboard.writeText(location.href);showToast(t('link_copied','Lien copié !'));}catch(_){prompt('URL',location.href);}}}
-  function bind(){
+  function addProjectsLink(){const actions=$('.header-actions');if(!actions||$('.projects-link'))return;const link=document.createElement('a');link.className='header-button projects-link';link.href='pages/projets.html';link.dataset.i18n='projects_nav';link.textContent=t('projects_nav','Mes projets');actions.prepend(link);}
+  function bind(){addProjectsLink();
     $('#tabs')?.addEventListener('click',e=>{const tab=e.target.closest('.tab');if(tab)setCategory(tab.dataset.cat);});
     $('#hubSearchButton')?.addEventListener('click',runSearch);
     $('#hubSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')runSearch();});
