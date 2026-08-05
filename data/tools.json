@@ -1,0 +1,170 @@
+[
+  {
+    "name": "Perplexity",
+    "category": "recherche",
+    "icon": "⚡",
+    "accent": "cc1",
+    "url": "https://www.perplexity.ai",
+    "description": {
+      "fr": "Moteur de recherche assisté par IA pour explorer rapidement une question et ses sources.",
+      "en": "AI-assisted search engine for quickly exploring a question and its sources.",
+      "ar": "محرك بحث مدعوم بالذكاء الاصطناعي لاستكشاف سؤال ومصادره بسرعة."
+    }
+  },
+  {
+    "name": "Consensus",
+    "category": "recherche",
+    "icon": "🎯",
+    "accent": "cc1",
+    "url": "https://consensus.app",
+    "description": {
+      "fr": "Interroge la littérature scientifique et synthétise les résultats d’études.",
+      "en": "Queries scientific literature and synthesizes study findings.",
+      "ar": "يبحث في الأدبيات العلمية ويلخص نتائج الدراسات."
+    }
+  },
+  {
+    "name": "Scite",
+    "category": "recherche",
+    "icon": "🔬",
+    "accent": "cc1",
+    "url": "https://scite.ai",
+    "description": {
+      "fr": "Analyse le contexte des citations et indique si une étude est soutenue ou contestée.",
+      "en": "Analyzes citation context and shows whether a study is supported or challenged.",
+      "ar": "يحلل سياق الاستشهادات ويبيّن ما إذا كانت الدراسة مدعومة أو محل نقاش."
+    }
+  },
+  {
+    "name": "ResearchRabbit",
+    "category": "recherche",
+    "icon": "🐇",
+    "accent": "cc1",
+    "url": "https://www.researchrabbit.ai",
+    "description": {
+      "fr": "Découverte d’articles et d’auteurs par réseaux de publications.",
+      "en": "Discovers papers and authors through publication networks.",
+      "ar": "اكتشاف المقالات والباحثين عبر شبكات المنشورات."
+    }
+  },
+  {
+    "name": "Google Scholar",
+    "category": "recherche",
+    "icon": "🌐",
+    "accent": "cc1",
+    "url": "https://scholar.google.com",
+    "description": {
+      "fr": "Recherche académique, suivi des citations et profils d’auteurs.",
+      "en": "Academic search, citation tracking and author profiles.",
+      "ar": "بحث أكاديمي وتتبع الاستشهادات وملفات الباحثين."
+    }
+  },
+  {
+    "name": "Scopus AI",
+    "category": "recherche",
+    "icon": "📊",
+    "accent": "cc1",
+    "url": "https://www.scopus.com/ai",
+    "description": {
+      "fr": "Exploration et synthèse assistées au sein de la base Scopus.",
+      "en": "Assisted exploration and synthesis within the Scopus database.",
+      "ar": "استكشاف وتلخيص مدعومان داخل قاعدة سكوبس."
+    }
+  },
+  {
+    "name": "SciSpace",
+    "category": "lecture",
+    "icon": "🚀",
+    "accent": "cc2",
+    "url": "https://typeset.io",
+    "description": {
+      "fr": "Explique, résume et facilite la lecture d’articles scientifiques.",
+      "en": "Explains, summarizes and supports the reading of scientific papers.",
+      "ar": "يشرح المقالات العلمية ويلخصها ويسهّل قراءتها."
+    }
+  },
+  {
+    "name": "NotebookLM",
+    "category": "lecture",
+    "icon": "📓",
+    "accent": "cc2",
+    "url": "https://notebooklm.google.com",
+    "description": {
+      "fr": "Interroge et synthétise vos propres documents de recherche.",
+      "en": "Queries and synthesizes your own research documents.",
+      "ar": "يستجوب وثائقك البحثية ويلخصها."
+    }
+  },
+  {
+    "name": "Connected Papers",
+    "category": "viz",
+    "icon": "🕸️",
+    "accent": "cc3",
+    "url": "https://www.connectedpapers.com",
+    "description": {
+      "fr": "Visualise les relations entre publications et travaux proches.",
+      "en": "Visualizes relationships between publications and related work.",
+      "ar": "يعرض العلاقات بين المنشورات والأعمال القريبة منها."
+    }
+  },
+  {
+    "name": "Napkin AI",
+    "category": "viz",
+    "icon": "✏️",
+    "accent": "cc3",
+    "url": "https://www.napkin.ai",
+    "description": {
+      "fr": "Transforme des idées textuelles en schémas et représentations visuelles.",
+      "en": "Turns text ideas into diagrams and visual representations.",
+      "ar": "يحوّل الأفكار النصية إلى رسوم وتمثيلات بصرية."
+    }
+  },
+  {
+    "name": "Gamma AI",
+    "category": "presentation",
+    "icon": "⚡",
+    "accent": "cc4",
+    "url": "https://gamma.app",
+    "description": {
+      "fr": "Crée rapidement des présentations structurées pour exposés et soutenances.",
+      "en": "Quickly creates structured presentations for talks and defenses.",
+      "ar": "ينشئ عروضاً منظمة بسرعة للعروض والمناقشات."
+    }
+  },
+  {
+    "name": "EndNote",
+    "category": "biblio",
+    "icon": "📖",
+    "accent": "cc5",
+    "url": "https://endnote.com",
+    "description": {
+      "fr": "Gestion bibliographique et insertion automatisée des références.",
+      "en": "Reference management and automated citation insertion.",
+      "ar": "إدارة المراجع وإدراج الاستشهادات آلياً."
+    }
+  },
+  {
+    "name": "Mendeley",
+    "category": "biblio",
+    "icon": "🤝",
+    "accent": "cc5",
+    "url": "https://www.mendeley.com",
+    "description": {
+      "fr": "Organisation, annotation et partage de références scientifiques.",
+      "en": "Organizes, annotates and shares scientific references.",
+      "ar": "تنظيم المراجع العلمية والتعليق عليها ومشاركتها."
+    }
+  },
+  {
+    "name": "Zotero",
+    "category": "biblio",
+    "icon": "🆓",
+    "accent": "cc5",
+    "url": "https://www.zotero.org",
+    "description": {
+      "fr": "Gestionnaire bibliographique gratuit et open source.",
+      "en": "Free and open-source reference manager.",
+      "ar": "مدير مراجع مجاني ومفتوح المصدر."
+    }
+  }
+]

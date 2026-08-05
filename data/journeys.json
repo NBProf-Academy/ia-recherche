@@ -1,0 +1,355 @@
+{
+  "articles": {
+    "icon": "🔎",
+    "title": {
+      "fr": "Trouver des articles scientifiques",
+      "en": "Find scientific papers",
+      "ar": "العثور على المقالات العلمية"
+    },
+    "description": {
+      "fr": "Construire une stratégie de recherche reproductible et sélectionner des sources pertinentes.",
+      "en": "Build a reproducible search strategy and select relevant sources.",
+      "ar": "بناء استراتيجية بحث قابلة للتكرار واختيار المصادر ذات الصلة."
+    },
+    "steps": {
+      "fr": [
+        "Délimiter le thème, la population et le contexte.",
+        "Transformer le sujet en concepts et mots-clés.",
+        "Construire des équations de recherche avec synonymes et opérateurs.",
+        "Interroger plusieurs bases et noter la date de recherche.",
+        "Appliquer des critères d’inclusion et d’exclusion.",
+        "Exporter les références et supprimer les doublons."
+      ],
+      "en": [
+        "Define the topic, population and context.",
+        "Turn the topic into concepts and keywords.",
+        "Build search strings with synonyms and operators.",
+        "Search several databases and record the search date.",
+        "Apply inclusion and exclusion criteria.",
+        "Export references and remove duplicates."
+      ],
+      "ar": [
+        "تحديد الموضوع والفئة والسياق.",
+        "تحويل الموضوع إلى مفاهيم وكلمات مفتاحية.",
+        "بناء معادلات بحث باستعمال المرادفات والعوامل المنطقية.",
+        "البحث في عدة قواعد وتسجيل تاريخ البحث.",
+        "تطبيق معايير الإدراج والاستبعاد.",
+        "تصدير المراجع وحذف المكررات."
+      ]
+    },
+    "tools": [
+      "Google Scholar",
+      "Scopus AI",
+      "Consensus",
+      "ResearchRabbit",
+      "Zotero"
+    ],
+    "tips": {
+      "fr": [
+        "Ne pas confondre pertinence thématique et qualité méthodologique.",
+        "Conserver une trace des requêtes pour assurer la reproductibilité."
+      ],
+      "en": [
+        "Do not confuse topical relevance with methodological quality.",
+        "Keep a record of queries to ensure reproducibility."
+      ],
+      "ar": [
+        "لا تخلط بين الصلة بالموضوع والجودة المنهجية.",
+        "احتفظ بسجل الاستعلامات لضمان قابلية التكرار."
+      ]
+    }
+  },
+  "literature": {
+    "icon": "📚",
+    "title": {
+      "fr": "Réaliser une revue de littérature",
+      "en": "Conduct a literature review",
+      "ar": "إنجاز مراجعة الأدبيات"
+    },
+    "description": {
+      "fr": "Passer d’une collection d’articles à une synthèse critique structurée.",
+      "en": "Move from a collection of papers to a structured critical synthesis.",
+      "ar": "الانتقال من مجموعة مقالات إلى تركيب نقدي منظم."
+    },
+    "steps": {
+      "fr": [
+        "Définir le type de revue et son protocole.",
+        "Organiser les références par thèmes, méthodes et résultats.",
+        "Lire en priorité les articles centraux et les travaux récents.",
+        "Construire une matrice de lecture comparative.",
+        "Identifier convergences, divergences et lacunes.",
+        "Rédiger une synthèse argumentative reliée à la problématique."
+      ],
+      "en": [
+        "Define the review type and protocol.",
+        "Organize references by themes, methods and findings.",
+        "Prioritize central papers and recent work.",
+        "Build a comparative reading matrix.",
+        "Identify convergences, divergences and gaps.",
+        "Write an argumentative synthesis linked to the research problem."
+      ],
+      "ar": [
+        "تحديد نوع المراجعة وبروتوكولها.",
+        "تنظيم المراجع حسب الموضوعات والمناهج والنتائج.",
+        "إعطاء الأولوية للمقالات المركزية والأعمال الحديثة.",
+        "بناء مصفوفة قراءة مقارنة.",
+        "تحديد نقاط الاتفاق والاختلاف والفجوات.",
+        "كتابة تركيب حجاجي مرتبط بإشكالية البحث."
+      ]
+    },
+    "tools": [
+      "SciSpace",
+      "NotebookLM",
+      "Scite",
+      "Connected Papers",
+      "Zotero"
+    ],
+    "tips": {
+      "fr": [
+        "Une revue n’est pas une succession de résumés.",
+        "Distinguer clairement les résultats des auteurs de votre interprétation."
+      ],
+      "en": [
+        "A review is not a sequence of summaries.",
+        "Clearly distinguish authors’ findings from your interpretation."
+      ],
+      "ar": [
+        "المراجعة ليست سلسلة من الملخصات.",
+        "ميّز بوضوح بين نتائج الباحثين وتفسيرك الخاص."
+      ]
+    }
+  },
+  "writing": {
+    "icon": "✍️",
+    "title": {
+      "fr": "Rédiger un travail scientifique",
+      "en": "Write scientific work",
+      "ar": "كتابة عمل علمي"
+    },
+    "description": {
+      "fr": "Structurer l’argumentation, documenter les sources et améliorer progressivement le texte.",
+      "en": "Structure the argument, document sources and improve the text iteratively.",
+      "ar": "هيكلة الحجاج وتوثيق المصادر وتحسين النص تدريجياً."
+    },
+    "steps": {
+      "fr": [
+        "Définir la fonction de chaque chapitre ou section.",
+        "Construire un plan détaillé aligné sur les questions de recherche.",
+        "Rédiger d’abord les idées et preuves principales.",
+        "Insérer les citations au moment de la rédaction.",
+        "Réviser la cohérence entre problématique, méthode, résultats et conclusion.",
+        "Effectuer une relecture linguistique et une vérification des références."
+      ],
+      "en": [
+        "Define the purpose of each chapter or section.",
+        "Build a detailed outline aligned with research questions.",
+        "Draft the main ideas and evidence first.",
+        "Insert citations while writing.",
+        "Review coherence among the problem, method, results and conclusion.",
+        "Perform language editing and reference checks."
+      ],
+      "ar": [
+        "تحديد وظيفة كل فصل أو قسم.",
+        "بناء خطة مفصلة منسجمة مع أسئلة البحث.",
+        "كتابة الأفكار والأدلة الأساسية أولاً.",
+        "إدراج الاستشهادات أثناء الكتابة.",
+        "مراجعة الانسجام بين الإشكالية والمنهج والنتائج والخاتمة.",
+        "إجراء مراجعة لغوية والتحقق من المراجع."
+      ]
+    },
+    "tools": [
+      "NotebookLM",
+      "Zotero",
+      "Mendeley",
+      "Napkin AI"
+    ],
+    "tips": {
+      "fr": [
+        "L’IA ne doit pas fabriquer des sources ni remplacer votre analyse.",
+        "Vérifier chaque citation dans le document original."
+      ],
+      "en": [
+        "AI must not fabricate sources or replace your analysis.",
+        "Verify every citation in the original document."
+      ],
+      "ar": [
+        "يجب ألا يصنع الذكاء الاصطناعي مصادر أو يعوض تحليلك.",
+        "تحقق من كل استشهاد في الوثيقة الأصلية."
+      ]
+    }
+  },
+  "bibliography": {
+    "icon": "📖",
+    "title": {
+      "fr": "Gérer les références bibliographiques",
+      "en": "Manage bibliographic references",
+      "ar": "إدارة المراجع الببليوغرافية"
+    },
+    "description": {
+      "fr": "Centraliser, nettoyer, annoter et citer les sources sans perdre leur traçabilité.",
+      "en": "Centralize, clean, annotate and cite sources while preserving traceability.",
+      "ar": "تجميع المصادر وتنظيفها والتعليق عليها وتوثيقها مع الحفاظ على قابليتها للتتبع."
+    },
+    "steps": {
+      "fr": [
+        "Choisir un gestionnaire principal.",
+        "Créer une arborescence par projet et thème.",
+        "Importer les métadonnées et vérifier leur exactitude.",
+        "Ajouter notes, mots-clés et pièces jointes.",
+        "Utiliser le connecteur du traitement de texte.",
+        "Sauvegarder et synchroniser régulièrement la bibliothèque."
+      ],
+      "en": [
+        "Choose one main reference manager.",
+        "Create a project- and theme-based structure.",
+        "Import metadata and verify accuracy.",
+        "Add notes, tags and attachments.",
+        "Use the word-processor connector.",
+        "Back up and synchronize the library regularly."
+      ],
+      "ar": [
+        "اختيار مدير مراجع رئيسي واحد.",
+        "إنشاء بنية حسب المشروع والموضوع.",
+        "استيراد البيانات الوصفية والتحقق من دقتها.",
+        "إضافة الملاحظات والكلمات المفتاحية والمرفقات.",
+        "استخدام إضافة برنامج معالجة النصوص.",
+        "نسخ المكتبة احتياطياً ومزامنتها بانتظام."
+      ]
+    },
+    "tools": [
+      "Zotero",
+      "Mendeley",
+      "EndNote"
+    ],
+    "tips": {
+      "fr": [
+        "Corriger les noms d’auteurs, dates, DOI et types de documents après import.",
+        "Ne pas gérer la même bibliothèque principale dans plusieurs outils simultanément."
+      ],
+      "en": [
+        "Correct author names, dates, DOI and document types after import.",
+        "Do not manage the same main library in several tools simultaneously."
+      ],
+      "ar": [
+        "صحح أسماء المؤلفين والتواريخ والمعرفات وأنواع الوثائق بعد الاستيراد.",
+        "لا تدِر المكتبة الرئيسية نفسها في عدة أدوات في الوقت ذاته."
+      ]
+    }
+  },
+  "analysis": {
+    "icon": "📊",
+    "title": {
+      "fr": "Analyser les données",
+      "en": "Analyze data",
+      "ar": "تحليل البيانات"
+    },
+    "description": {
+      "fr": "Relier la question de recherche, le type de données et la méthode d’analyse.",
+      "en": "Connect the research question, data type and analysis method.",
+      "ar": "ربط سؤال البحث بنوع البيانات ومنهج التحليل."
+    },
+    "steps": {
+      "fr": [
+        "Clarifier les variables, unités d’analyse ou corpus.",
+        "Nettoyer et documenter les données.",
+        "Choisir une méthode cohérente avec la question et le plan de recherche.",
+        "Réaliser les analyses descriptives avant les analyses avancées.",
+        "Vérifier les hypothèses, limites et cas atypiques.",
+        "Interpréter les résultats sans dépasser ce que les données permettent."
+      ],
+      "en": [
+        "Clarify variables, units of analysis or corpus.",
+        "Clean and document the data.",
+        "Choose a method consistent with the question and research design.",
+        "Run descriptive analyses before advanced analyses.",
+        "Check assumptions, limitations and outliers.",
+        "Interpret results without exceeding what the data support."
+      ],
+      "ar": [
+        "توضيح المتغيرات أو وحدات التحليل أو المتن.",
+        "تنظيف البيانات وتوثيقها.",
+        "اختيار منهج منسجم مع السؤال وتصميم البحث.",
+        "إجراء التحليلات الوصفية قبل التحليلات المتقدمة.",
+        "فحص الافتراضات والحدود والحالات الشاذة.",
+        "تفسير النتائج دون تجاوز ما تسمح به البيانات."
+      ]
+    },
+    "tools": [
+      "NotebookLM",
+      "Napkin AI",
+      "Gamma AI"
+    ],
+    "tips": {
+      "fr": [
+        "Un logiciel ne choisit pas la méthode à la place du chercheur.",
+        "Conserver le fichier brut et documenter toutes les transformations."
+      ],
+      "en": [
+        "Software does not choose the method for the researcher.",
+        "Keep the raw file and document every transformation."
+      ],
+      "ar": [
+        "البرنامج لا يختار المنهج بدلاً من الباحث.",
+        "احتفظ بالملف الخام ووثق جميع التحويلات."
+      ]
+    }
+  },
+  "defense": {
+    "icon": "🎤",
+    "title": {
+      "fr": "Préparer la soutenance",
+      "en": "Prepare the thesis defense",
+      "ar": "الاستعداد للمناقشة"
+    },
+    "description": {
+      "fr": "Transformer le travail écrit en une démonstration orale claire et maîtrisée.",
+      "en": "Turn the written work into a clear and controlled oral demonstration.",
+      "ar": "تحويل العمل المكتوب إلى عرض شفهي واضح ومتمكن."
+    },
+    "steps": {
+      "fr": [
+        "Identifier les messages essentiels et les contributions.",
+        "Construire un fil narratif : problème, méthode, résultats, apport.",
+        "Limiter chaque diapositive à une idée principale.",
+        "Préparer des figures lisibles et sourcées.",
+        "Répéter avec chronomètre et anticiper les questions.",
+        "Préparer une version de secours et tester le matériel."
+      ],
+      "en": [
+        "Identify key messages and contributions.",
+        "Build a narrative: problem, method, results and contribution.",
+        "Limit each slide to one main idea.",
+        "Prepare readable and sourced figures.",
+        "Rehearse with a timer and anticipate questions.",
+        "Prepare a backup version and test the equipment."
+      ],
+      "ar": [
+        "تحديد الرسائل الأساسية والإسهامات.",
+        "بناء سرد: الإشكالية والمنهج والنتائج والإضافة.",
+        "تخصيص كل شريحة لفكرة رئيسية واحدة.",
+        "إعداد رسوم واضحة وموثقة.",
+        "التدرب مع ضبط الوقت وتوقع الأسئلة.",
+        "إعداد نسخة احتياطية واختبار المعدات."
+      ]
+    },
+    "tools": [
+      "Gamma AI",
+      "Napkin AI",
+      "Connected Papers"
+    ],
+    "tips": {
+      "fr": [
+        "Ne pas lire les diapositives mot à mot.",
+        "Préparer des réponses courtes aux limites de l’étude."
+      ],
+      "en": [
+        "Do not read slides word for word.",
+        "Prepare concise answers about the study’s limitations."
+      ],
+      "ar": [
+        "لا تقرأ الشرائح كلمة بكلمة.",
+        "حضّر إجابات موجزة حول حدود الدراسة."
+      ]
+    }
+  }
+}
