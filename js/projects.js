@@ -1,6 +1,7 @@
 (() => {
   const STORAGE_KEY = 'nbprof-research-projects-v1';
   const STAGES = ['exploration', 'literature', 'method', 'data', 'writing', 'defense'];
+  const PRIORITIES = ['low', 'medium', 'high'];
   const $ = selector => document.querySelector(selector);
   const t = (key, fallback = '') => window.NBProfI18n?.t(key, fallback) || fallback || key;
   const id = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -8,6 +9,8 @@
   const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   let projects = [];
   let editingProjectId = null;
+  let taskProjectId = null;
+  let editingTaskId = null;
 
   function cleanText(value, maxLength = 400) {
     return typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
@@ -16,6 +19,23 @@
   function validIso(value, fallback) {
     if (typeof value !== 'string' || Number.isNaN(Date.parse(value))) return fallback;
     return new Date(value).toISOString();
+  }
+
+  function validDateKey(value) {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return '';
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day ? value : '';
+  }
+
+  function normalizeTask(item) {
+    return {
+      id: cleanText(item?.id, 80) || id(),
+      text: cleanText(item?.text, 160),
+      done: Boolean(item?.done),
+      priority: PRIORITIES.includes(item?.priority) ? item.priority : 'medium',
+      dueDate: validDateKey(item?.dueDate)
+    };
   }
 
   function normalizeProject(project) {
@@ -28,9 +48,7 @@
       milestones: Array.isArray(project?.milestones)
         ? project.milestones.map(item => ({ id: cleanText(item?.id, 80) || id(), text: cleanText(item?.text, 160) })).filter(item => item.text)
         : [],
-      tasks: Array.isArray(project?.tasks)
-        ? project.tasks.map(item => ({ id: cleanText(item?.id, 80) || id(), text: cleanText(item?.text, 160), done: Boolean(item?.done) })).filter(item => item.text)
-        : [],
+      tasks: Array.isArray(project?.tasks) ? project.tasks.map(normalizeTask).filter(item => item.text) : [],
       notes: cleanText(project?.notes, 5000),
       createdAt,
       updatedAt: validIso(project?.updatedAt, createdAt)
@@ -53,8 +71,49 @@
   function touch(project) { if (project) project.updatedAt = nowIso(); }
   function toast(message) { const el = $('#toast'); el.textContent = message; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2600); }
   function stageLabel(stage) { return t(`stage_${stage}`, stage); }
-  function projectProgress(project) { const total = project.tasks.length; const done = project.tasks.filter(task => task.done).length; return { total, done, percent: total ? Math.round(done / total * 100) : 0 }; }
+  function priorityLabel(priority) { return t(`priority_${priority}`, priority); }
   function projectById(projectId) { return projects.find(project => project.id === projectId); }
+  function taskById(project, taskId) { return project?.tasks.find(task => task.id === taskId); }
+
+  function localDateKey(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function dateFromKey(value) {
+    if (!validDateKey(value)) return null;
+    const [year, month, day] = value.split('-').map(Number);
+    return new Date(year, month - 1, day, 12, 0, 0, 0);
+  }
+
+  function daysUntil(value) {
+    const due = dateFromKey(value);
+    if (!due) return null;
+    const today = dateFromKey(localDateKey());
+    return Math.round((due - today) / 86400000);
+  }
+
+  function taskState(task) {
+    if (task.done) return 'complete';
+    const remaining = daysUntil(task.dueDate);
+    if (remaining === null) return 'undated';
+    if (remaining < 0) return 'overdue';
+    if (remaining === 0) return 'today';
+    if (remaining <= 7) return 'soon';
+    return 'scheduled';
+  }
+
+  function projectProgress(project) {
+    const total = project.tasks.length;
+    const done = project.tasks.filter(task => task.done).length;
+    const pending = project.tasks.filter(task => !task.done);
+    const overdue = pending.filter(task => taskState(task) === 'overdue').length;
+    const dueSoon = pending.filter(task => ['today', 'soon'].includes(taskState(task))).length;
+    const highPriority = pending.filter(task => task.priority === 'high').length;
+    return { total, done, overdue, dueSoon, highPriority, percent: total ? Math.round(done / total * 100) : 0 };
+  }
 
   function formatDate(value) {
     const date = new Date(value);
@@ -64,6 +123,17 @@
       return new Intl.DateTimeFormat(language, { dateStyle: 'medium', timeStyle: 'short' }).format(date);
     } catch {
       return date.toLocaleString();
+    }
+  }
+
+  function formatDueDate(value) {
+    const date = dateFromKey(value);
+    if (!date) return '';
+    const language = window.NBProfI18n?.getLanguage?.() || document.documentElement.lang || 'fr';
+    try {
+      return new Intl.DateTimeFormat(language, { dateStyle: 'medium' }).format(date);
+    } catch {
+      return date.toLocaleDateString();
     }
   }
 
@@ -77,10 +147,33 @@
     return `<div class="empty-projects"><img src="../icon-192.png" alt=""><h2>${escapeHtml(t('no_projects_title'))}</h2><p>${escapeHtml(t('no_projects_text'))}</p></div>`;
   }
 
+  function dueBadge(task) {
+    if (!task.dueDate) return '';
+    const state = taskState(task);
+    const label = state === 'overdue'
+      ? `${t('overdue')} · ${formatDueDate(task.dueDate)}`
+      : state === 'today'
+        ? t('due_today')
+        : `${t('due_on')} ${formatDueDate(task.dueDate)}`;
+    return `<span class="due-badge due-${state}">${state === 'overdue' ? '⚠ ' : '📅 '}${escapeHtml(label)}</span>`;
+  }
+
+  function taskMarkup(project, task) {
+    const state = taskState(task);
+    return `<li class="task-row task-row--${state}">
+      <label class="task-check"><input type="checkbox" data-action="toggle" data-project="${project.id}" data-item="${task.id}" ${task.done ? 'checked' : ''}><span class="task-body"><span class="task-title">${escapeHtml(task.text)}</span><span class="task-tags"><span class="priority-badge priority-${task.priority}">${escapeHtml(priorityLabel(task.priority))}</span>${dueBadge(task)}</span></span></label>
+      <span class="task-row__actions"><button data-action="edit-task" data-project="${project.id}" data-item="${task.id}" aria-label="${escapeHtml(t('edit_task'))}">✎</button><button data-action="remove-task" data-project="${project.id}" data-item="${task.id}" aria-label="${escapeHtml(t('remove_task'))}">×</button></span>
+    </li>`;
+  }
+
+  function indicator(value, label, type = '') {
+    return `<div class="task-indicator ${type ? `task-indicator--${type}` : ''}"><strong>${value}</strong><span>${escapeHtml(label)}</span></div>`;
+  }
+
   function card(project) {
     const progress = projectProgress(project);
     const milestones = project.milestones.map(item => `<li>${escapeHtml(item.text)}</li>`).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
-    const tasks = project.tasks.map(task => `<li class="task-row"><label><input type="checkbox" data-action="toggle" data-project="${project.id}" data-item="${task.id}" ${task.done ? 'checked' : ''}><span>${escapeHtml(task.text)}</span></label><button data-action="remove-task" data-project="${project.id}" data-item="${task.id}" aria-label="${escapeHtml(t('remove_task', 'Supprimer la tâche'))}">×</button></li>`).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
+    const tasks = project.tasks.map(task => taskMarkup(project, task)).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
     return `<article class="project-card">
       <div class="project-card__top">
         <div><span class="project-stage">${escapeHtml(stageLabel(project.stage))}</span><h2>${escapeHtml(project.name)}</h2></div>
@@ -93,17 +186,26 @@
       <div class="project-meta"><span><strong>${escapeHtml(t('created_on'))}</strong> ${escapeHtml(formatDate(project.createdAt))}</span><span><strong>${escapeHtml(t('updated_on'))}</strong> ${escapeHtml(formatDate(project.updatedAt))}</span></div>
       <div class="progress-label"><strong>${progress.percent}%</strong><span>${escapeHtml(t('project_progress'))} · ${progress.done}/${progress.total} ${escapeHtml(t('tasks_done'))}</span></div>
       <div class="progress-track"><span style="width:${progress.percent}%"></span></div>
+      <div class="task-indicators">
+        ${indicator(`${progress.done}/${progress.total}`, t('indicator_completed'), 'completed')}
+        ${indicator(progress.overdue, t('indicator_overdue'), progress.overdue ? 'overdue' : '')}
+        ${indicator(progress.dueSoon, t('indicator_due_soon'), progress.dueSoon ? 'soon' : '')}
+        ${indicator(progress.highPriority, t('indicator_high_priority'), progress.highPriority ? 'high' : '')}
+      </div>
       <div class="project-columns">
-        <section><h3>${escapeHtml(t('milestones'))}</h3><ul class="milestone-list">${milestones}</ul><form class="inline-form" data-form="milestone" data-project="${project.id}"><input required maxlength="160" data-i18n-placeholder="milestone_placeholder" placeholder="${escapeHtml(t('milestone_placeholder'))}"><button type="submit" aria-label="${escapeHtml(t('add_milestone', 'Ajouter une étape'))}">+</button></form></section>
-        <section><h3>${escapeHtml(t('tasks'))}</h3><ul class="tasks-list">${tasks}</ul><form class="inline-form" data-form="task" data-project="${project.id}"><input required maxlength="160" data-i18n-placeholder="task_placeholder" placeholder="${escapeHtml(t('task_placeholder'))}"><button type="submit" aria-label="${escapeHtml(t('add_task', 'Ajouter une tâche'))}">+</button></form></section>
+        <section><h3>${escapeHtml(t('milestones'))}</h3><ul class="milestone-list">${milestones}</ul><form class="inline-form" data-form="milestone" data-project="${project.id}"><input required maxlength="160" data-i18n-placeholder="milestone_placeholder" placeholder="${escapeHtml(t('milestone_placeholder'))}"><button type="submit" aria-label="${escapeHtml(t('add_milestone'))}">+</button></form></section>
+        <section><div class="tasks-heading"><h3>${escapeHtml(t('tasks'))}</h3><button class="add-task-button" type="button" data-action="add-task" data-project="${project.id}">+ ${escapeHtml(t('add_task'))}</button></div><ul class="tasks-list">${tasks}</ul></section>
       </div>
       <section class="notes-section"><h3>${escapeHtml(t('research_notes'))}</h3><textarea data-action="notes" data-project="${project.id}" rows="4" placeholder="${escapeHtml(t('notes_placeholder'))}">${escapeHtml(project.notes || '')}</textarea></section>
     </article>`;
   }
 
-  function render() { const container = $('#projectsContainer'); container.innerHTML = projects.length ? projects.map(card).join('') : emptyState(); }
+  function render() {
+    const container = $('#projectsContainer');
+    container.innerHTML = projects.length ? projects.map(card).join('') : emptyState();
+  }
 
-  function updateDialogMode() {
+  function updateProjectDialogMode() {
     const isEditing = Boolean(editingProjectId);
     const title = $('#projectDialogTitle');
     const submit = $('#projectSubmitButton');
@@ -111,7 +213,7 @@
     if (submit) submit.textContent = t(isEditing ? 'save' : 'create_project');
   }
 
-  function openDialog(projectId = null) {
+  function openProjectDialog(projectId = null) {
     editingProjectId = projectId;
     const project = projectId ? projectById(projectId) : null;
     $('#projectForm').reset();
@@ -120,18 +222,18 @@
       $('#projectGoal').value = project.goal;
       $('#projectStage').value = project.stage;
     }
-    updateDialogMode();
+    updateProjectDialogMode();
     const dialog = $('#projectDialog');
     if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', '');
     $('#projectName').focus();
   }
 
-  function closeDialog() {
+  function closeProjectDialog() {
     const dialog = $('#projectDialog');
     if (dialog.close) dialog.close(); else dialog.removeAttribute('open');
     $('#projectForm').reset();
     editingProjectId = null;
-    updateDialogMode();
+    updateProjectDialogMode();
   }
 
   function saveProjectForm() {
@@ -145,7 +247,7 @@
       project.stage = $('#projectStage').value;
       touch(project);
       saveProjects();
-      closeDialog();
+      closeProjectDialog();
       render();
       toast(t('project_updated'));
       return;
@@ -153,21 +255,87 @@
     const createdAt = nowIso();
     projects.unshift({ id: id(), name, goal: $('#projectGoal').value.trim(), stage: $('#projectStage').value, milestones: [], tasks: [], notes: '', createdAt, updatedAt: createdAt });
     saveProjects();
-    closeDialog();
+    closeProjectDialog();
     render();
     toast(t('project_created'));
   }
 
-  function addItem(form) {
-    const project = projectById(form.dataset.project); const input = form.querySelector('input'); const text = input.value.trim();
+  function updateTaskDialogMode() {
+    const isEditing = Boolean(editingTaskId);
+    const title = $('#taskDialogTitle');
+    const submit = $('#taskSubmitButton');
+    if (title) title.textContent = t(isEditing ? 'edit_task_title' : 'new_task_title');
+    if (submit) submit.textContent = t(isEditing ? 'save_task' : 'add_task');
+  }
+
+  function openTaskDialog(projectId, taskId = null) {
+    const project = projectById(projectId);
+    if (!project) return;
+    taskProjectId = projectId;
+    editingTaskId = taskId;
+    const task = taskId ? taskById(project, taskId) : null;
+    $('#taskForm').reset();
+    $('#taskPriority').value = task?.priority || 'medium';
+    $('#taskText').value = task?.text || '';
+    $('#taskDueDate').value = task?.dueDate || '';
+    updateTaskDialogMode();
+    const dialog = $('#taskDialog');
+    if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', '');
+    $('#taskText').focus();
+  }
+
+  function closeTaskDialog() {
+    const dialog = $('#taskDialog');
+    if (dialog.close) dialog.close(); else dialog.removeAttribute('open');
+    $('#taskForm').reset();
+    taskProjectId = null;
+    editingTaskId = null;
+    updateTaskDialogMode();
+  }
+
+  function saveTaskForm() {
+    const project = projectById(taskProjectId);
+    const text = $('#taskText').value.trim();
     if (!project || !text) return;
-    if (form.dataset.form === 'task') project.tasks.push({ id: id(), text, done: false }); else project.milestones.push({ id: id(), text });
-    touch(project); saveProjects(); render(); toast(t('project_updated'));
+    const priority = PRIORITIES.includes($('#taskPriority').value) ? $('#taskPriority').value : 'medium';
+    const dueDate = validDateKey($('#taskDueDate').value);
+    if (editingTaskId) {
+      const task = taskById(project, editingTaskId);
+      if (!task) return;
+      task.text = text;
+      task.priority = priority;
+      task.dueDate = dueDate;
+      toast(t('task_updated'));
+    } else {
+      project.tasks.push({ id: id(), text, done: false, priority, dueDate });
+      toast(t('task_created'));
+    }
+    touch(project);
+    saveProjects();
+    closeTaskDialog();
+    render();
+  }
+
+  function addMilestone(form) {
+    const project = projectById(form.dataset.project);
+    const input = form.querySelector('input');
+    const text = input.value.trim();
+    if (!project || !text) return;
+    project.milestones.push({ id: id(), text });
+    touch(project);
+    saveProjects();
+    render();
+    toast(t('project_updated'));
   }
 
   function exportProjects() {
-    const blob = new Blob([JSON.stringify({ exportedAt: nowIso(), version: '0.5.0', projects }, null, 2)], { type: 'application/json' });
-    const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `nbprof-projets-${new Date().toISOString().slice(0, 10)}.json`; link.click(); URL.revokeObjectURL(link.href); toast(t('export_ready'));
+    const blob = new Blob([JSON.stringify({ exportedAt: nowIso(), version: '0.6.0', projects }, null, 2)], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `nbprof-projets-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    toast(t('export_ready'));
   }
 
   async function importProjects(file) {
@@ -192,14 +360,17 @@
   }
 
   function addNbprofFooter() {
-    const main = $('.projects-main'); if (!main || $('.nbprof-project-footer')) return;
-    const footer = document.createElement('footer'); footer.className = 'site-footer nbprof-project-footer';
+    const main = $('.projects-main');
+    if (!main || $('.nbprof-project-footer')) return;
+    const footer = document.createElement('footer');
+    footer.className = 'site-footer nbprof-project-footer';
     footer.innerHTML = `<div class="footer-inner"><span class="footer-return-text">NBProf Research Hub</span><a class="secondary-button nbprof-return" href="https://nbprof.com" data-i18n="return_nbprof">${escapeHtml(t('return_nbprof', 'Retour au site NBProf'))}</a></div>`;
     main.after(footer);
   }
 
   function bind() {
-    const hero = $('.projects-hero'); addNbprofFooter();
+    const hero = $('.projects-hero');
+    addNbprofFooter();
     const actionGroup = document.createElement('div');
     actionGroup.className = 'project-actions';
     const newProjectButton = $('#newProjectButton');
@@ -207,42 +378,99 @@
     actionGroup.append(newProjectButton);
 
     const importButton = document.createElement('button');
-    importButton.className = 'secondary-button import-button'; importButton.type = 'button'; importButton.dataset.action = 'import'; importButton.dataset.i18n = 'import_projects'; importButton.textContent = t('import_projects');
+    importButton.className = 'secondary-button import-button';
+    importButton.type = 'button';
+    importButton.dataset.action = 'import';
+    importButton.dataset.i18n = 'import_projects';
+    importButton.textContent = t('import_projects');
     const importInput = document.createElement('input');
-    importInput.id = 'importProjectsInput'; importInput.type = 'file'; importInput.accept = 'application/json,.json'; importInput.hidden = true;
+    importInput.id = 'importProjectsInput';
+    importInput.type = 'file';
+    importInput.accept = 'application/json,.json';
+    importInput.hidden = true;
     const exportButton = document.createElement('button');
-    exportButton.className = 'secondary-button export-button'; exportButton.type = 'button'; exportButton.dataset.action = 'export'; exportButton.dataset.i18n = 'export_projects'; exportButton.textContent = t('export_projects');
+    exportButton.className = 'secondary-button export-button';
+    exportButton.type = 'button';
+    exportButton.dataset.action = 'export';
+    exportButton.dataset.i18n = 'export_projects';
+    exportButton.textContent = t('export_projects');
     actionGroup.append(importButton, exportButton, importInput);
 
-    newProjectButton.addEventListener('click', () => openDialog());
-    $('#closeDialog').addEventListener('click', closeDialog);
-    $('#cancelDialog').addEventListener('click', closeDialog);
+    newProjectButton.addEventListener('click', () => openProjectDialog());
+    $('#closeDialog').addEventListener('click', closeProjectDialog);
+    $('#cancelDialog').addEventListener('click', closeProjectDialog);
+    $('#closeTaskDialog').addEventListener('click', closeTaskDialog);
+    $('#cancelTaskDialog').addEventListener('click', closeTaskDialog);
     importInput.addEventListener('change', event => importProjects(event.target.files?.[0]));
     $('#projectForm').addEventListener('submit', event => { event.preventDefault(); saveProjectForm(); });
-    document.addEventListener('submit', event => { if (!event.target.matches('.inline-form')) return; event.preventDefault(); addItem(event.target); });
+    $('#taskForm').addEventListener('submit', event => { event.preventDefault(); saveTaskForm(); });
+    document.addEventListener('submit', event => {
+      if (!event.target.matches('.inline-form[data-form="milestone"]')) return;
+      event.preventDefault();
+      addMilestone(event.target);
+    });
     document.addEventListener('click', event => {
-      const target = event.target.closest('[data-action]'); if (!target) return;
-      if (target.dataset.action === 'create') openDialog();
-      if (target.dataset.action === 'edit-project') openDialog(target.dataset.project);
+      const target = event.target.closest('[data-action]');
+      if (!target) return;
+      if (target.dataset.action === 'create') openProjectDialog();
+      if (target.dataset.action === 'edit-project') openProjectDialog(target.dataset.project);
+      if (target.dataset.action === 'add-task') openTaskDialog(target.dataset.project);
+      if (target.dataset.action === 'edit-task') openTaskDialog(target.dataset.project, target.dataset.item);
       if (target.dataset.action === 'import') $('#importProjectsInput')?.click();
       if (target.dataset.action === 'export') exportProjects();
-      if (target.dataset.action === 'delete-project' && confirm(t('delete_project_confirm'))) { projects = projects.filter(project => project.id !== target.dataset.project); saveProjects(); render(); }
-      if (target.dataset.action === 'remove-task') { const project = projectById(target.dataset.project); if (project) { project.tasks = project.tasks.filter(task => task.id !== target.dataset.item); touch(project); saveProjects(); render(); } }
+      if (target.dataset.action === 'delete-project' && confirm(t('delete_project_confirm'))) {
+        projects = projects.filter(project => project.id !== target.dataset.project);
+        saveProjects();
+        render();
+      }
+      if (target.dataset.action === 'remove-task' && confirm(t('remove_task_confirm'))) {
+        const project = projectById(target.dataset.project);
+        if (project) {
+          project.tasks = project.tasks.filter(task => task.id !== target.dataset.item);
+          touch(project);
+          saveProjects();
+          render();
+        }
+      }
     });
     document.addEventListener('change', event => {
       if (event.target.dataset.action !== 'toggle') return;
-      const project = projectById(event.target.dataset.project); const task = project?.tasks.find(item => item.id === event.target.dataset.item);
-      if (task) { task.done = event.target.checked; touch(project); saveProjects(); render(); }
+      const project = projectById(event.target.dataset.project);
+      const task = taskById(project, event.target.dataset.item);
+      if (task) {
+        task.done = event.target.checked;
+        touch(project);
+        saveProjects();
+        render();
+      }
     });
     document.addEventListener('input', event => {
       if (event.target.dataset.action !== 'notes') return;
       const project = projectById(event.target.dataset.project);
-      if (project) { project.notes = event.target.value; touch(project); saveProjects(); }
+      if (project) {
+        project.notes = event.target.value;
+        touch(project);
+        saveProjects();
+      }
     });
-    document.addEventListener('blur', event => { if (event.target.dataset.action === 'notes') { render(); toast(t('notes_saved')); } }, true);
-    window.addEventListener('nbprof:languagechange', () => { render(); updateDialogMode(); });
+    document.addEventListener('blur', event => {
+      if (event.target.dataset.action === 'notes') {
+        render();
+        toast(t('notes_saved'));
+      }
+    }, true);
+    window.addEventListener('nbprof:languagechange', () => {
+      render();
+      updateProjectDialogMode();
+      updateTaskDialogMode();
+    });
   }
 
-  function init() { projects = readProjects(); render(); bind(); }
+  function init() {
+    projects = readProjects();
+    render();
+    bind();
+  }
+
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
