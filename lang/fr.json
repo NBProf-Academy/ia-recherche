@@ -82,7 +82,7 @@
   "tools_count": "outils référencés",
   "journeys_count": "parcours guidés",
   "languages_count": "langues",
-  "footer_status": "Application en développement — version 0.3",
+  "footer_status": "Application en développement — version 0.5",
   "footer_share": "Partager avec les chercheurs",
   "install_title": "Installer NBProf Research Hub",
   "install_text": "Accès rapide et fonctionnement hors connexion.",
@@ -109,5 +109,10 @@
   "import_confirm": "Remplacer les projets actuels par ceux de cette sauvegarde ?",
   "import_success": "{count} projet(s) importé(s) avec succès.",
   "import_invalid": "Ce fichier JSON est invalide ou incompatible.",
-  "import_empty": "La sauvegarde ne contient aucun projet exploitable."
+  "import_empty": "La sauvegarde ne contient aucun projet exploitable.",
+  "edit_project": "Modifier",
+  "edit_project_title": "Modifier le projet",
+  "created_on": "Créé le",
+  "updated_on": "Mis à jour le",
+  "remove_task": "Supprimer la tâche"
 }
