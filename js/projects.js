@@ -13,6 +13,29 @@
   function projectProgress(project) { const total = project.tasks.length; const done = project.tasks.filter(task => task.done).length; return { total, done, percent: total ? Math.round(done / total * 100) : 0 }; }
   function projectById(projectId) { return projects.find(project => project.id === projectId); }
 
+  function cleanText(value, maxLength = 400) {
+    return typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
+  }
+
+  function normalizeImportedProjects(payload) {
+    const source = Array.isArray(payload) ? payload : payload?.projects;
+    if (!Array.isArray(source)) throw new Error('INVALID_FORMAT');
+
+    return source.map(project => ({
+      id: cleanText(project?.id, 80) || id(),
+      name: cleanText(project?.name, 120),
+      goal: cleanText(project?.goal, 400),
+      stage: ['exploration', 'literature', 'method', 'data', 'writing', 'defense'].includes(project?.stage) ? project.stage : 'exploration',
+      milestones: Array.isArray(project?.milestones)
+        ? project.milestones.map(item => ({ id: cleanText(item?.id, 80) || id(), text: cleanText(item?.text, 160) })).filter(item => item.text)
+        : [],
+      tasks: Array.isArray(project?.tasks)
+        ? project.tasks.map(item => ({ id: cleanText(item?.id, 80) || id(), text: cleanText(item?.text, 160), done: Boolean(item?.done) })).filter(item => item.text)
+        : [],
+      notes: cleanText(project?.notes, 5000)
+    })).filter(project => project.name);
+  }
+
   function emptyState() {
     return `<div class="empty-projects"><img src="../icon-192.png" alt=""><h2>${escapeHtml(t('no_projects_title'))}</h2><p>${escapeHtml(t('no_projects_text'))}</p></div>`;
   }
@@ -46,16 +69,65 @@
     const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `nbprof-projets-${new Date().toISOString().slice(0, 10)}.json`; link.click(); URL.revokeObjectURL(link.href); toast(t('export_ready'));
   }
 
+  async function importProjects(file) {
+    if (!file) return;
+    try {
+      if (file.size > 2 * 1024 * 1024) throw new Error('FILE_TOO_LARGE');
+      const payload = JSON.parse(await file.text());
+      const imported = normalizeImportedProjects(payload);
+      if (!imported.length) { toast(t('import_empty')); return; }
+      if (projects.length && !confirm(t('import_confirm'))) return;
+      projects = imported;
+      saveProjects();
+      render();
+      toast(t('import_success').replace('{count}', String(imported.length)));
+    } catch (error) {
+      console.error('NBProf import error:', error);
+      toast(t('import_invalid'));
+    } finally {
+      const input = $('#importProjectsInput');
+      if (input) input.value = '';
+    }
+  }
+
   function addNbprofFooter() { const main = $('.projects-main'); if (!main || $('.nbprof-project-footer')) return; const footer = document.createElement('footer'); footer.className = 'site-footer nbprof-project-footer'; footer.innerHTML = `<div class="footer-inner"><span class="footer-return-text">NBProf Research Hub</span><a class="secondary-button nbprof-return" href="https://nbprof.com" data-i18n="return_nbprof">${escapeHtml(t('return_nbprof', 'Retour au site NBProf'))}</a></div>`; main.after(footer); }
   function bind() {
     const hero = $('.projects-hero'); addNbprofFooter();
-    const exportButton = document.createElement('button'); exportButton.className = 'secondary-button export-button'; exportButton.type = 'button'; exportButton.dataset.action = 'export'; exportButton.dataset.i18n = 'export_projects'; exportButton.textContent = t('export_projects'); hero.append(exportButton);
-    $('#newProjectButton').addEventListener('click', openDialog); $('#closeDialog').addEventListener('click', closeDialog); $('#cancelDialog').addEventListener('click', closeDialog);
+    const actionGroup = document.createElement('div');
+    actionGroup.className = 'project-actions';
+    const newProjectButton = $('#newProjectButton');
+    hero.append(actionGroup);
+    actionGroup.append(newProjectButton);
+
+    const importButton = document.createElement('button');
+    importButton.className = 'secondary-button import-button';
+    importButton.type = 'button';
+    importButton.dataset.action = 'import';
+    importButton.dataset.i18n = 'import_projects';
+    importButton.textContent = t('import_projects');
+
+    const importInput = document.createElement('input');
+    importInput.id = 'importProjectsInput';
+    importInput.type = 'file';
+    importInput.accept = 'application/json,.json';
+    importInput.hidden = true;
+
+    const exportButton = document.createElement('button');
+    exportButton.className = 'secondary-button export-button';
+    exportButton.type = 'button';
+    exportButton.dataset.action = 'export';
+    exportButton.dataset.i18n = 'export_projects';
+    exportButton.textContent = t('export_projects');
+
+    actionGroup.append(importButton, exportButton, importInput);
+    newProjectButton.addEventListener('click', openDialog); $('#closeDialog').addEventListener('click', closeDialog); $('#cancelDialog').addEventListener('click', closeDialog);
+    importInput.addEventListener('change', event => importProjects(event.target.files?.[0]));
     $('#projectForm').addEventListener('submit', event => { event.preventDefault(); createProject(); });
     document.addEventListener('submit', event => { if (!event.target.matches('.inline-form')) return; event.preventDefault(); addItem(event.target); });
     document.addEventListener('click', event => {
       const target = event.target.closest('[data-action]'); if (!target) return;
       if (target.dataset.action === 'create') openDialog();
+      if (target.dataset.action === 'import') $('#importProjectsInput')?.click();
       if (target.dataset.action === 'export') exportProjects();
       if (target.dataset.action === 'delete-project' && confirm(t('delete_project_confirm'))) { projects = projects.filter(project => project.id !== target.dataset.project); saveProjects(); render(); }
       if (target.dataset.action === 'remove-task') { const project = projectById(target.dataset.project); if (project) { project.tasks = project.tasks.filter(task => task.id !== target.dataset.item); saveProjects(); render(); } }
