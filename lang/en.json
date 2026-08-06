@@ -77,7 +77,7 @@
   "tools_count": "referenced tools",
   "journeys_count": "guided pathways",
   "languages_count": "languages",
-  "footer_status": "Application under development — version 0.3",
+  "footer_status": "Application under development — version 0.5",
   "footer_share": "Share with researchers",
   "install_title": "Install NBProf Research Hub",
   "install_text": "Quick access and offline support.",
@@ -104,5 +104,10 @@
   "import_confirm": "Replace the current projects with the projects in this backup?",
   "import_success": "{count} project(s) imported successfully.",
   "import_invalid": "This JSON file is invalid or incompatible.",
-  "import_empty": "The backup does not contain any usable project."
+  "import_empty": "The backup does not contain any usable project.",
+  "edit_project": "Edit",
+  "edit_project_title": "Edit project",
+  "created_on": "Created on",
+  "updated_on": "Updated on",
+  "remove_task": "Delete task"
 }

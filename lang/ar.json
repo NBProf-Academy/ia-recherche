@@ -77,7 +77,7 @@
   "tools_count": "أداة مرجعية",
   "journeys_count": "مسارات موجهة",
   "languages_count": "لغات",
-  "footer_status": "التطبيق قيد التطوير — الإصدار 0.3",
+  "footer_status": "التطبيق قيد التطوير — الإصدار 0.5",
   "footer_share": "شارك مع الباحثين",
   "install_title": "تثبيت NBProf Research Hub",
   "install_text": "وصول سريع ودعم العمل دون اتصال.",
@@ -104,5 +104,10 @@
   "import_confirm": "هل تريد استبدال المشاريع الحالية بالمشاريع الموجودة في هذه النسخة الاحتياطية؟",
   "import_success": "تم استيراد {count} مشروع بنجاح.",
   "import_invalid": "ملف JSON غير صالح أو غير متوافق.",
-  "import_empty": "لا تحتوي النسخة الاحتياطية على أي مشروع صالح للاستيراد."
+  "import_empty": "لا تحتوي النسخة الاحتياطية على أي مشروع صالح للاستيراد.",
+  "edit_project": "تعديل",
+  "edit_project_title": "تعديل المشروع",
+  "created_on": "تاريخ الإنشاء",
+  "updated_on": "آخر تحديث",
+  "remove_task": "حذف المهمة"
 }

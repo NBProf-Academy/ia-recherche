@@ -1,39 +1,76 @@
 (() => {
   const STORAGE_KEY = 'nbprof-research-projects-v1';
+  const STAGES = ['exploration', 'literature', 'method', 'data', 'writing', 'defense'];
   const $ = selector => document.querySelector(selector);
   const t = (key, fallback = '') => window.NBProfI18n?.t(key, fallback) || fallback || key;
   const id = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const nowIso = () => new Date().toISOString();
   const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   let projects = [];
-
-  function readProjects() { try { const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); return Array.isArray(stored) ? stored : []; } catch { return []; } }
-  function saveProjects() { localStorage.setItem(STORAGE_KEY, JSON.stringify(projects)); }
-  function toast(message) { const el = $('#toast'); el.textContent = message; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2600); }
-  function stageLabel(stage) { return t(`stage_${stage}`, stage); }
-  function projectProgress(project) { const total = project.tasks.length; const done = project.tasks.filter(task => task.done).length; return { total, done, percent: total ? Math.round(done / total * 100) : 0 }; }
-  function projectById(projectId) { return projects.find(project => project.id === projectId); }
+  let editingProjectId = null;
 
   function cleanText(value, maxLength = 400) {
     return typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
   }
 
-  function normalizeImportedProjects(payload) {
-    const source = Array.isArray(payload) ? payload : payload?.projects;
-    if (!Array.isArray(source)) throw new Error('INVALID_FORMAT');
+  function validIso(value, fallback) {
+    if (typeof value !== 'string' || Number.isNaN(Date.parse(value))) return fallback;
+    return new Date(value).toISOString();
+  }
 
-    return source.map(project => ({
+  function normalizeProject(project) {
+    const createdAt = validIso(project?.createdAt, nowIso());
+    return {
       id: cleanText(project?.id, 80) || id(),
       name: cleanText(project?.name, 120),
       goal: cleanText(project?.goal, 400),
-      stage: ['exploration', 'literature', 'method', 'data', 'writing', 'defense'].includes(project?.stage) ? project.stage : 'exploration',
+      stage: STAGES.includes(project?.stage) ? project.stage : 'exploration',
       milestones: Array.isArray(project?.milestones)
         ? project.milestones.map(item => ({ id: cleanText(item?.id, 80) || id(), text: cleanText(item?.text, 160) })).filter(item => item.text)
         : [],
       tasks: Array.isArray(project?.tasks)
         ? project.tasks.map(item => ({ id: cleanText(item?.id, 80) || id(), text: cleanText(item?.text, 160), done: Boolean(item?.done) })).filter(item => item.text)
         : [],
-      notes: cleanText(project?.notes, 5000)
-    })).filter(project => project.name);
+      notes: cleanText(project?.notes, 5000),
+      createdAt,
+      updatedAt: validIso(project?.updatedAt, createdAt)
+    };
+  }
+
+  function readProjects() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      if (!Array.isArray(stored)) return [];
+      const normalized = stored.map(normalizeProject).filter(project => project.name);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+      return normalized;
+    } catch {
+      return [];
+    }
+  }
+
+  function saveProjects() { localStorage.setItem(STORAGE_KEY, JSON.stringify(projects)); }
+  function touch(project) { if (project) project.updatedAt = nowIso(); }
+  function toast(message) { const el = $('#toast'); el.textContent = message; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2600); }
+  function stageLabel(stage) { return t(`stage_${stage}`, stage); }
+  function projectProgress(project) { const total = project.tasks.length; const done = project.tasks.filter(task => task.done).length; return { total, done, percent: total ? Math.round(done / total * 100) : 0 }; }
+  function projectById(projectId) { return projects.find(project => project.id === projectId); }
+
+  function formatDate(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '—';
+    const language = window.NBProfI18n?.getLanguage?.() || document.documentElement.lang || 'fr';
+    try {
+      return new Intl.DateTimeFormat(language, { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+    } catch {
+      return date.toLocaleString();
+    }
+  }
+
+  function normalizeImportedProjects(payload) {
+    const source = Array.isArray(payload) ? payload : payload?.projects;
+    if (!Array.isArray(source)) throw new Error('INVALID_FORMAT');
+    return source.map(normalizeProject).filter(project => project.name);
   }
 
   function emptyState() {
@@ -43,29 +80,93 @@
   function card(project) {
     const progress = projectProgress(project);
     const milestones = project.milestones.map(item => `<li>${escapeHtml(item.text)}</li>`).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
-    const tasks = project.tasks.map(task => `<li class="task-row"><label><input type="checkbox" data-action="toggle" data-project="${project.id}" data-item="${task.id}" ${task.done ? 'checked' : ''}><span>${escapeHtml(task.text)}</span></label><button data-action="remove-task" data-project="${project.id}" data-item="${task.id}" aria-label="Supprimer">×</button></li>`).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
-    return `<article class="project-card"><div class="project-card__top"><div><span class="project-stage">${escapeHtml(stageLabel(project.stage))}</span><h2>${escapeHtml(project.name)}</h2></div><button class="delete-project" data-action="delete-project" data-project="${project.id}">${escapeHtml(t('delete_project'))}</button></div><p class="project-goal">${escapeHtml(project.goal || '—')}</p><div class="progress-label"><strong>${progress.percent}%</strong><span>${escapeHtml(t('project_progress'))} · ${progress.done}/${progress.total} ${escapeHtml(t('tasks_done'))}</span></div><div class="progress-track"><span style="width:${progress.percent}%"></span></div><div class="project-columns"><section><h3>${escapeHtml(t('milestones'))}</h3><ul class="milestone-list">${milestones}</ul><form class="inline-form" data-form="milestone" data-project="${project.id}"><input required maxlength="160" data-i18n-placeholder="milestone_placeholder" placeholder="${escapeHtml(t('milestone_placeholder'))}"><button type="submit">+</button></form></section><section><h3>${escapeHtml(t('tasks'))}</h3><ul class="tasks-list">${tasks}</ul><form class="inline-form" data-form="task" data-project="${project.id}"><input required maxlength="160" data-i18n-placeholder="task_placeholder" placeholder="${escapeHtml(t('task_placeholder'))}"><button type="submit">+</button></form></section></div><section class="notes-section"><h3>${escapeHtml(t('research_notes'))}</h3><textarea data-action="notes" data-project="${project.id}" rows="4" placeholder="${escapeHtml(t('notes_placeholder'))}">${escapeHtml(project.notes || '')}</textarea></section></article>`;
+    const tasks = project.tasks.map(task => `<li class="task-row"><label><input type="checkbox" data-action="toggle" data-project="${project.id}" data-item="${task.id}" ${task.done ? 'checked' : ''}><span>${escapeHtml(task.text)}</span></label><button data-action="remove-task" data-project="${project.id}" data-item="${task.id}" aria-label="${escapeHtml(t('remove_task', 'Supprimer la tâche'))}">×</button></li>`).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
+    return `<article class="project-card">
+      <div class="project-card__top">
+        <div><span class="project-stage">${escapeHtml(stageLabel(project.stage))}</span><h2>${escapeHtml(project.name)}</h2></div>
+        <div class="project-card__actions">
+          <button class="edit-project" data-action="edit-project" data-project="${project.id}">${escapeHtml(t('edit_project'))}</button>
+          <button class="delete-project" data-action="delete-project" data-project="${project.id}">${escapeHtml(t('delete_project'))}</button>
+        </div>
+      </div>
+      <p class="project-goal">${escapeHtml(project.goal || '—')}</p>
+      <div class="project-meta"><span><strong>${escapeHtml(t('created_on'))}</strong> ${escapeHtml(formatDate(project.createdAt))}</span><span><strong>${escapeHtml(t('updated_on'))}</strong> ${escapeHtml(formatDate(project.updatedAt))}</span></div>
+      <div class="progress-label"><strong>${progress.percent}%</strong><span>${escapeHtml(t('project_progress'))} · ${progress.done}/${progress.total} ${escapeHtml(t('tasks_done'))}</span></div>
+      <div class="progress-track"><span style="width:${progress.percent}%"></span></div>
+      <div class="project-columns">
+        <section><h3>${escapeHtml(t('milestones'))}</h3><ul class="milestone-list">${milestones}</ul><form class="inline-form" data-form="milestone" data-project="${project.id}"><input required maxlength="160" data-i18n-placeholder="milestone_placeholder" placeholder="${escapeHtml(t('milestone_placeholder'))}"><button type="submit" aria-label="${escapeHtml(t('add_milestone', 'Ajouter une étape'))}">+</button></form></section>
+        <section><h3>${escapeHtml(t('tasks'))}</h3><ul class="tasks-list">${tasks}</ul><form class="inline-form" data-form="task" data-project="${project.id}"><input required maxlength="160" data-i18n-placeholder="task_placeholder" placeholder="${escapeHtml(t('task_placeholder'))}"><button type="submit" aria-label="${escapeHtml(t('add_task', 'Ajouter une tâche'))}">+</button></form></section>
+      </div>
+      <section class="notes-section"><h3>${escapeHtml(t('research_notes'))}</h3><textarea data-action="notes" data-project="${project.id}" rows="4" placeholder="${escapeHtml(t('notes_placeholder'))}">${escapeHtml(project.notes || '')}</textarea></section>
+    </article>`;
   }
 
   function render() { const container = $('#projectsContainer'); container.innerHTML = projects.length ? projects.map(card).join('') : emptyState(); }
-  function openDialog() { const dialog = $('#projectDialog'); if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', ''); $('#projectName').focus(); }
-  function closeDialog() { const dialog = $('#projectDialog'); if (dialog.close) dialog.close(); else dialog.removeAttribute('open'); $('#projectForm').reset(); }
 
-  function createProject() {
-    const name = $('#projectName').value.trim(); if (!name) return;
-    projects.unshift({ id: id(), name, goal: $('#projectGoal').value.trim(), stage: $('#projectStage').value, milestones: [], tasks: [], notes: '' });
-    saveProjects(); closeDialog(); render(); toast(t('project_created'));
+  function updateDialogMode() {
+    const isEditing = Boolean(editingProjectId);
+    const title = $('#projectDialogTitle');
+    const submit = $('#projectSubmitButton');
+    if (title) title.textContent = t(isEditing ? 'edit_project_title' : 'new_project');
+    if (submit) submit.textContent = t(isEditing ? 'save' : 'create_project');
+  }
+
+  function openDialog(projectId = null) {
+    editingProjectId = projectId;
+    const project = projectId ? projectById(projectId) : null;
+    $('#projectForm').reset();
+    if (project) {
+      $('#projectName').value = project.name;
+      $('#projectGoal').value = project.goal;
+      $('#projectStage').value = project.stage;
+    }
+    updateDialogMode();
+    const dialog = $('#projectDialog');
+    if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', '');
+    $('#projectName').focus();
+  }
+
+  function closeDialog() {
+    const dialog = $('#projectDialog');
+    if (dialog.close) dialog.close(); else dialog.removeAttribute('open');
+    $('#projectForm').reset();
+    editingProjectId = null;
+    updateDialogMode();
+  }
+
+  function saveProjectForm() {
+    const name = $('#projectName').value.trim();
+    if (!name) return;
+    if (editingProjectId) {
+      const project = projectById(editingProjectId);
+      if (!project) return;
+      project.name = name;
+      project.goal = $('#projectGoal').value.trim();
+      project.stage = $('#projectStage').value;
+      touch(project);
+      saveProjects();
+      closeDialog();
+      render();
+      toast(t('project_updated'));
+      return;
+    }
+    const createdAt = nowIso();
+    projects.unshift({ id: id(), name, goal: $('#projectGoal').value.trim(), stage: $('#projectStage').value, milestones: [], tasks: [], notes: '', createdAt, updatedAt: createdAt });
+    saveProjects();
+    closeDialog();
+    render();
+    toast(t('project_created'));
   }
 
   function addItem(form) {
     const project = projectById(form.dataset.project); const input = form.querySelector('input'); const text = input.value.trim();
     if (!project || !text) return;
     if (form.dataset.form === 'task') project.tasks.push({ id: id(), text, done: false }); else project.milestones.push({ id: id(), text });
-    saveProjects(); render(); toast(t('project_updated'));
+    touch(project); saveProjects(); render(); toast(t('project_updated'));
   }
 
   function exportProjects() {
-    const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), projects }, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ exportedAt: nowIso(), version: '0.5.0', projects }, null, 2)], { type: 'application/json' });
     const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `nbprof-projets-${new Date().toISOString().slice(0, 10)}.json`; link.click(); URL.revokeObjectURL(link.href); toast(t('export_ready'));
   }
 
@@ -90,7 +191,13 @@
     }
   }
 
-  function addNbprofFooter() { const main = $('.projects-main'); if (!main || $('.nbprof-project-footer')) return; const footer = document.createElement('footer'); footer.className = 'site-footer nbprof-project-footer'; footer.innerHTML = `<div class="footer-inner"><span class="footer-return-text">NBProf Research Hub</span><a class="secondary-button nbprof-return" href="https://nbprof.com" data-i18n="return_nbprof">${escapeHtml(t('return_nbprof', 'Retour au site NBProf'))}</a></div>`; main.after(footer); }
+  function addNbprofFooter() {
+    const main = $('.projects-main'); if (!main || $('.nbprof-project-footer')) return;
+    const footer = document.createElement('footer'); footer.className = 'site-footer nbprof-project-footer';
+    footer.innerHTML = `<div class="footer-inner"><span class="footer-return-text">NBProf Research Hub</span><a class="secondary-button nbprof-return" href="https://nbprof.com" data-i18n="return_nbprof">${escapeHtml(t('return_nbprof', 'Retour au site NBProf'))}</a></div>`;
+    main.after(footer);
+  }
+
   function bind() {
     const hero = $('.projects-hero'); addNbprofFooter();
     const actionGroup = document.createElement('div');
@@ -100,42 +207,40 @@
     actionGroup.append(newProjectButton);
 
     const importButton = document.createElement('button');
-    importButton.className = 'secondary-button import-button';
-    importButton.type = 'button';
-    importButton.dataset.action = 'import';
-    importButton.dataset.i18n = 'import_projects';
-    importButton.textContent = t('import_projects');
-
+    importButton.className = 'secondary-button import-button'; importButton.type = 'button'; importButton.dataset.action = 'import'; importButton.dataset.i18n = 'import_projects'; importButton.textContent = t('import_projects');
     const importInput = document.createElement('input');
-    importInput.id = 'importProjectsInput';
-    importInput.type = 'file';
-    importInput.accept = 'application/json,.json';
-    importInput.hidden = true;
-
+    importInput.id = 'importProjectsInput'; importInput.type = 'file'; importInput.accept = 'application/json,.json'; importInput.hidden = true;
     const exportButton = document.createElement('button');
-    exportButton.className = 'secondary-button export-button';
-    exportButton.type = 'button';
-    exportButton.dataset.action = 'export';
-    exportButton.dataset.i18n = 'export_projects';
-    exportButton.textContent = t('export_projects');
-
+    exportButton.className = 'secondary-button export-button'; exportButton.type = 'button'; exportButton.dataset.action = 'export'; exportButton.dataset.i18n = 'export_projects'; exportButton.textContent = t('export_projects');
     actionGroup.append(importButton, exportButton, importInput);
-    newProjectButton.addEventListener('click', openDialog); $('#closeDialog').addEventListener('click', closeDialog); $('#cancelDialog').addEventListener('click', closeDialog);
+
+    newProjectButton.addEventListener('click', () => openDialog());
+    $('#closeDialog').addEventListener('click', closeDialog);
+    $('#cancelDialog').addEventListener('click', closeDialog);
     importInput.addEventListener('change', event => importProjects(event.target.files?.[0]));
-    $('#projectForm').addEventListener('submit', event => { event.preventDefault(); createProject(); });
+    $('#projectForm').addEventListener('submit', event => { event.preventDefault(); saveProjectForm(); });
     document.addEventListener('submit', event => { if (!event.target.matches('.inline-form')) return; event.preventDefault(); addItem(event.target); });
     document.addEventListener('click', event => {
       const target = event.target.closest('[data-action]'); if (!target) return;
       if (target.dataset.action === 'create') openDialog();
+      if (target.dataset.action === 'edit-project') openDialog(target.dataset.project);
       if (target.dataset.action === 'import') $('#importProjectsInput')?.click();
       if (target.dataset.action === 'export') exportProjects();
       if (target.dataset.action === 'delete-project' && confirm(t('delete_project_confirm'))) { projects = projects.filter(project => project.id !== target.dataset.project); saveProjects(); render(); }
-      if (target.dataset.action === 'remove-task') { const project = projectById(target.dataset.project); if (project) { project.tasks = project.tasks.filter(task => task.id !== target.dataset.item); saveProjects(); render(); } }
+      if (target.dataset.action === 'remove-task') { const project = projectById(target.dataset.project); if (project) { project.tasks = project.tasks.filter(task => task.id !== target.dataset.item); touch(project); saveProjects(); render(); } }
     });
-    document.addEventListener('change', event => { if (event.target.dataset.action !== 'toggle') return; const project = projectById(event.target.dataset.project); const task = project?.tasks.find(item => item.id === event.target.dataset.item); if (task) { task.done = event.target.checked; saveProjects(); render(); } });
-    document.addEventListener('input', event => { if (event.target.dataset.action !== 'notes') return; const project = projectById(event.target.dataset.project); if (project) { project.notes = event.target.value; saveProjects(); } });
-    document.addEventListener('blur', event => { if (event.target.dataset.action === 'notes') toast(t('notes_saved')); }, true);
-    window.addEventListener('nbprof:languagechange', render);
+    document.addEventListener('change', event => {
+      if (event.target.dataset.action !== 'toggle') return;
+      const project = projectById(event.target.dataset.project); const task = project?.tasks.find(item => item.id === event.target.dataset.item);
+      if (task) { task.done = event.target.checked; touch(project); saveProjects(); render(); }
+    });
+    document.addEventListener('input', event => {
+      if (event.target.dataset.action !== 'notes') return;
+      const project = projectById(event.target.dataset.project);
+      if (project) { project.notes = event.target.value; touch(project); saveProjects(); }
+    });
+    document.addEventListener('blur', event => { if (event.target.dataset.action === 'notes') { render(); toast(t('notes_saved')); } }, true);
+    window.addEventListener('nbprof:languagechange', () => { render(); updateDialogMode(); });
   }
 
   function init() { projects = readProjects(); render(); bind(); }
