@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr" data-base-path="../">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#03040a">
+  <meta name="description" content="Découvrez NBProf Research Hub v1.0 — une application local-first pour organiser, suivre et structurer un projet de recherche, de l’idée à la soutenance.">
+  <meta property="og:title" content="NBProf Research Hub v1.0 — De l’idée à la soutenance">
+  <meta property="og:description" content="Assistant guidé, gestion de projets, tableau de bord et rapport intelligent pour accompagner le parcours de recherche.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="../icon-512.png">
+  <title>Découvrir NBProf Research Hub v1.0</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png">
+  <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style-v2.css">
+  <script src="../js/i18n.js" defer></script>
+</head>
+<body class="launch-page">
+<div class="bg" aria-hidden="true"></div><div class="grid-bg" aria-hidden="true"></div>
+<header class="app-header launch-header">
+  <a href="presentation.html" class="brand" aria-label="NBProf Research Hub">
+    <img src="../icon-192.png" alt="Logo NBProf Research Hub" class="brand-logo">
+    <div class="brand-text"><strong data-i18n="app_name">NBProf Research Hub</strong><span data-i18n="app_slogan">De l’idée à la soutenance</span></div>
+  </a>
+  <div class="header-actions">
+    <a href="../index.html" class="header-button launch-open-app" data-i18n="launch_open_app">Ouvrir l’application</a>
+    <div class="language-switcher"><button type="button" class="header-button language-button" id="languageButton" aria-haspopup="true" aria-expanded="false" aria-controls="languageMenu"><span aria-hidden="true">🌍</span><span id="currentLanguageLabel">Français</span><span class="language-chevron" aria-hidden="true">▾</span></button><div class="language-menu" id="languageMenu" role="menu" hidden><button type="button" class="language-option active" data-lang="fr" role="menuitem"><span>🇫🇷</span><span>Français</span></button><button type="button" class="language-option" data-lang="en" role="menuitem"><span>🇬🇧</span><span>English</span></button><button type="button" class="language-option" data-lang="ar" role="menuitem"><span>🇲🇦</span><span>العربية</span></button></div></div>
+  </div>
+</header>
+<main class="launch-main">
+  <section class="launch-hero">
+    <div class="launch-hero__copy">
+      <div class="launch-version"><span>v1.0.0</span><strong data-i18n="launch_stable">Version stable</strong></div>
+      <span class="section-kicker" data-i18n="launch_kicker">Plateforme de recherche</span>
+      <h1><span data-i18n="launch_title_1">Organisez votre recherche.</span> <span class="launch-gradient" data-i18n="launch_title_2">Gardez le cap jusqu’à la soutenance.</span></h1>
+      <p data-i18n="launch_intro">NBProf Research Hub centralise les étapes essentielles d’un projet scientifique : cadrage, planification, suivi, priorités, rapport et progression.</p>
+      <div class="launch-cta-row">
+        <a class="primary-button launch-cta-primary" href="../index.html" data-i18n="launch_open_app">Ouvrir l’application</a>
+        <a class="secondary-button" href="assistant.html" data-i18n="launch_try_assistant">Essayer l’assistant guidé</a>
+      </div>
+      <div class="launch-proof" aria-label="Points clés">
+        <span><strong>3</strong><small data-i18n="launch_proof_languages">langues</small></span>
+        <span><strong>4</strong><small data-i18n="launch_proof_modules">espaces clés</small></span>
+        <span><strong>100%</strong><small data-i18n="launch_proof_local">local-first</small></span>
+        <span><strong>PWA</strong><small data-i18n="launch_proof_install">installable</small></span>
+      </div>
+    </div>
+    <div class="launch-hero__visual">
+      <div class="launch-browser-card launch-browser-card--hero"><img src="../images/launch/home.png" alt="Accueil de NBProf Research Hub" loading="eager"></div>
+      <div class="launch-floating-badge launch-floating-badge--one"><span>✦</span><strong data-i18n="launch_badge_guided">Parcours guidé</strong></div>
+      <div class="launch-floating-badge launch-floating-badge--two"><span>▤</span><strong data-i18n="launch_badge_report">Rapport PDF</strong></div>
+    </div>
+  </section>
+
+  <section class="launch-trust-strip" aria-label="Valeurs de la plateforme">
+    <div><span>🔒</span><div><strong data-i18n="launch_trust_private_title">Vos données restent sur votre appareil</strong><small data-i18n="launch_trust_private_text">Aucun envoi automatique vers un serveur externe.</small></div></div>
+    <div><span>🧭</span><div><strong data-i18n="launch_trust_method_title">Une démarche structurée</strong><small data-i18n="launch_trust_method_text">Des jalons et tâches pour avancer de façon progressive.</small></div></div>
+    <div><span>📱</span><div><strong data-i18n="launch_trust_multi_title">Pensé pour plusieurs écrans</strong><small data-i18n="launch_trust_multi_text">Ordinateur, tablette et mobile via une PWA installable.</small></div></div>
+  </section>
+
+  <section class="launch-section launch-problem-solution">
+    <div class="launch-section__intro"><span class="section-kicker" data-i18n="launch_why_kicker">Pourquoi NBProf Research Hub ?</span><h2 data-i18n="launch_why_title">Passer d’une recherche dispersée à un parcours piloté.</h2><p data-i18n="launch_why_text">Entre lectures, échéances, idées, tâches et livrables, un projet de recherche peut vite se fragmenter. NBProf Research Hub rassemble ces éléments dans un espace cohérent et lisible.</p></div>
+    <div class="launch-shift-grid">
+      <article><span class="launch-shift-number">01</span><h3 data-i18n="launch_shift_1_title">Clarifier</h3><p data-i18n="launch_shift_1_text">Transformer une idée en objectif, étape actuelle et feuille de route.</p></article>
+      <article><span class="launch-shift-number">02</span><h3 data-i18n="launch_shift_2_title">Planifier</h3><p data-i18n="launch_shift_2_text">Organiser jalons, tâches, priorités et échéances sans perdre la vision globale.</p></article>
+      <article><span class="launch-shift-number">03</span><h3 data-i18n="launch_shift_3_title">Suivre</h3><p data-i18n="launch_shift_3_text">Visualiser la progression et repérer immédiatement les points d’attention.</p></article>
+      <article><span class="launch-shift-number">04</span><h3 data-i18n="launch_shift_4_title">Synthétiser</h3><p data-i18n="launch_shift_4_text">Produire un rapport lisible et exportable pour garder une trace de l’avancement.</p></article>
+    </div>
+  </section>
+
+  <section class="launch-section launch-showcase" id="fonctionnalites">
+    <div class="launch-section__intro launch-section__intro--center"><span class="section-kicker" data-i18n="launch_features_kicker">Fonctionnalités v1.0</span><h2 data-i18n="launch_features_title">Quatre espaces qui travaillent ensemble.</h2><p data-i18n="launch_features_text">Chaque module répond à un besoin précis tout en partageant les mêmes données locales du projet.</p></div>
+    <div class="launch-feature-grid">
+      <article class="launch-feature-card launch-feature-card--wide"><div class="launch-feature-copy"><span class="launch-feature-icon">✦</span><div><small data-i18n="launch_feature_1_kicker">Assistant guidé</small><h3 data-i18n="launch_feature_1_title">Commencer avec une feuille de route.</h3><p data-i18n="launch_feature_1_text">Définissez votre sujet, objectif, livrable et rythme. L’assistant propose ensuite des jalons, tâches, priorités et échéances modifiables.</p><a href="assistant.html" data-i18n="launch_feature_open">Découvrir →</a></div></div><div class="launch-browser-card"><img src="../images/launch/assistant.png" alt="Assistant guidé de NBProf Research Hub" loading="lazy"></div></article>
+      <article class="launch-feature-card"><div class="launch-feature-copy"><span class="launch-feature-icon">▥</span><div><small data-i18n="launch_feature_2_kicker">Tableau de bord</small><h3 data-i18n="launch_feature_2_title">Voir ce qui compte maintenant.</h3><p data-i18n="launch_feature_2_text">Progression, retards, échéances proches, priorités, filtres et recherche dans une vue synthétique.</p></div></div><div class="launch-browser-card"><img src="../images/launch/dashboard.png" alt="Tableau de bord de NBProf Research Hub" loading="lazy"></div></article>
+      <article class="launch-feature-card"><div class="launch-feature-copy"><span class="launch-feature-icon">▤</span><div><small data-i18n="launch_feature_3_kicker">Rapport intelligent</small><h3 data-i18n="launch_feature_3_title">Transformer l’avancement en synthèse.</h3><p data-i18n="launch_feature_3_text">Un résumé exécutif, des indicateurs clés et un export PDF A4 prêt à partager ou archiver.</p></div></div><div class="launch-browser-card"><img src="../images/launch/report.png" alt="Rapport intelligent de NBProf Research Hub" loading="lazy"></div></article>
+    </div>
+  </section>
+
+  <section class="launch-section launch-workflow">
+    <div class="launch-section__intro"><span class="section-kicker" data-i18n="launch_workflow_kicker">De l’idée à l’action</span><h2 data-i18n="launch_workflow_title">Un parcours simple pour démarrer.</h2></div>
+    <div class="launch-flow">
+      <div><span>1</span><strong data-i18n="launch_flow_1_title">Décrivez votre sujet</strong><small data-i18n="launch_flow_1_text">Titre provisoire et question de départ.</small></div>
+      <i aria-hidden="true">→</i>
+      <div><span>2</span><strong data-i18n="launch_flow_2_title">Précisez votre objectif</strong><small data-i18n="launch_flow_2_text">Livrable, étape et rythme de travail.</small></div>
+      <i aria-hidden="true">→</i>
+      <div><span>3</span><strong data-i18n="launch_flow_3_title">Recevez une feuille de route</strong><small data-i18n="launch_flow_3_text">Jalons, tâches, priorités et dates.</small></div>
+      <i aria-hidden="true">→</i>
+      <div><span>4</span><strong data-i18n="launch_flow_4_title">Pilotez votre progression</strong><small data-i18n="launch_flow_4_text">Tableau de bord et rapport.</small></div>
+    </div>
+  </section>
+
+  <section class="launch-section launch-audience">
+    <div class="launch-audience__copy"><span class="section-kicker" data-i18n="launch_audience_kicker">Pour qui ?</span><h2 data-i18n="launch_audience_title">Conçu pour les parcours académiques qui demandent de la méthode.</h2><p data-i18n="launch_audience_text">NBProf Research Hub peut soutenir l’organisation personnelle d’un mémoire, d’une thèse, d’un article ou d’un autre projet scientifique, sans remplacer l’encadrement académique ni le jugement du chercheur.</p></div>
+    <div class="launch-audience__cards"><span>🎓 <strong data-i18n="launch_audience_master">Étudiants en master</strong></span><span>🔬 <strong data-i18n="launch_audience_phd">Doctorants</strong></span><span>📚 <strong data-i18n="launch_audience_researchers">Chercheurs</strong></span><span>🧑‍🏫 <strong data-i18n="launch_audience_supervisors">Encadrants et enseignants</strong></span></div>
+  </section>
+
+  <section class="launch-section launch-privacy-section">
+    <div class="launch-privacy-icon">🔐</div><div><span class="section-kicker" data-i18n="launch_privacy_kicker">Confidentialité</span><h2 data-i18n="launch_privacy_title">Une approche local-first par conception.</h2><p data-i18n="launch_privacy_text">Les projets, notes et suivis sont enregistrés localement sur l’appareil. L’utilisateur garde la responsabilité de ses sauvegardes et peut exporter ses projets en JSON.</p></div><div class="launch-privacy-points"><span data-i18n="launch_privacy_point_1">✓ Données locales</span><span data-i18n="launch_privacy_point_2">✓ Export de sauvegarde</span><span data-i18n="launch_privacy_point_3">✓ Pas de compte obligatoire</span></div>
+  </section>
+
+  <section class="launch-final-cta">
+    <div><span class="launch-version"><span>v1.0.0</span><strong data-i18n="launch_official_release">Release officielle</strong></span><h2 data-i18n="launch_final_title">Votre recherche mérite un espace de pilotage clair.</h2><p data-i18n="launch_final_text">Découvrez la première version majeure de NBProf Research Hub et construisez votre feuille de route.</p></div>
+    <div class="launch-final-actions"><a class="primary-button" href="../index.html" data-i18n="launch_open_app">Ouvrir l’application</a><a class="secondary-button" href="https://github.com/NBProf-Academy/ia-recherche/releases/tag/v1.0.0" target="_blank" rel="noopener" data-i18n="launch_view_release">Voir la Release GitHub</a></div>
+  </section>
+</main>
+<footer class="site-footer launch-footer"><div class="footer-inner"><div class="signature"><img src="../icon-192.png" alt="" class="signature-logo"><div><strong>Noamane Boulahcen — NB Prof</strong><span data-i18n="launch_footer_text">NBProf Research Hub v1.0 — présentation publique</span></div></div><div class="footer-return-text" data-i18n="app_slogan">De l’idée à la soutenance</div></div></footer>
+</body></html>
