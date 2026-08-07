@@ -329,7 +329,7 @@
   }
 
   function exportProjects() {
-    const blob = new Blob([JSON.stringify({ exportedAt: nowIso(), version: '0.7.0', projects }, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ exportedAt: nowIso(), version: '0.8.0', projects }, null, 2)], { type: 'application/json' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `nbprof-projets-${new Date().toISOString().slice(0, 10)}.json`;
