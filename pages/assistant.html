@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr" data-base-path="../">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#03040a">
+  <meta name="description" content="Assistant guidé de création d’un projet de recherche — NBProf Research Hub.">
+  <title>Assistant de projet — NBProf Research Hub</title>
+  <link rel="icon" href="../images/favicon-32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style-v2.css">
+  <script src="../js/i18n.js" defer></script>
+  <script src="../js/assistant.js" defer></script>
+</head>
+<body class="assistant-page">
+  <div class="bg" aria-hidden="true"></div><div class="grid-bg" aria-hidden="true"></div>
+  <header class="app-header">
+    <a href="../index.html" class="brand" aria-label="Accueil NBProf Research Hub"><img src="../icon-192.png" alt="Logo NBProf Research Hub" class="brand-logo"><div class="brand-text"><strong data-i18n="app_name">NBProf Research Hub</strong><span data-i18n="app_slogan">De l’idée à la soutenance</span></div></a>
+    <div class="header-actions">
+      <a href="assistant.html" class="header-button assistant-link is-active" data-i18n="assistant_nav" data-i18n-aria-label="assistant_nav">Assistant guidé</a>
+      <a href="dashboard.html" class="header-button dashboard-link" data-i18n="dashboard_nav">Tableau de bord</a>
+      <a href="rapport.html" class="header-button report-link" data-i18n="report_nav">Rapport</a>
+      <a href="projets.html" class="header-button projects-link" data-i18n="projects_nav">Mes projets</a>
+      <div class="language-switcher"><button type="button" class="header-button language-button" id="languageButton" aria-haspopup="true" aria-expanded="false" aria-controls="languageMenu"><span aria-hidden="true">🌍</span><span id="currentLanguageLabel">Français</span><span class="language-chevron" aria-hidden="true">▾</span></button><div class="language-menu" id="languageMenu" role="menu" hidden><button type="button" class="language-option active" data-lang="fr" role="menuitem">🇫🇷 Français</button><button type="button" class="language-option" data-lang="en" role="menuitem">🇬🇧 English</button><button type="button" class="language-option" data-lang="ar" role="menuitem">🇲🇦 العربية</button></div></div>
+    </div>
+  </header>
+
+  <main class="assistant-main">
+    <section class="assistant-hero">
+      <div><span class="section-kicker" data-i18n="assistant_kicker">Création guidée</span><h1 data-i18n="assistant_title">Construisez votre projet de recherche pas à pas</h1><p data-i18n="assistant_description">Décrivez votre idée, précisez votre objectif et laissez NBProf Research Hub préparer une première feuille de route que vous pourrez ensuite modifier librement.</p></div>
+      <a href="projets.html" class="secondary-button" data-i18n="assistant_back_projects">Retour à Mes projets</a>
+    </section>
+
+    <section class="assistant-privacy"><span aria-hidden="true">🔒</span><span data-i18n="assistant_local_notice">Toutes les informations saisies restent sur cet appareil. L’assistant ne transmet aucune donnée à un serveur.</span></section>
+
+    <section class="assistant-shell">
+      <aside class="assistant-steps" aria-label="Étapes de création">
+        <button type="button" class="assistant-step is-active" data-step-go="1"><span>1</span><div><strong data-i18n="assistant_step1_title">Votre sujet</strong><small data-i18n="assistant_step1_short">Idée et titre</small></div></button>
+        <button type="button" class="assistant-step" data-step-go="2"><span>2</span><div><strong data-i18n="assistant_step2_title">Votre objectif</strong><small data-i18n="assistant_step2_short">Finalité et étape</small></div></button>
+        <button type="button" class="assistant-step" data-step-go="3"><span>3</span><div><strong data-i18n="assistant_step3_title">Votre feuille de route</strong><small data-i18n="assistant_step3_short">Jalons et tâches</small></div></button>
+        <button type="button" class="assistant-step" data-step-go="4"><span>4</span><div><strong data-i18n="assistant_step4_title">Validation</strong><small data-i18n="assistant_step4_short">Créer le projet</small></div></button>
+      </aside>
+
+      <form id="assistantForm" class="assistant-panel" novalidate>
+        <section class="assistant-screen is-active" data-step="1">
+          <div class="assistant-screen-heading"><span class="assistant-step-label" data-i18n="assistant_step_label_1">Étape 1 sur 4</span><h2 data-i18n="assistant_step1_heading">Quel est votre sujet de recherche ?</h2><p data-i18n="assistant_step1_help">Commencez par un titre provisoire et décrivez votre idée en quelques lignes. Vous pourrez tout modifier plus tard.</p></div>
+          <label><span data-i18n="assistant_project_name">Titre provisoire du projet</span><input id="assistantProjectName" maxlength="120" required data-i18n-placeholder="assistant_project_name_placeholder" placeholder="Ex. Impact de l’IA sur les pratiques pédagogiques"></label>
+          <label><span data-i18n="assistant_idea">Idée ou question de départ</span><textarea id="assistantIdea" rows="5" maxlength="1200" required data-i18n-placeholder="assistant_idea_placeholder" placeholder="Décrivez le problème, le contexte ou la question qui vous intéresse…"></textarea></label>
+        </section>
+
+        <section class="assistant-screen" data-step="2" hidden>
+          <div class="assistant-screen-heading"><span class="assistant-step-label" data-i18n="assistant_step_label_2">Étape 2 sur 4</span><h2 data-i18n="assistant_step2_heading">Précisez votre objectif et votre avancement</h2><p data-i18n="assistant_step2_help">Ces informations permettent de proposer une feuille de route adaptée à votre situation actuelle.</p></div>
+          <label><span data-i18n="assistant_goal">Objectif principal</span><textarea id="assistantGoal" rows="4" maxlength="400" required data-i18n-placeholder="assistant_goal_placeholder" placeholder="Ex. Identifier comment l’usage de l’IA influence la préparation des cours et l’évaluation."></textarea></label>
+          <div class="assistant-form-grid">
+            <label><span data-i18n="assistant_output">Livrable visé</span><select id="assistantOutput"><option value="memory" data-i18n="assistant_output_memory">Mémoire</option><option value="thesis" data-i18n="assistant_output_thesis">Thèse</option><option value="article" data-i18n="assistant_output_article">Article scientifique</option><option value="communication" data-i18n="assistant_output_communication">Communication / conférence</option><option value="other" data-i18n="assistant_output_other">Autre</option></select></label>
+            <label><span data-i18n="assistant_stage">Étape actuelle</span><select id="assistantStage"><option value="exploration" data-i18n="stage_exploration">Exploration du sujet</option><option value="literature" data-i18n="stage_literature">Revue de littérature</option><option value="method" data-i18n="stage_method">Méthodologie</option><option value="data" data-i18n="stage_data">Collecte et analyse des données</option><option value="writing" data-i18n="stage_writing">Rédaction</option><option value="defense" data-i18n="stage_defense">Publication ou soutenance</option></select></label>
+          </div>
+          <label><span data-i18n="assistant_pace">Rythme de planification</span><select id="assistantPace"><option value="light" data-i18n="assistant_pace_light">Souple — échéances espacées</option><option value="standard" data-i18n="assistant_pace_standard" selected>Standard — rythme équilibré</option><option value="intensive" data-i18n="assistant_pace_intensive">Intensif — échéances rapprochées</option></select></label>
+        </section>
+
+        <section class="assistant-screen" data-step="3" hidden>
+          <div class="assistant-screen-heading"><span class="assistant-step-label" data-i18n="assistant_step_label_3">Étape 3 sur 4</span><h2 data-i18n="assistant_step3_heading">Voici votre première feuille de route</h2><p data-i18n="assistant_step3_help">NBProf propose une structure initiale. Elle reste entièrement modifiable après la création du projet.</p></div>
+          <div class="assistant-plan-grid"><article><div class="assistant-plan-heading"><span>◆</span><h3 data-i18n="assistant_milestones_title">Jalons proposés</h3></div><ol id="assistantMilestonesPreview" class="assistant-preview-list"></ol></article><article><div class="assistant-plan-heading"><span>✓</span><h3 data-i18n="assistant_tasks_title">Premières tâches</h3></div><div id="assistantTasksPreview" class="assistant-preview-tasks"></div></article></div>
+          <p class="assistant-method-note" data-i18n="assistant_method_note">Cette feuille de route est une aide à l’organisation. Elle ne remplace pas la validation méthodologique par votre encadrant ou votre équipe de recherche.</p>
+        </section>
+
+        <section class="assistant-screen" data-step="4" hidden>
+          <div class="assistant-screen-heading"><span class="assistant-step-label" data-i18n="assistant_step_label_4">Étape 4 sur 4</span><h2 data-i18n="assistant_step4_heading">Vérifiez avant de créer le projet</h2><p data-i18n="assistant_step4_help">Un dernier contrôle avant d’ajouter le projet à votre espace personnel.</p></div>
+          <div id="assistantSummary" class="assistant-summary"></div>
+          <label class="assistant-consent"><input id="assistantConfirm" type="checkbox" required><span data-i18n="assistant_confirm_text">Je comprends que cette structure est une proposition d’organisation et qu’elle doit être adaptée à mon contexte scientifique.</span></label>
+        </section>
+
+        <div class="assistant-actions"><button type="button" class="secondary-button" id="assistantPrevious" data-i18n="assistant_previous" hidden>Précédent</button><div class="assistant-actions__spacer"></div><button type="button" class="primary-button" id="assistantNext" data-i18n="assistant_next">Continuer</button><button type="submit" class="primary-button" id="assistantCreate" data-i18n="assistant_create" hidden>Créer mon projet</button></div>
+      </form>
+    </section>
+
+    <section id="assistantSuccess" class="assistant-success" hidden><div class="assistant-success__icon">✓</div><span class="section-kicker" data-i18n="assistant_success_kicker">Projet créé</span><h2 data-i18n="assistant_success_title">Votre feuille de route est prête</h2><p data-i18n="assistant_success_text">Le projet a été ajouté à Mes projets avec ses jalons et ses premières tâches. Vous pouvez maintenant l’ajuster à votre rythme.</p><div><a class="primary-button" href="projets.html" data-i18n="assistant_open_project">Ouvrir Mes projets</a><a class="secondary-button" href="dashboard.html" data-i18n="dashboard_nav">Tableau de bord</a></div></section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <footer class="site-footer"><div class="footer-inner"><div class="signature"><img src="../icon-192.png" alt="" class="signature-logo"><div><strong>Noamane Boulahcen — NB Prof</strong><span data-i18n="footer_status">Version 1.0 — première version majeure</span></div></div><div class="footer-actions"><a class="secondary-button" href="../index.html" data-i18n="back_home">Retour à l’accueil</a></div></div></footer>
+</body>
+</html>

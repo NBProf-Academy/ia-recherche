@@ -329,7 +329,7 @@
   }
 
   function exportProjects() {
-    const blob = new Blob([JSON.stringify({ exportedAt: nowIso(), version: '0.8.0', projects }, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ exportedAt: nowIso(), version: '1.0.0', projects }, null, 2)], { type: 'application/json' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `nbprof-projets-${new Date().toISOString().slice(0, 10)}.json`;
@@ -376,6 +376,13 @@
     const newProjectButton = $('#newProjectButton');
     hero.append(actionGroup);
     actionGroup.append(newProjectButton);
+
+    const assistantButton = document.createElement('a');
+    assistantButton.className = 'secondary-button assistant-launch';
+    assistantButton.href = 'assistant.html';
+    assistantButton.dataset.i18n = 'assistant_launch';
+    assistantButton.textContent = t('assistant_launch');
+    actionGroup.prepend(assistantButton);
 
     const importButton = document.createElement('button');
     importButton.className = 'secondary-button import-button';
