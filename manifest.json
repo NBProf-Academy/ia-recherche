@@ -31,6 +31,11 @@
   ],
   "shortcuts": [
     {
+      "name": "Assistant guidé de projet",
+      "short_name": "Assistant",
+      "url": "./pages/assistant.html"
+    },
+    {
       "name": "Tableau de bord du chercheur",
       "short_name": "Tableau de bord",
       "url": "./pages/dashboard.html"
