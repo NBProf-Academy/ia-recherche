@@ -36,6 +36,11 @@
       "url": "./pages/dashboard.html"
     },
     {
+      "name": "Rapport intelligent du chercheur",
+      "short_name": "Rapport",
+      "url": "./pages/rapport.html"
+    },
+    {
       "name": "Trouver des articles",
       "short_name": "Articles",
       "url": "./pages/parcours.html?parcours=articles"
