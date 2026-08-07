@@ -5,6 +5,7 @@
   const $ = selector => document.querySelector(selector);
   const t = (key, fallback = '') => window.NBProfI18n?.t(key, fallback) || fallback || key;
   const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  const filters = { query: '', stage: 'all', priority: 'all', deadline: 'all', sort: 'updated' };
   let projects = [];
 
   function validDateKey(value) {
@@ -94,17 +95,84 @@
     }
   }
 
-  function summary() {
-    const tasks = projects.flatMap(project => project.tasks.map(task => ({ ...task, project })));
-    const done = tasks.filter(item => item.done).length;
-    const pending = tasks.filter(item => !item.done);
+  function normalizeSearch(value) {
+    return String(value ?? '').toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  }
+
+  function queryMatchesProject(project) {
+    if (!filters.query) return true;
+    const needle = normalizeSearch(filters.query);
+    const haystack = [project.name, project.goal, stageLabel(project.stage), ...project.tasks.map(task => task.text)].map(normalizeSearch).join(' ');
+    return haystack.includes(needle);
+  }
+
+  function deadlineMatches(task) {
+    const state = taskState(task);
+    if (filters.deadline === 'all') return true;
+    if (filters.deadline === 'overdue') return state === 'overdue';
+    if (filters.deadline === 'dueSoon') return ['today', 'soon'].includes(state);
+    if (filters.deadline === 'scheduled') return state === 'scheduled';
+    if (filters.deadline === 'undated') return state === 'undated';
+    if (filters.deadline === 'completed') return state === 'complete';
+    return true;
+  }
+
+  function taskMatches(item) {
+    if (filters.stage !== 'all' && item.project.stage !== filters.stage) return false;
+    if (filters.priority !== 'all' && item.priority !== filters.priority) return false;
+    if (!deadlineMatches(item)) return false;
+    if (filters.query) {
+      const needle = normalizeSearch(filters.query);
+      const haystack = normalizeSearch(`${item.text} ${item.project.name} ${item.project.goal} ${stageLabel(item.project.stage)}`);
+      if (!haystack.includes(needle)) return false;
+    }
+    return true;
+  }
+
+  function projectMatches(project) {
+    if (filters.stage !== 'all' && project.stage !== filters.stage) return false;
+    if (!queryMatchesProject(project)) return false;
+    const hasTaskFilter = filters.priority !== 'all' || filters.deadline !== 'all';
+    if (!hasTaskFilter) return true;
+    return project.tasks.some(task => taskMatches({ ...task, project }));
+  }
+
+  function nextDeadline(project) {
+    const dates = project.tasks
+      .filter(task => !task.done && task.dueDate)
+      .map(task => dateFromKey(task.dueDate)?.getTime())
+      .filter(Number.isFinite);
+    return dates.length ? Math.min(...dates) : Number.POSITIVE_INFINITY;
+  }
+
+  function sortProjects(items) {
+    return [...items].sort((a, b) => {
+      if (filters.sort === 'progressDesc') return progress(b).percent - progress(a).percent || a.name.localeCompare(b.name);
+      if (filters.sort === 'progressAsc') return progress(a).percent - progress(b).percent || a.name.localeCompare(b.name);
+      if (filters.sort === 'deadline') return nextDeadline(a) - nextDeadline(b) || a.name.localeCompare(b.name);
+      if (filters.sort === 'name') return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+      return Date.parse(b.updatedAt || 0) - Date.parse(a.updatedAt || 0);
+    });
+  }
+
+  function filteredData() {
+    const visibleProjects = sortProjects(projects.filter(projectMatches));
+    const visibleProjectIds = new Set(visibleProjects.map(project => project.id));
+    const tasks = projects.flatMap(project => project.tasks.map(task => ({ ...task, project })))
+      .filter(item => visibleProjectIds.has(item.project.id) && taskMatches(item));
+    return { projects: visibleProjects, tasks };
+  }
+
+  function summary(view) {
+    const done = view.tasks.filter(item => item.done).length;
+    const pending = view.tasks.filter(item => !item.done);
     return {
-      projects: projects.length,
-      progress: tasks.length ? Math.round(done / tasks.length * 100) : 0,
+      projects: view.projects.length,
+      progress: view.tasks.length ? Math.round(done / view.tasks.length * 100) : 0,
       overdue: pending.filter(item => taskState(item) === 'overdue').length,
       dueSoon: pending.filter(item => ['today', 'soon'].includes(taskState(item))).length,
       high: pending.filter(item => item.priority === 'high').length,
-      tasks
+      tasks: view.tasks
     };
   }
 
@@ -122,15 +190,20 @@
     ].join('');
   }
 
-  function renderProjects() {
+  function renderProjects(view) {
     const container = $('#dashboardProjects');
-    const ordered = [...projects].sort((a, b) => Date.parse(b.updatedAt || 0) - Date.parse(a.updatedAt || 0));
-    container.innerHTML = ordered.slice(0, 8).map(project => {
+    if (!view.projects.length) {
+      container.innerHTML = `<div class="dashboard-panel-empty">${escapeHtml(t('dashboard_no_filter_results'))}</div>`;
+      return;
+    }
+    container.innerHTML = view.projects.slice(0, 12).map(project => {
       const p = progress(project);
       const pending = project.tasks.filter(task => !task.done).length;
+      const deadline = nextDeadline(project);
+      const deadlineText = Number.isFinite(deadline) ? formatDate(localDateKey(new Date(deadline))) : t('dashboard_no_deadline');
       return `<a class="dashboard-project-row" href="projets.html" aria-label="${escapeHtml(project.name)}">
         <div class="dashboard-project-row__main"><span class="project-stage">${escapeHtml(stageLabel(project.stage))}</span><strong>${escapeHtml(project.name)}</strong><small>${escapeHtml(project.goal || t('dashboard_no_goal'))}</small></div>
-        <div class="dashboard-project-row__progress"><span><b>${p.percent}%</b> · ${pending} ${escapeHtml(t('dashboard_pending_tasks'))}</span><div class="dashboard-mini-track"><i style="width:${p.percent}%"></i></div><small>${escapeHtml(t('dashboard_updated'))} ${escapeHtml(formatDate(project.updatedAt, true))}</small></div>
+        <div class="dashboard-project-row__progress"><span><b>${p.percent}%</b> · ${pending} ${escapeHtml(t('dashboard_pending_tasks'))}</span><div class="dashboard-mini-track"><i style="width:${p.percent}%"></i></div><small>${escapeHtml(t('dashboard_next_deadline'))}: ${escapeHtml(deadlineText)}</small><small>${escapeHtml(t('dashboard_updated'))} ${escapeHtml(formatDate(project.updatedAt, true))}</small></div>
       </a>`;
     }).join('');
   }
@@ -148,20 +221,21 @@
 
   function dueText(task) {
     const state = taskState(task);
+    if (state === 'complete') return t('dashboard_completed_task');
     if (state === 'overdue') return `${t('overdue')} · ${formatDate(task.dueDate)}`;
     if (state === 'today') return t('due_today');
     if (task.dueDate) return `${t('due_on')} ${formatDate(task.dueDate)}`;
     return t('dashboard_no_deadline');
   }
 
-  function renderTasks(data) {
+  function renderTasks(view) {
     const container = $('#dashboardTasks');
-    const urgent = data.tasks.filter(item => !item.done).sort((a, b) => urgencyScore(a) - urgencyScore(b)).slice(0, 7);
-    if (!urgent.length) {
+    const ordered = [...view.tasks].sort((a, b) => urgencyScore(a) - urgencyScore(b)).slice(0, 10);
+    if (!ordered.length) {
       container.innerHTML = `<div class="dashboard-panel-empty">✓ ${escapeHtml(t('dashboard_no_tasks'))}</div>`;
       return;
     }
-    container.innerHTML = urgent.map(item => {
+    container.innerHTML = ordered.map(item => {
       const state = taskState(item);
       return `<a class="dashboard-task dashboard-task--${state}" href="projets.html">
         <span class="dashboard-task__marker" aria-hidden="true"></span>
@@ -170,10 +244,10 @@
     }).join('');
   }
 
-  function renderStages() {
+  function renderStages(view) {
     const container = $('#dashboardStages');
     const counts = Object.fromEntries(STAGES.map(stage => [stage, 0]));
-    projects.forEach(project => { counts[project.stage] += 1; });
+    view.projects.forEach(project => { counts[project.stage] += 1; });
     const max = Math.max(1, ...Object.values(counts));
     container.innerHTML = STAGES.map(stage => {
       const value = counts[stage];
@@ -182,27 +256,75 @@
     }).join('');
   }
 
+  function renderFilterSummary(view) {
+    const el = $('#dashboardFilterSummary');
+    if (!el) return;
+    const taskCount = view.tasks.length;
+    el.textContent = t('dashboard_filter_summary')
+      .replace('{projects}', String(view.projects.length))
+      .replace('{tasks}', String(taskCount));
+  }
+
+  function syncFilterControls() {
+    const search = $('#dashboardSearch');
+    const stage = $('#dashboardStageFilter');
+    const priority = $('#dashboardPriorityFilter');
+    const deadline = $('#dashboardDeadlineFilter');
+    const sort = $('#dashboardSort');
+    if (search && search.value !== filters.query) search.value = filters.query;
+    if (stage) stage.value = filters.stage;
+    if (priority) priority.value = filters.priority;
+    if (deadline) deadline.value = filters.deadline;
+    if (sort) sort.value = filters.sort;
+  }
+
   function render() {
     projects = readProjects();
     const empty = $('#dashboardEmpty');
     const kpis = $('#dashboardKpis');
     const layout = $('.dashboard-layout');
+    const toolbar = $('.dashboard-toolbar');
     if (!projects.length) {
       kpis.innerHTML = '';
       layout.hidden = true;
+      if (toolbar) toolbar.hidden = true;
       empty.hidden = false;
       return;
     }
     empty.hidden = true;
     layout.hidden = false;
-    const data = summary();
+    if (toolbar) toolbar.hidden = false;
+    syncFilterControls();
+    const view = filteredData();
+    const data = summary(view);
     renderKpis(data);
-    renderProjects();
-    renderTasks(data);
-    renderStages();
+    renderProjects(view);
+    renderTasks(view);
+    renderStages(view);
+    renderFilterSummary(view);
+  }
+
+  function resetFilters() {
+    filters.query = '';
+    filters.stage = 'all';
+    filters.priority = 'all';
+    filters.deadline = 'all';
+    filters.sort = 'updated';
+    render();
+    $('#dashboardSearch')?.focus();
+  }
+
+  function bindFilters() {
+    $('#dashboardSearch')?.addEventListener('input', event => { filters.query = event.target.value; render(); });
+    $('#dashboardStageFilter')?.addEventListener('change', event => { filters.stage = event.target.value; render(); });
+    $('#dashboardPriorityFilter')?.addEventListener('change', event => { filters.priority = event.target.value; render(); });
+    $('#dashboardDeadlineFilter')?.addEventListener('change', event => { filters.deadline = event.target.value; render(); });
+    $('#dashboardSort')?.addEventListener('change', event => { filters.sort = event.target.value; render(); });
+    $('#dashboardResetFilters')?.addEventListener('click', resetFilters);
   }
 
   function init() {
+    bindFilters();
     render();
     window.addEventListener('nbprof:languagechange', render);
     window.addEventListener('storage', event => { if (event.key === STORAGE_KEY) render(); });

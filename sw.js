@@ -1,4 +1,4 @@
-const CACHE='nbprof-research-hub-v0.7.0';
+const CACHE='nbprof-research-hub-v0.8.0';
 const ASSETS=['./','./index.html','./index-v2.html','./offline.html','./manifest.json','./css/style-v2.css','./js/i18n.js','./js/app-v2.js','./js/journey.js','./js/projects.js','./js/dashboard.js','./data/tools.json','./data/journeys.json','./lang/fr.json','./lang/en.json','./lang/ar.json','./pages/parcours.html','./pages/projets.html','./pages/dashboard.html','./icon-192.png','./icon-512.png','./images/favicon-32.png','./images/favicon-16.png','./images/apple-touch-icon.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting();});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});
