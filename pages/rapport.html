@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr" data-base-path="../">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#03040a">
+  <meta name="description" content="Rapport intelligent du chercheur — NBProf Research Hub.">
+  <title>Rapport du chercheur — NBProf Research Hub</title>
+  <link rel="icon" href="../images/favicon-32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style-v2.css">
+  <script src="../js/i18n.js" defer></script>
+  <script src="../js/report.js" defer></script>
+</head>
+<body class="report-page">
+  <div class="bg" aria-hidden="true"></div><div class="grid-bg" aria-hidden="true"></div>
+  <header class="app-header report-app-header">
+    <a href="../index.html" class="brand" aria-label="Accueil NBProf Research Hub"><img src="../icon-192.png" alt="Logo NBProf Research Hub" class="brand-logo"><div class="brand-text"><strong data-i18n="app_name">NBProf Research Hub</strong><span data-i18n="app_slogan">De l’idée à la soutenance</span></div></a>
+    <div class="header-actions">
+      <a href="dashboard.html" class="header-button dashboard-link" data-i18n="dashboard_nav">Tableau de bord</a>
+      <a href="rapport.html" class="header-button report-link is-active" data-i18n="report_nav">Rapport</a>
+      <a href="projets.html" class="header-button projects-link" data-i18n="projects_nav">Mes projets</a>
+      <div class="language-switcher"><button type="button" class="header-button language-button" id="languageButton" aria-haspopup="true" aria-expanded="false" aria-controls="languageMenu"><span aria-hidden="true">🌍</span><span id="currentLanguageLabel">Français</span><span class="language-chevron" aria-hidden="true">▾</span></button><div class="language-menu" id="languageMenu" role="menu" hidden><button type="button" class="language-option active" data-lang="fr" role="menuitem">🇫🇷 Français</button><button type="button" class="language-option" data-lang="en" role="menuitem">🇬🇧 English</button><button type="button" class="language-option" data-lang="ar" role="menuitem">🇲🇦 العربية</button></div></div>
+    </div>
+  </header>
+
+  <main class="report-main">
+    <section class="report-hero no-print">
+      <div><span class="section-kicker" data-i18n="report_kicker">Synthèse de recherche</span><h1 data-i18n="report_title">Rapport intelligent du chercheur</h1><p data-i18n="report_description">Transformez automatiquement les données de vos projets en une synthèse claire, prête à être imprimée ou enregistrée en PDF.</p></div>
+      <div class="report-actions"><button type="button" class="secondary-button" id="refreshReport" data-i18n="report_generate">Actualiser le rapport</button><button type="button" class="primary-button" id="printReport" data-i18n="report_print">Imprimer / Exporter en PDF</button></div>
+    </section>
+
+    <section class="report-local-note no-print"><span aria-hidden="true">🔒</span><span data-i18n="report_local_notice">Rapport généré localement : aucune donnée de projet n’est envoyée à un serveur.</span></section>
+
+    <article class="report-sheet" id="reportSheet">
+      <header class="report-document-header">
+        <div class="report-document-brand"><img src="../icon-192.png" alt=""><div><strong>NBProf Research Hub</strong><span data-i18n="report_title">Rapport intelligent du chercheur</span></div></div>
+        <div class="report-document-meta"><strong id="reportDate"></strong><span data-i18n="report_period">Données disponibles sur cet appareil au moment de la génération.</span></div>
+      </header>
+
+      <section id="reportEmpty" class="report-empty" hidden><img src="../icon-192.png" alt=""><h2 data-i18n="report_empty_title">Aucune donnée à synthétiser</h2><p data-i18n="report_empty_text">Créez ou importez au moins un projet dans Mes projets pour générer votre rapport de recherche.</p><a class="primary-button no-print" href="projets.html" data-i18n="dashboard_open_projects">Gérer mes projets</a></section>
+
+      <div id="reportContent">
+        <section class="report-section report-executive">
+          <div class="report-section-heading"><span class="section-kicker" data-i18n="report_executive_kicker">Synthèse</span><h2 data-i18n="report_executive_title">Résumé exécutif</h2></div>
+          <div class="report-executive-card"><div class="report-health" id="reportHealth"></div><p id="reportExecutiveText"></p></div>
+        </section>
+
+        <section class="report-section">
+          <div class="report-section-heading"><h2 data-i18n="report_kpis_title">Indicateurs clés</h2></div>
+          <div class="report-kpis" id="reportKpis"></div>
+        </section>
+
+        <section class="report-section">
+          <div class="report-section-heading"><span class="section-kicker" data-i18n="report_portfolio_kicker">Portefeuille</span><h2 data-i18n="report_portfolio_title">État des projets</h2></div>
+          <div class="report-table-wrap"><table class="report-table"><thead><tr><th data-i18n="report_project">Projet</th><th data-i18n="report_stage">Étape</th><th data-i18n="report_progress_col">Progression</th><th data-i18n="report_tasks_col">Tâches</th><th data-i18n="report_next_deadline">Prochaine échéance</th><th data-i18n="report_updated">Dernière mise à jour</th></tr></thead><tbody id="reportProjects"></tbody></table></div>
+        </section>
+
+        <section class="report-grid-two">
+          <section class="report-section report-section--compact">
+            <div class="report-section-heading"><span class="section-kicker" data-i18n="report_priority_kicker">Vigilance</span><h2 data-i18n="report_priority_title">Points d’attention</h2></div>
+            <div class="report-alerts" id="reportAlerts"></div>
+          </section>
+          <section class="report-section report-section--compact">
+            <div class="report-section-heading"><span class="section-kicker" data-i18n="report_stage_kicker">Parcours</span><h2 data-i18n="report_stage_title">Répartition par étape de recherche</h2></div>
+            <div class="report-stages" id="reportStages"></div>
+          </section>
+        </section>
+
+        <section class="report-section report-method-note">
+          <div class="report-section-heading"><span class="section-kicker" data-i18n="report_method_kicker">Lecture du rapport</span><h2 data-i18n="report_method_title">Note méthodologique</h2></div>
+          <p data-i18n="report_method_text">Cette synthèse est calculée automatiquement à partir des projets, tâches, priorités et échéances enregistrés dans NBProf Research Hub. Elle constitue un outil de pilotage et ne remplace ni l’évaluation scientifique, ni la validation méthodologique, ni l’encadrement académique.</p>
+          <small data-i18n="report_print_hint">Dans la fenêtre d’impression, choisissez « Enregistrer au format PDF » pour créer votre fichier.</small>
+        </section>
+      </div>
+
+      <footer class="report-document-footer"><span>NBProf Research Hub</span><span>© 2026 NB Prof</span></footer>
+    </article>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <footer class="site-footer report-site-footer no-print"><div class="footer-inner"><div class="signature"><img src="../icon-192.png" alt="" class="signature-logo"><div><strong>Noamane Boulahcen — NB Prof</strong><span data-i18n="footer_status">Application en développement — version 0.9</span></div></div><div class="footer-actions"><a class="secondary-button" href="dashboard.html" data-i18n="report_back_dashboard">Retour au tableau de bord</a></div></div></footer>
+</body>
+</html>
