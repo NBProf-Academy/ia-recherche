@@ -31,6 +31,11 @@
   ],
   "shortcuts": [
     {
+      "name": "Découvrir NBProf Research Hub",
+      "short_name": "Présentation",
+      "url": "./pages/presentation.html"
+    },
+    {
       "name": "Assistant guidé de projet",
       "short_name": "Assistant",
       "url": "./pages/assistant.html"
