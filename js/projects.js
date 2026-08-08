@@ -11,6 +11,7 @@
   let editingProjectId = null;
   let taskProjectId = null;
   let editingTaskId = null;
+  let saveStatusTimer = null;
 
   function cleanText(value, maxLength = 400) {
     return typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
@@ -67,7 +68,55 @@
     }
   }
 
-  function saveProjects() { localStorage.setItem(STORAGE_KEY, JSON.stringify(projects)); }
+  function saveStatusTime() {
+  const language =
+    window.NBProfI18n?.getLanguage?.() ||
+    document.documentElement.lang ||
+    'fr';
+
+  try {
+    return new Intl.DateTimeFormat(language, {
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date());
+  } catch {
+    return new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+}
+
+function setSaveStatus(state = 'saved') {
+  const status = $('#localSaveStatus');
+  if (!status) return;
+
+  if (state === 'saving') {
+    status.textContent = `⏳ ${t('saving_local', 'Enregistrement...')}`;
+    status.dataset.state = 'saving';
+    return;
+  }
+
+  status.textContent =
+    `✓ ${t('saved_local', 'Sauvegardé localement')} · ${saveStatusTime()}`;
+
+  status.dataset.state = 'saved';
+}
+
+function saveProjects() {
+  setSaveStatus('saving');
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(projects)
+  );
+
+  clearTimeout(saveStatusTimer);
+
+  saveStatusTimer = setTimeout(() => {
+    setSaveStatus('saved');
+  }, 350);
+}
   function touch(project) { if (project) project.updatedAt = nowIso(); }
   function toast(message) { const el = $('#toast'); el.textContent = message; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2600); }
   function stageLabel(stage) { return t(`stage_${stage}`, stage); }
@@ -509,6 +558,15 @@ projects = imported;
     const newProjectButton = $('#newProjectButton');
     hero.append(actionGroup);
     actionGroup.append(newProjectButton);
+    const saveStatus = document.createElement('div');
+saveStatus.id = 'localSaveStatus';
+saveStatus.className = 'local-save-status';
+saveStatus.setAttribute('role', 'status');
+saveStatus.setAttribute('aria-live', 'polite');
+
+hero.append(saveStatus);
+
+setSaveStatus('saved');
 
     const assistantButton = document.createElement('a');
     assistantButton.className = 'secondary-button assistant-launch';
