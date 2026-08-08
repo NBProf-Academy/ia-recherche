@@ -12,7 +12,7 @@
   let taskProjectId = null;
   let editingTaskId = null;
   let saveStatusTimer = null;
-
+  
   function cleanText(value, maxLength = 400) {
     return typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
   }
