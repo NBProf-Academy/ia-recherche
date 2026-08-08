@@ -233,7 +233,7 @@ function saveProjects() {
         <div class="project-card__actions">
           <button class="edit-project" data-action="edit-project" data-project="${project.id}">${escapeHtml(t('edit_project'))}</button>
           <button
-  class="archive-project"
+  class="edit-project archive-project"
   data-action="archive-project"
   data-project="${project.id}"
 >
