@@ -227,7 +227,7 @@ function saveProjects() {
     const progress = projectProgress(project);
     const milestones = project.milestones.map(item => `<li>${escapeHtml(item.text)}</li>`).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
     const tasks = project.tasks.map(task => taskMarkup(project, task)).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
-    return `<article class="project-card">
+    return `<article class="project-card" data-project-card="${escapeHtml(project.id)}">
       <div class="project-card__top">
         <div><span class="project-stage">${escapeHtml(stageLabel(project.stage))}</span><h2>${escapeHtml(project.name)}</h2></div>
         <div class="project-card__actions">
@@ -885,11 +885,35 @@ restoreSafetyButton.textContent = t(
       updateTaskDialogMode();
     });
   }
+function focusRequestedProject() {
+  const params = new URLSearchParams(window.location.search);
+  const requestedProjectId = params.get('project');
 
+  if (!requestedProjectId) return;
+
+  const card = [...document.querySelectorAll('[data-project-card]')]
+    .find(element => element.dataset.projectCard === requestedProjectId);
+
+  if (!card) return;
+
+  setTimeout(() => {
+    card.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
+
+    card.classList.add('project-card--focused');
+
+    setTimeout(() => {
+      card.classList.remove('project-card--focused');
+    }, 3000);
+  }, 150);
+}
   function init() {
     projects = readProjects();
     render();
     bind();
+    focusRequestedProject();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
