@@ -308,20 +308,6 @@ function restoreArchivedProject(projectId) {
   );
 }
 
-  project.archived = true;
-  project.archivedAt = nowIso();
-
-  touch(project);
-  saveProjects();
-  render();
-
-  toast(
-    t(
-      'project_archived',
-      'Projet archivé avec succès.'
-    )
-  );
-}
   function archivedProjectCard(project) {
   return `
     <article class="project-card archived-project-card">
