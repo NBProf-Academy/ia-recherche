@@ -431,14 +431,6 @@ const nextActionMarkup = nextAction
     `;
   }).join('');
 }
-    container.innerHTML = ordered.map(item => {
-      const state = taskState(item);
-      return `<a class="dashboard-task dashboard-task--${state}" href="projets.html">
-        <span class="dashboard-task__marker" aria-hidden="true"></span>
-        <span class="dashboard-task__body"><strong>${escapeHtml(item.text)}</strong><small>${escapeHtml(item.project.name)}</small><span class="task-tags"><span class="priority-badge priority-${item.priority}">${escapeHtml(priorityLabel(item.priority))}</span><span class="due-badge due-${state}">${escapeHtml(dueText(item))}</span></span></span>
-      </a>`;
-    }).join('');
-  }
 
   function renderStages(view) {
     const container = $('#dashboardStages');
