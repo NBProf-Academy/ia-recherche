@@ -38,7 +38,66 @@
       dueDate: validDateKey(item?.dueDate)
     };
   }
+function normalizeExploration(exploration, projectGoal = '') {
+  return {
+    initialIdea: cleanText(exploration?.initialIdea, 1500),
 
+    problem: cleanText(exploration?.problem, 3000),
+
+    mainQuestion: cleanText(
+      exploration?.mainQuestion,
+      1000
+    ),
+
+    secondaryQuestions: Array.isArray(exploration?.secondaryQuestions)
+      ? exploration.secondaryQuestions
+          .map(item => cleanText(item, 500))
+          .filter(Boolean)
+          .slice(0, 10)
+      : [],
+
+    generalObjective: cleanText(
+      exploration?.generalObjective || projectGoal,
+      1500
+    ),
+
+    specificObjectives: Array.isArray(exploration?.specificObjectives)
+      ? exploration.specificObjectives
+          .map(item => cleanText(item, 500))
+          .filter(Boolean)
+          .slice(0, 10)
+      : [],
+
+    keywords: Array.isArray(exploration?.keywords)
+      ? exploration.keywords
+          .map(item => cleanText(item, 100))
+          .filter(Boolean)
+          .slice(0, 20)
+      : [],
+
+    population: cleanText(exploration?.population, 1000),
+
+    field: cleanText(exploration?.field, 1000),
+
+    geography: cleanText(exploration?.geography, 500),
+
+    period: cleanText(exploration?.period, 500),
+
+    discipline: cleanText(exploration?.discipline, 500),
+
+    scientificInterest: cleanText(
+      exploration?.scientificInterest,
+      2500
+    ),
+
+    practicalInterest: cleanText(
+      exploration?.practicalInterest,
+      2500
+    ),
+
+    limits: cleanText(exploration?.limits, 2500)
+  };
+}
   function normalizeProject(project) {
     const createdAt = validIso(project?.createdAt, nowIso());
     return {
@@ -46,6 +105,10 @@
       name: cleanText(project?.name, 120),
       goal: cleanText(project?.goal, 400),
       stage: STAGES.includes(project?.stage) ? project.stage : 'exploration',
+      exploration: normalizeExploration(
+  project?.exploration,
+  project?.goal
+),
       archived: Boolean(project?.archived),
 archivedAt: Boolean(project?.archived)
   ? validIso(project?.archivedAt, createdAt)
