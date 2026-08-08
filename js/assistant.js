@@ -150,16 +150,35 @@
       t('assistant_notes_generated')
     ];
     const project = {
-      id: id(),
-      name: data.name,
-      goal: data.goal,
-      stage: data.stage,
-      milestones: generatedPlan.milestones,
-      tasks: generatedPlan.tasks,
-      notes: noteParts.join('\n'),
-      createdAt,
-      updatedAt: createdAt
-    };
+  id: id(),
+  name: data.name,
+  goal: data.goal,
+  stage: data.stage,
+
+  exploration: {
+    initialIdea: data.idea,
+    problem: '',
+    mainQuestion: '',
+    secondaryQuestions: [],
+    generalObjective: data.goal,
+    specificObjectives: [],
+    keywords: [],
+    population: '',
+    field: '',
+    geography: '',
+    period: '',
+    discipline: '',
+    scientificInterest: '',
+    practicalInterest: '',
+    limits: ''
+  },
+
+  milestones: generatedPlan.milestones,
+  tasks: generatedPlan.tasks,
+  notes: noteParts.join('\n'),
+  createdAt,
+  updatedAt: createdAt
+};
     const projects = readProjects();
     projects.unshift(project);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
