@@ -283,6 +283,44 @@ function deadlineGroups(view) {
   function renderTasks(view) {
   const container = $('#dashboardTasks');
   const groups = deadlineGroups(view);
+    const nextAction = getNextAction(view);
+
+const nextActionMarkup = nextAction
+  ? `
+    <section class="next-action-card">
+      <div class="next-action-card__label">
+        🎯 ${escapeHtml(
+          t('next_action_label', 'Ma prochaine action')
+        )}
+      </div>
+
+      <strong class="next-action-card__title">
+        ${escapeHtml(nextAction.text)}
+      </strong>
+
+      <span class="next-action-card__project">
+        ${escapeHtml(nextAction.project.name)}
+      </span>
+
+      <div class="next-action-card__meta">
+        <span class="priority-badge priority-${nextAction.priority}">
+          ${escapeHtml(priorityLabel(nextAction.priority))}
+        </span>
+
+        <span class="due-badge due-${taskState(nextAction)}">
+          ${escapeHtml(dueText(nextAction))}
+        </span>
+      </div>
+
+      <a class="secondary-button next-action-card__button"
+         href="projets.html">
+        ${escapeHtml(
+          t('next_action_start', 'Commencer')
+        )}
+      </a>
+    </section>
+  `
+  : '';
 
   const groupConfig = [
     {
@@ -311,20 +349,22 @@ function deadlineGroups(view) {
     .reduce((total, items) => total + items.length, 0);
 
   if (!totalTasks) {
-    container.innerHTML = `
-      <div class="dashboard-panel-empty">
-        ✓ ${escapeHtml(
-          t(
-            'deadline_center_empty',
-            'Aucune échéance à traiter pour le moment.'
-          )
-        )}
-      </div>
-    `;
-    return;
-  }
+  container.innerHTML = `
+    ${nextActionMarkup}
 
-  container.innerHTML = groupConfig.map(group => {
+    <div class="dashboard-panel-empty">
+      ✓ ${escapeHtml(
+        t(
+          'deadline_center_empty',
+          'Aucune échéance à traiter pour le moment.'
+        )
+      )}
+    </div>
+  `;
+  return;
+}
+
+  container.innerHTML = nextActionMarkup + groupConfig.map(group => {
     const items = groups[group.key];
 
     const tasksMarkup = items.length
