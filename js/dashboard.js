@@ -256,12 +256,116 @@ function deadlineGroups(view) {
   };
 }
   function renderTasks(view) {
-    const container = $('#dashboardTasks');
-    const ordered = [...view.tasks].sort((a, b) => urgencyScore(a) - urgencyScore(b)).slice(0, 10);
-    if (!ordered.length) {
-      container.innerHTML = `<div class="dashboard-panel-empty">✓ ${escapeHtml(t('dashboard_no_tasks'))}</div>`;
-      return;
+  const container = $('#dashboardTasks');
+  const groups = deadlineGroups(view);
+
+  const groupConfig = [
+    {
+      key: 'overdue',
+      icon: '🔴',
+      label: t('deadline_group_overdue', 'En retard')
+    },
+    {
+      key: 'today',
+      icon: '🟠',
+      label: t('deadline_group_today', 'Aujourd’hui')
+    },
+    {
+      key: 'week',
+      icon: '🟡',
+      label: t('deadline_group_week', 'Cette semaine')
+    },
+    {
+      key: 'upcoming',
+      icon: '🔵',
+      label: t('deadline_group_upcoming', 'À venir')
     }
+  ];
+
+  const totalTasks = Object.values(groups)
+    .reduce((total, items) => total + items.length, 0);
+
+  if (!totalTasks) {
+    container.innerHTML = `
+      <div class="dashboard-panel-empty">
+        ✓ ${escapeHtml(
+          t(
+            'deadline_center_empty',
+            'Aucune échéance à traiter pour le moment.'
+          )
+        )}
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = groupConfig.map(group => {
+    const items = groups[group.key];
+
+    const tasksMarkup = items.length
+      ? items.map(item => {
+          const state = taskState(item);
+
+          return `
+            <a
+              class="dashboard-task dashboard-task--${state}"
+              href="projets.html"
+            >
+              <span
+                class="dashboard-task__marker"
+                aria-hidden="true"
+              ></span>
+
+              <span class="dashboard-task__body">
+                <strong>${escapeHtml(item.text)}</strong>
+
+                <small>
+                  ${escapeHtml(item.project.name)}
+                </small>
+
+                <span class="task-tags">
+                  <span
+                    class="priority-badge priority-${item.priority}"
+                  >
+                    ${escapeHtml(priorityLabel(item.priority))}
+                  </span>
+
+                  <span class="due-badge due-${state}">
+                    ${escapeHtml(dueText(item))}
+                  </span>
+                </span>
+              </span>
+            </a>
+          `;
+        }).join('')
+      : `
+        <div class="deadline-group-empty">
+          ${escapeHtml(
+            t('deadline_group_empty', 'Aucune tâche')
+          )}
+        </div>
+      `;
+
+    return `
+      <section class="deadline-group deadline-group--${group.key}">
+        <div class="deadline-group__heading">
+          <h3>
+            ${group.icon}
+            ${escapeHtml(group.label)}
+          </h3>
+
+          <span class="deadline-group__count">
+            ${items.length}
+          </span>
+        </div>
+
+        <div class="deadline-group__tasks">
+          ${tasksMarkup}
+        </div>
+      </section>
+    `;
+  }).join('');
+}
     container.innerHTML = ordered.map(item => {
       const state = taskState(item);
       return `<a class="dashboard-task dashboard-task--${state}" href="projets.html">
