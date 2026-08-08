@@ -245,3 +245,33 @@ html[dir=rtl] .launch-trust-strip>div+div{border-right:1px solid var(--border);b
     width: 100%;
   }
 }
+/* === v1.1 — Mise en évidence du projet ciblé === */
+
+.project-card--focused {
+  position: relative;
+  border-color: rgba(56, 189, 248, 0.85) !important;
+  box-shadow:
+    0 0 0 2px rgba(56, 189, 248, 0.18),
+    0 0 32px rgba(56, 189, 248, 0.22);
+  transform: translateY(-2px);
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    transform 0.35s ease;
+}
+
+.project-card--focused::before {
+  content: "🎯";
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  font-size: 1rem;
+}
