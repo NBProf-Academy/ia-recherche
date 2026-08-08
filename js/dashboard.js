@@ -232,7 +232,29 @@
     if (task.dueDate) return `${t('due_on')} ${formatDate(task.dueDate)}`;
     return t('dashboard_no_deadline');
   }
+function deadlineGroups(view) {
+  const pendingWithDeadline = view.tasks
+    .filter(item => !item.done && item.dueDate)
+    .sort((a, b) => urgencyScore(a) - urgencyScore(b));
 
+  return {
+    overdue: pendingWithDeadline.filter(
+      item => taskState(item) === 'overdue'
+    ),
+
+    today: pendingWithDeadline.filter(
+      item => taskState(item) === 'today'
+    ),
+
+    week: pendingWithDeadline.filter(
+      item => taskState(item) === 'soon'
+    ),
+
+    upcoming: pendingWithDeadline.filter(
+      item => taskState(item) === 'scheduled'
+    )
+  };
+}
   function renderTasks(view) {
     const container = $('#dashboardTasks');
     const ordered = [...view.tasks].sort((a, b) => urgencyScore(a) - urgencyScore(b)).slice(0, 10);
