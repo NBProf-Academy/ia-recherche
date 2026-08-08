@@ -273,7 +273,23 @@ function archiveProject(projectId) {
   ) {
     return;
   }
-  function restoreArchivedProject(projectId) {
+
+  project.archived = true;
+  project.archivedAt = nowIso();
+
+  touch(project);
+  saveProjects();
+  render();
+
+  toast(
+    t(
+      'project_archived',
+      'Projet archivé avec succès.'
+    )
+  );
+}
+
+function restoreArchivedProject(projectId) {
   const project = projectById(projectId);
   if (!project) return;
 
@@ -320,7 +336,7 @@ function archiveProject(projectId) {
 
         <div class="project-card__actions">
           <button
-            class="restore-project"
+            class="edit-project restore-project"
             data-action="restore-project"
             data-project="${project.id}"
           >
