@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="fr" data-base-path="../">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#03040a">
+
+  <title>Exploration du sujet — NBProf Research Hub</title>
+
+  <link rel="icon" href="../images/favicon-32.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="../css/style-v2.css">
+
+  <script src="../js/i18n.js" defer></script>
+</head>
+
+<body>
+
+  <div class="bg" aria-hidden="true"></div>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <header class="app-header">
+
+    <a href="../index.html" class="brand">
+      <img
+        src="../icon-192.png"
+        alt="Logo NBProf Research Hub"
+        class="brand-logo"
+      >
+
+      <div class="brand-text">
+        <strong>NBProf Research Hub</strong>
+        <span>De l’idée à la soutenance</span>
+      </div>
+    </a>
+
+    <div class="header-actions">
+
+      <a
+        href="dashboard.html"
+        class="header-button"
+      >
+        Tableau de bord
+      </a>
+
+      <a
+        href="projets.html"
+        class="header-button"
+      >
+        Mes projets
+      </a>
+
+      <div class="language-switcher">
+
+        <button
+          type="button"
+          class="header-button language-button"
+          id="languageButton"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="languageMenu"
+        >
+          <span aria-hidden="true">🌍</span>
+          <span id="currentLanguageLabel">Français</span>
+          <span aria-hidden="true">▾</span>
+        </button>
+
+        <div
+          class="language-menu"
+          id="languageMenu"
+          role="menu"
+          hidden
+        >
+          <button
+            type="button"
+            class="language-option active"
+            data-lang="fr"
+            role="menuitem"
+          >
+            🇫🇷 Français
+          </button>
+
+          <button
+            type="button"
+            class="language-option"
+            data-lang="en"
+            role="menuitem"
+          >
+            🇬🇧 English
+          </button>
+
+          <button
+            type="button"
+            class="language-option"
+            data-lang="ar"
+            role="menuitem"
+          >
+            🇲🇦 العربية
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+
+  <main class="projects-main exploration-main">
+
+    <section class="projects-hero">
+
+      <div>
+        <span class="section-kicker">
+          🔎 Cadrage scientifique
+        </span>
+
+        <h1>
+          Exploration du sujet
+        </h1>
+
+        <p>
+          Clarifiez votre sujet, votre problématique et vos objectifs
+          avant de passer à la revue de littérature.
+        </p>
+      </div>
+
+      <a
+        class="secondary-button"
+        id="backToProject"
+        href="projets.html"
+      >
+        ← Retour au projet
+      </a>
+
+    </section>
+
+
+    <section class="exploration-project-header">
+
+      <span class="section-kicker">
+        Projet sélectionné
+      </span>
+
+      <h2 id="explorationProjectName">
+        Chargement du projet…
+      </h2>
+
+      <p id="explorationProjectGoal"></p>
+
+    </section>
+
+
+    <form id="explorationForm" class="exploration-form">
+
+      <section class="exploration-section">
+
+        <div class="exploration-section__heading">
+          <span>01</span>
+          <div>
+            <h2>Point de départ</h2>
+            <p>
+              Formalisez l’idée à l’origine de votre recherche.
+            </p>
+          </div>
+        </div>
+
+        <label>
+          <span>Idée initiale</span>
+
+          <textarea
+            id="explorationInitialIdea"
+            rows="5"
+            maxlength="1500"
+            placeholder="Quelle est l’idée initiale de cette recherche ?"
+          ></textarea>
+        </label>
+
+        <label>
+          <span>Discipline / domaine</span>
+
+          <input
+            id="explorationDiscipline"
+            maxlength="500"
+            placeholder="Ex. Management stratégique, sciences de l’éducation…"
+          >
+        </label>
+
+      </section>
+
+
+      <section class="exploration-section">
+
+        <div class="exploration-section__heading">
+          <span>02</span>
+
+          <div>
+            <h2>Problématique</h2>
+            <p>
+              Décrivez précisément le problème scientifique ou pratique.
+            </p>
+          </div>
+        </div>
+
+        <label>
+          <span>Problématique</span>
+
+          <textarea
+            id="explorationProblem"
+            rows="7"
+            maxlength="3000"
+            placeholder="Quel problème votre recherche cherche-t-elle à comprendre ou résoudre ?"
+          ></textarea>
+        </label>
+
+        <label>
+          <span>Question principale de recherche</span>
+
+          <textarea
+            id="explorationMainQuestion"
+            rows="3"
+            maxlength="1000"
+            placeholder="Ex. Dans quelle mesure… ?"
+          ></textarea>
+        </label>
+
+        <label>
+          <span>Questions secondaires</span>
+
+          <textarea
+            id="explorationSecondaryQuestions"
+            rows="5"
+            placeholder="Une question par ligne"
+          ></textarea>
+
+          <small class="field-help">
+            Vous pourrez saisir jusqu’à 10 questions secondaires.
+          </small>
+        </label>
+
+      </section>
+
+
+      <section class="exploration-section">
+
+        <div class="exploration-section__heading">
+          <span>03</span>
+
+          <div>
+            <h2>Objectifs</h2>
+            <p>
+              Définissez ce que la recherche doit permettre d’atteindre.
+            </p>
+          </div>
+        </div>
+
+        <label>
+          <span>Objectif général</span>
+
+          <textarea
+            id="explorationGeneralObjective"
+            rows="4"
+            maxlength="1500"
+            placeholder="Quel est l’objectif principal de votre recherche ?"
+          ></textarea>
+        </label>
+
+        <label>
+          <span>Objectifs spécifiques</span>
+
+          <textarea
+            id="explorationSpecificObjectives"
+            rows="5"
+            placeholder="Un objectif par ligne"
+          ></textarea>
+        </label>
+
+      </section>
+
+
+      <section class="exploration-section">
+
+        <div class="exploration-section__heading">
+          <span>04</span>
+
+          <div>
+            <h2>Délimitation du sujet</h2>
+            <p>
+              Précisez le terrain et les frontières de votre étude.
+            </p>
+          </div>
+        </div>
+
+        <label>
+          <span>Mots-clés</span>
+
+          <input
+            id="explorationKeywords"
+            placeholder="IA, audit, gouvernance, performance…"
+          >
+
+          <small class="field-help">
+            Séparez les mots-clés par des virgules.
+          </small>
+        </label>
+
+        <label>
+          <span>Population étudiée</span>
+
+          <textarea
+            id="explorationPopulation"
+            rows="3"
+            maxlength="1000"
+            placeholder="Qui est concerné par l’étude ?"
+          ></textarea>
+        </label>
+
+        <label>
+          <span>Terrain / contexte</span>
+
+          <textarea
+            id="explorationField"
+            rows="3"
+            maxlength="1000"
+            placeholder="Établissements, entreprises, administrations, universités…"
+          ></textarea>
+        </label>
+
+        <label>
+          <span>Périmètre géographique</span>
+
+          <input
+            id="explorationGeography"
+            maxlength="500"
+            placeholder="Ex. Maroc, région Marrakech-Safi…"
+          >
+        </label>
+
+        <label>
+          <span>Période étudiée</span>
+
+          <input
+            id="explorationPeriod"
+            maxlength="500"
+            placeholder="Ex. 2024–2026"
+          >
+        </label>
+
+      </section>
+
+
+      <section class="exploration-section">
+
+        <div class="exploration-section__heading">
+          <span>05</span>
+
+          <div>
+            <h2>Pertinence de la recherche</h2>
+            <p>
+              Expliquez pourquoi cette recherche mérite d’être menée.
+            </p>
+          </div>
+        </div>
+
+        <label>
+          <span>Intérêt scientifique</span>
+
+          <textarea
+            id="explorationScientificInterest"
+            rows="5"
+            maxlength="2500"
+            placeholder="Quelle contribution scientifique cette recherche peut-elle apporter ?"
+          ></textarea>
+        </label>
+
+        <label>
+          <span>Intérêt pratique / managérial</span>
+
+          <textarea
+            id="explorationPracticalInterest"
+            rows="5"
+            maxlength="2500"
+            placeholder="Quelle utilité concrète cette recherche peut-elle avoir ?"
+          ></textarea>
+        </label>
+
+        <label>
+          <span>Limites et contraintes du sujet</span>
+
+          <textarea
+            id="explorationLimits"
+            rows="5"
+            maxlength="2500"
+            placeholder="Accès aux données, population, temps, périmètre…"
+          ></textarea>
+        </label>
+
+      </section>
+
+
+      <section class="exploration-save-area">
+
+        <div>
+          <strong>
+            Vos données restent enregistrées localement.
+          </strong>
+
+          <p>
+            Elles seront intégrées au projet sélectionné.
+          </p>
+        </div>
+
+        <button
+          class="primary-button"
+          type="submit"
+          id="explorationSaveButton"
+        >
+          Enregistrer l’exploration
+        </button>
+
+      </section>
+
+    </form>
+
+  </main>
+
+
+  <div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+  ></div>
+
+</body>
+</html>
