@@ -312,8 +312,10 @@ const nextActionMarkup = nextAction
         </span>
       </div>
 
-      <a class="secondary-button next-action-card__button"
-         href="projets.html">
+      <a
+  class="secondary-button next-action-card__button"
+  href="projets.html?project=${encodeURIComponent(nextAction.project.id)}"
+>
         ${escapeHtml(
           t('next_action_start', 'Commencer')
         )}
