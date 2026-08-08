@@ -380,6 +380,81 @@ function createSafetyBackup() {
 
   return safetyBackup;
 }
+  function restoreSafetyBackup() {
+  try {
+    const raw = localStorage.getItem(`${STORAGE_KEY}-safety-backup`);
+
+    if (!raw) {
+      toast(
+        t(
+          'safety_backup_missing',
+          'Aucune sauvegarde de sécurité disponible.'
+        )
+      );
+      return;
+    }
+
+    const payload = JSON.parse(raw);
+    const restored = normalizeImportedProjects(payload);
+
+    if (!restored.length) {
+      toast(
+        t(
+          'safety_backup_empty',
+          'La sauvegarde de sécurité est vide.'
+        )
+      );
+      return;
+    }
+
+    if (
+      !confirm(
+        t(
+          'restore_safety_confirm',
+          'Restaurer la sauvegarde de sécurité ? Les données actuelles seront remplacées.'
+        )
+      )
+    ) {
+      return;
+    }
+
+    // Conserver également l’état actuel avant la restauration.
+    const currentStateBackup = {
+      app: 'NBProf Research Hub',
+      backupType: 'before-safety-restore',
+      schemaVersion: 1,
+      appVersion: '1.1.0',
+      createdAt: nowIso(),
+      projectCount: projects.length,
+      projects: JSON.parse(JSON.stringify(projects))
+    };
+
+    localStorage.setItem(
+      `${STORAGE_KEY}-before-safety-restore`,
+      JSON.stringify(currentStateBackup)
+    );
+
+    projects = restored;
+    saveProjects();
+    render();
+
+    toast(
+      t(
+        'safety_restore_success',
+        'Sauvegarde de sécurité restaurée avec succès.'
+      )
+    );
+  } catch (error) {
+    console.error('NBProf safety restore error:', error);
+
+    toast(
+      t(
+        'safety_restore_failed',
+        'Impossible de restaurer la sauvegarde de sécurité.'
+      )
+    );
+  }
+}
   async function importProjects(file) {
     if (!file) return;
     try {
@@ -459,7 +534,21 @@ projects = imported;
     exportButton.dataset.action = 'export';
     exportButton.dataset.i18n = 'export_projects';
     exportButton.textContent = t('export_projects');
-    actionGroup.append(importButton, exportButton, importInput);
+    const restoreSafetyButton = document.createElement('button');
+
+restoreSafetyButton.className = 'secondary-button restore-safety-button';
+restoreSafetyButton.type = 'button';
+restoreSafetyButton.dataset.action = 'restore-safety';
+restoreSafetyButton.textContent = t(
+  'restore_safety_backup',
+  'Restaurer la sauvegarde de sécurité'
+);
+    actionGroup.append(
+  importButton,
+  exportButton,
+  restoreSafetyButton,
+  importInput
+);
 
     newProjectButton.addEventListener('click', () => openProjectDialog());
     $('#closeDialog').addEventListener('click', closeProjectDialog);
@@ -483,6 +572,9 @@ projects = imported;
       if (target.dataset.action === 'edit-task') openTaskDialog(target.dataset.project, target.dataset.item);
       if (target.dataset.action === 'import') $('#importProjectsInput')?.click();
       if (target.dataset.action === 'export') exportProjects();
+      if (target.dataset.action === 'restore-safety') {
+  restoreSafetyBackup();
+}
       if (target.dataset.action === 'delete-project' && confirm(t('delete_project_confirm'))) {
         projects = projects.filter(project => project.id !== target.dataset.project);
         saveProjects();
