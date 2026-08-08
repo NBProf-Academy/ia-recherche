@@ -359,7 +359,27 @@
 
   toast(t('export_ready'));
 }
+function createSafetyBackup() {
+  if (!projects.length) return null;
 
+  const safetyBackup = {
+    app: 'NBProf Research Hub',
+    backupType: 'pre-restore-safety-backup',
+    schemaVersion: 1,
+    appVersion: '1.1.0',
+    createdAt: nowIso(),
+    sourceStorageKey: STORAGE_KEY,
+    projectCount: projects.length,
+    projects: JSON.parse(JSON.stringify(projects))
+  };
+
+  localStorage.setItem(
+    `${STORAGE_KEY}-safety-backup`,
+    JSON.stringify(safetyBackup)
+  );
+
+  return safetyBackup;
+}
   async function importProjects(file) {
     if (!file) return;
     try {
@@ -367,8 +387,24 @@
       const payload = JSON.parse(await file.text());
       const imported = normalizeImportedProjects(payload);
       if (!imported.length) { toast(t('import_empty')); return; }
-      if (projects.length && !confirm(t('import_confirm'))) return;
-      projects = imported;
+      if (projects.length) {
+  if (!confirm(t('import_confirm'))) return;
+
+  try {
+    createSafetyBackup();
+  } catch (error) {
+    console.error('NBProf safety backup error:', error);
+    toast(
+      t(
+        'safety_backup_failed',
+        'Impossible de créer la sauvegarde de sécurité. Importation annulée.'
+      )
+    );
+    return;
+  }
+}
+
+projects = imported;
       saveProjects();
       render();
       toast(t('import_success').replace('{count}', String(imported.length)));
