@@ -329,14 +329,36 @@
   }
 
   function exportProjects() {
-    const blob = new Blob([JSON.stringify({ exportedAt: nowIso(), version: '1.0.0', projects }, null, 2)], { type: 'application/json' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `nbprof-projets-${new Date().toISOString().slice(0, 10)}.json`;
-    link.click();
-    URL.revokeObjectURL(link.href);
-    toast(t('export_ready'));
-  }
+  const backup = {
+    app: 'NBProf Research Hub',
+    backupType: 'research-hub-backup',
+    schemaVersion: 1,
+    appVersion: '1.1.0',
+    exportedAt: nowIso(),
+    storageKey: STORAGE_KEY,
+    projectCount: projects.length,
+    projects
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(backup, null, 2)],
+    { type: 'application/json' }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = `NBProf-Research-Backup-${new Date().toISOString().slice(0, 10)}.json`;
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+
+  toast(t('export_ready'));
+}
 
   async function importProjects(file) {
     if (!file) return;
