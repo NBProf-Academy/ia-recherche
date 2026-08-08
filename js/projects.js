@@ -273,6 +273,24 @@ function archiveProject(projectId) {
   ) {
     return;
   }
+  function restoreArchivedProject(projectId) {
+  const project = projectById(projectId);
+  if (!project) return;
+
+  project.archived = false;
+  project.archivedAt = '';
+
+  touch(project);
+  saveProjects();
+  render();
+
+  toast(
+    t(
+      'project_restored',
+      'Projet restauré avec succès.'
+    )
+  );
+}
 
   project.archived = true;
   project.archivedAt = nowIso();
@@ -288,6 +306,44 @@ function archiveProject(projectId) {
     )
   );
 }
+  function archivedProjectCard(project) {
+  return `
+    <article class="project-card archived-project-card">
+      <div class="project-card__top">
+        <div>
+          <span class="project-stage">
+            📦 ${escapeHtml(t('archived_project', 'Projet archivé'))}
+          </span>
+
+          <h2>${escapeHtml(project.name)}</h2>
+        </div>
+
+        <div class="project-card__actions">
+          <button
+            class="restore-project"
+            data-action="restore-project"
+            data-project="${project.id}"
+          >
+            ${escapeHtml(t('restore_project', 'Restaurer'))}
+          </button>
+        </div>
+      </div>
+
+      <p class="project-goal">
+        ${escapeHtml(project.goal || '—')}
+      </p>
+
+      <div class="project-meta">
+        <span>
+          <strong>
+            ${escapeHtml(t('archived_on', 'Archivé le'))}
+          </strong>
+          ${escapeHtml(formatDate(project.archivedAt))}
+        </span>
+      </div>
+    </article>
+  `;
+}
   function render() {
   const container = $('#projectsContainer');
 
@@ -295,9 +351,37 @@ function archiveProject(projectId) {
     project => !project.archived
   );
 
-  container.innerHTML = activeProjects.length
+  const archivedProjects = projects.filter(
+    project => project.archived
+  );
+
+  const activeMarkup = activeProjects.length
     ? activeProjects.map(card).join('')
     : emptyState();
+
+  const archivedMarkup = archivedProjects.length
+    ? `
+      <section class="archived-projects-section">
+        <div class="archived-projects-heading">
+          <h2>
+            📦 ${escapeHtml(
+              t('archived_projects', 'Projets archivés')
+            )}
+          </h2>
+
+          <span class="archived-projects-count">
+            ${archivedProjects.length}
+          </span>
+        </div>
+
+        <div class="archived-projects-list">
+          ${archivedProjects.map(archivedProjectCard).join('')}
+        </div>
+      </section>
+    `
+    : '';
+
+  container.innerHTML = activeMarkup + archivedMarkup;
 }
 
   function updateProjectDialogMode() {
@@ -686,6 +770,9 @@ restoreSafetyButton.textContent = t(
       if (target.dataset.action === 'edit-project') openProjectDialog(target.dataset.project);
       if (target.dataset.action === 'archive-project') {
   archiveProject(target.dataset.project);
+}
+      if (target.dataset.action === 'restore-project') {
+  restoreArchivedProject(target.dataset.project);
 }
       if (target.dataset.action === 'add-task') openTaskDialog(target.dataset.project);
       if (target.dataset.action === 'edit-task') openTaskDialog(target.dataset.project, target.dataset.item);
