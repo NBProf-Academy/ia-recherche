@@ -232,6 +232,13 @@ function saveProjects() {
         <div><span class="project-stage">${escapeHtml(stageLabel(project.stage))}</span><h2>${escapeHtml(project.name)}</h2></div>
         <div class="project-card__actions">
           <button class="edit-project" data-action="edit-project" data-project="${project.id}">${escapeHtml(t('edit_project'))}</button>
+          <button
+  class="archive-project"
+  data-action="archive-project"
+  data-project="${project.id}"
+>
+  ${escapeHtml(t('archive_project', 'Archiver'))}
+</button>
           <button class="delete-project" data-action="delete-project" data-project="${project.id}">${escapeHtml(t('delete_project'))}</button>
         </div>
       </div>
@@ -252,11 +259,46 @@ function saveProjects() {
       <section class="notes-section"><h3>${escapeHtml(t('research_notes'))}</h3><textarea data-action="notes" data-project="${project.id}" rows="4" placeholder="${escapeHtml(t('notes_placeholder'))}">${escapeHtml(project.notes || '')}</textarea></section>
     </article>`;
   }
+function archiveProject(projectId) {
+  const project = projectById(projectId);
+  if (!project) return;
 
-  function render() {
-    const container = $('#projectsContainer');
-    container.innerHTML = projects.length ? projects.map(card).join('') : emptyState();
+  if (
+    !confirm(
+      t(
+        'archive_project_confirm',
+        'Archiver ce projet ? Vous pourrez le restaurer ultérieurement.'
+      )
+    )
+  ) {
+    return;
   }
+
+  project.archived = true;
+  project.archivedAt = nowIso();
+
+  touch(project);
+  saveProjects();
+  render();
+
+  toast(
+    t(
+      'project_archived',
+      'Projet archivé avec succès.'
+    )
+  );
+}
+  function render() {
+  const container = $('#projectsContainer');
+
+  const activeProjects = projects.filter(
+    project => !project.archived
+  );
+
+  container.innerHTML = activeProjects.length
+    ? activeProjects.map(card).join('')
+    : emptyState();
+}
 
   function updateProjectDialogMode() {
     const isEditing = Boolean(editingProjectId);
@@ -642,6 +684,9 @@ restoreSafetyButton.textContent = t(
       if (!target) return;
       if (target.dataset.action === 'create') openProjectDialog();
       if (target.dataset.action === 'edit-project') openProjectDialog(target.dataset.project);
+      if (target.dataset.action === 'archive-project') {
+  archiveProject(target.dataset.project);
+}
       if (target.dataset.action === 'add-task') openTaskDialog(target.dataset.project);
       if (target.dataset.action === 'edit-task') openTaskDialog(target.dataset.project, target.dataset.item);
       if (target.dataset.action === 'import') $('#importProjectsInput')?.click();
