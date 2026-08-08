@@ -233,6 +233,13 @@ function saveProjects() {
         <div class="project-card__actions">
           <button class="edit-project" data-action="edit-project" data-project="${project.id}">${escapeHtml(t('edit_project'))}</button>
           <button
+  class="edit-project duplicate-project"
+  data-action="duplicate-project"
+  data-project="${project.id}"
+>
+  ${escapeHtml(t('duplicate_project', 'Dupliquer'))}
+</button>
+          <button
   class="edit-project archive-project"
   data-action="archive-project"
   data-project="${project.id}"
@@ -259,6 +266,51 @@ function saveProjects() {
       <section class="notes-section"><h3>${escapeHtml(t('research_notes'))}</h3><textarea data-action="notes" data-project="${project.id}" rows="4" placeholder="${escapeHtml(t('notes_placeholder'))}">${escapeHtml(project.notes || '')}</textarea></section>
     </article>`;
   }
+  function duplicateProject(projectId) {
+  const source = projectById(projectId);
+  if (!source) return;
+
+  const createdAt = nowIso();
+
+  const duplicate = {
+    ...JSON.parse(JSON.stringify(source)),
+
+    id: id(),
+
+    name: cleanText(
+      `${source.name} — Copie`,
+      120
+    ),
+
+    archived: false,
+    archivedAt: '',
+
+    milestones: source.milestones.map(item => ({
+      ...item,
+      id: id()
+    })),
+
+    tasks: source.tasks.map(task => ({
+      ...task,
+      id: id()
+    })),
+
+    createdAt,
+    updatedAt: createdAt
+  };
+
+  projects.unshift(duplicate);
+
+  saveProjects();
+  render();
+
+  toast(
+    t(
+      'project_duplicated',
+      'Projet dupliqué avec succès.'
+    )
+  );
+}
 function archiveProject(projectId) {
   const project = projectById(projectId);
   if (!project) return;
@@ -770,6 +822,9 @@ restoreSafetyButton.textContent = t(
       if (!target) return;
       if (target.dataset.action === 'create') openProjectDialog();
       if (target.dataset.action === 'edit-project') openProjectDialog(target.dataset.project);
+      if (target.dataset.action === 'duplicate-project') {
+  duplicateProject(target.dataset.project);
+}
       if (target.dataset.action === 'archive-project') {
   archiveProject(target.dataset.project);
 }
