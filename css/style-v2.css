@@ -95,3 +95,88 @@ html[dir=rtl] .launch-trust-strip>div+div{border-right:1px solid var(--border);b
     text-align: center;
   }
 }
+/* === v1.1 — Centre des échéances === */
+
+.deadline-group {
+  margin-bottom: 18px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.38);
+}
+
+.deadline-group:last-child {
+  margin-bottom: 0;
+}
+
+.deadline-group__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.deadline-group__heading h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.deadline-group__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.deadline-group__tasks {
+  display: grid;
+  gap: 10px;
+}
+
+.deadline-group-empty {
+  padding: 10px 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* En retard */
+.deadline-group--overdue {
+  border-color: rgba(251, 113, 133, 0.28);
+}
+
+/* Aujourd’hui */
+.deadline-group--today {
+  border-color: rgba(251, 146, 60, 0.28);
+}
+
+/* Cette semaine */
+.deadline-group--week {
+  border-color: rgba(250, 204, 21, 0.25);
+}
+
+/* À venir */
+.deadline-group--upcoming {
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+@media (max-width: 700px) {
+  .deadline-group {
+    padding: 12px;
+    border-radius: 15px;
+  }
+
+  .deadline-group__heading h3 {
+    font-size: 0.88rem;
+  }
+}
