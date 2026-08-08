@@ -564,7 +564,7 @@ saveStatus.className = 'local-save-status';
 saveStatus.setAttribute('role', 'status');
 saveStatus.setAttribute('aria-live', 'polite');
 
-hero.append(saveStatus);
+actionGroup.append(saveStatus);
 
 setSaveStatus('saved');
 
