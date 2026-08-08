@@ -46,6 +46,10 @@
       name: cleanText(project?.name, 120),
       goal: cleanText(project?.goal, 400),
       stage: STAGES.includes(project?.stage) ? project.stage : 'exploration',
+      archived: Boolean(project?.archived),
+archivedAt: Boolean(project?.archived)
+  ? validIso(project?.archivedAt, createdAt)
+  : '',
       milestones: Array.isArray(project?.milestones)
         ? project.milestones.map(item => ({ id: cleanText(item?.id, 80) || id(), text: cleanText(item?.text, 160) })).filter(item => item.text)
         : [],
@@ -302,7 +306,19 @@ function saveProjects() {
       return;
     }
     const createdAt = nowIso();
-    projects.unshift({ id: id(), name, goal: $('#projectGoal').value.trim(), stage: $('#projectStage').value, milestones: [], tasks: [], notes: '', createdAt, updatedAt: createdAt });
+    projects.unshift({
+  id: id(),
+  name,
+  goal: $('#projectGoal').value.trim(),
+  stage: $('#projectStage').value,
+  archived: false,
+  archivedAt: '',
+  milestones: [],
+  tasks: [],
+  notes: '',
+  createdAt,
+  updatedAt: createdAt
+});
     saveProjects();
     closeProjectDialog();
     render();
