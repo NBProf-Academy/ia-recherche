@@ -65,3 +65,33 @@ html[dir=rtl] .launch-trust-strip>div+div{border-right:1px solid var(--border);b
 @media(max-width:1120px){.launch-hero{grid-template-columns:1fr;min-height:0}.launch-hero__copy{justify-items:center;text-align:center}.launch-hero__copy>p{margin:auto}.launch-cta-row{justify-content:center}.launch-proof{max-width:760px}.launch-hero__visual{width:min(960px,100%);margin:auto}.launch-feature-card--wide{grid-template-columns:1fr}.launch-privacy-section{grid-template-columns:auto 1fr}.launch-privacy-points{grid-column:2}.launch-final-cta{align-items:flex-start;flex-direction:column}.launch-final-actions{justify-content:flex-start}}
 @media(max-width:860px){.launch-main{width:min(100% - 30px,1420px);padding-top:34px}.launch-trust-strip{grid-template-columns:1fr}.launch-trust-strip>div+div{border-top:1px solid var(--border);border-left:0}.launch-shift-grid{grid-template-columns:1fr 1fr}.launch-feature-grid{grid-template-columns:1fr}.launch-feature-card--wide{grid-column:auto}.launch-flow{grid-template-columns:1fr}.launch-flow>i{display:none}.launch-audience{grid-template-columns:1fr;padding:30px}.launch-privacy-section{grid-template-columns:1fr}.launch-privacy-points{grid-column:auto}.launch-floating-badge{display:none}}
 @media(max-width:620px){.launch-page .brand-text{display:none}.launch-open-app{width:42px;min-height:42px;padding:0;font-size:0}.launch-open-app::before{content:"↗";font-size:1.1rem}.launch-hero{gap:20px;padding-top:25px}.launch-hero h1{font-size:clamp(2.7rem,14vw,4.2rem)}.launch-proof{grid-template-columns:1fr 1fr}.launch-shift-grid{grid-template-columns:1fr}.launch-audience__cards{grid-template-columns:1fr}.launch-final-cta{padding:30px}.launch-final-actions{width:100%;display:grid}.launch-final-actions>*{width:100%}.launch-browser-card{border-radius:15px}}
+/* === v1.1 — Statut de sauvegarde locale === */
+
+.local-save-status {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 28px;
+  margin-top: 4px;
+  color: #a7f3d0;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  opacity: 0.92;
+}
+
+.local-save-status[data-state="saving"] {
+  color: #fde68a;
+}
+
+@media (max-width: 700px) {
+  .local-save-status {
+    justify-content: center;
+    margin-top: 6px;
+    white-space: normal;
+    text-align: center;
+  }
+}
