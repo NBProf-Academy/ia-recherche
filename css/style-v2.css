@@ -180,3 +180,68 @@ html[dir=rtl] .launch-trust-strip>div+div{border-right:1px solid var(--border);b
     font-size: 0.88rem;
   }
 }
+/* === v1.1 — Ma prochaine action === */
+
+.next-action-card {
+  margin-bottom: 20px;
+  padding: 18px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(14, 165, 233, 0.10),
+      rgba(139, 92, 246, 0.10)
+    );
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.next-action-card__label {
+  margin-bottom: 10px;
+  color: #38bdf8;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.next-action-card__title {
+  display: block;
+  margin-bottom: 6px;
+  color: #f8fafc;
+  font-size: 1.08rem;
+  line-height: 1.35;
+}
+
+.next-action-card__project {
+  display: block;
+  margin-bottom: 12px;
+  color: #94a3b8;
+  font-size: 0.84rem;
+}
+
+.next-action-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.next-action-card__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  text-decoration: none;
+}
+
+@media (max-width: 700px) {
+  .next-action-card {
+    padding: 15px;
+  }
+
+  .next-action-card__button {
+    width: 100%;
+  }
+}
