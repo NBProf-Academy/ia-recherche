@@ -223,6 +223,31 @@
     if (item.dueDate) return remaining ?? 999;
     return item.priority === 'medium' ? 1500 : 2000;
   }
+  function getNextAction(view) {
+  const pendingTasks = view.tasks.filter(
+    item => !item.done
+  );
+
+  if (!pendingTasks.length) return null;
+
+  return [...pendingTasks].sort((a, b) => {
+    const urgencyDifference =
+      urgencyScore(a) - urgencyScore(b);
+
+    if (urgencyDifference !== 0) {
+      return urgencyDifference;
+    }
+
+    if (a.dueDate && b.dueDate) {
+      return a.dueDate.localeCompare(b.dueDate);
+    }
+
+    if (a.dueDate) return -1;
+    if (b.dueDate) return 1;
+
+    return a.text.localeCompare(b.text);
+  })[0];
+}
 
   function dueText(task) {
     const state = taskState(task);
