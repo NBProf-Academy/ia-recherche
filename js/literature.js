@@ -169,7 +169,7 @@ function matchesLiteratureSearch(reference) {
     const matrix = $('#literatureMatrix');
     const body = $('#literatureTableBody');
 
-    iif (count) {
+    if (count) {
   count.textContent = String(allItems.length);
 }
 
