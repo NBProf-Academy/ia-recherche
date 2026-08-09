@@ -29,6 +29,7 @@
   let projects = [];
   let currentProject = null;
   let editingReferenceId = null;
+  let literatureSearchQuery = '';
 
 
   function readProjects() {
@@ -133,18 +134,44 @@
     return `${text.slice(0, maxLength).trim()}…`;
   }
 
+function matchesLiteratureSearch(reference) {
+  const query = cleanText(
+    literatureSearchQuery,
+    200
+  ).toLowerCase();
 
+  if (!query) return true;
+
+  const searchableContent = [
+    reference.authors,
+    reference.title,
+    reference.source,
+    reference.methodology,
+    ...(Array.isArray(reference.keywords)
+      ? reference.keywords
+      : [])
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+  return searchableContent.includes(query);
+}
   function renderReferences() {
-    const items = references();
+  const allItems = references();
+
+  const items = allItems.filter(
+    matchesLiteratureSearch
+  );
 
     const count = $('#literatureReferenceCount');
     const empty = $('#literatureEmpty');
     const matrix = $('#literatureMatrix');
     const body = $('#literatureTableBody');
 
-    if (count) {
-      count.textContent = String(items.length);
-    }
+    iif (count) {
+  count.textContent = String(allItems.length);
+}
 
     if (!items.length) {
       if (empty) empty.hidden = false;
