@@ -294,6 +294,12 @@ function saveProjects() {
       <div class="project-card__top">
         <div><span class="project-stage">${escapeHtml(stageLabel(project.stage))}</span><h2>${escapeHtml(project.name)}</h2></div>
         <div class="project-card__actions">
+        <a
+  class="edit-project exploration-project"
+  href="exploration.html?project=${encodeURIComponent(project.id)}"
+>
+  🔎 Explorer le sujet
+</a>
           <button class="edit-project" data-action="edit-project" data-project="${project.id}">${escapeHtml(t('edit_project'))}</button>
           <button
   class="edit-project duplicate-project"
