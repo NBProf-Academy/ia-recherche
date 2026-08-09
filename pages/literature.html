@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr" data-base-path="../">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#03040a">
+
+  <title>
+    Revue de littérature — NBProf Research Hub
+  </title>
+
+  <link
+    rel="icon"
+    href="../images/favicon-32.png"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../css/style-v2.css"
+  >
+
+  <script
+    src="../js/i18n.js"
+    defer
+  ></script>
+</head>
+
+
+<body>
+
+  <div
+    class="bg"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="grid-bg"
+    aria-hidden="true"
+  ></div>
+
+
+  <header class="app-header">
+
+    <a
+      href="../index.html"
+      class="brand"
+    >
+
+      <img
+        src="../icon-192.png"
+        alt="Logo NBProf Research Hub"
+        class="brand-logo"
+      >
+
+      <div class="brand-text">
+        <strong>
+          NBProf Research Hub
+        </strong>
+
+        <span>
+          De l’idée à la soutenance
+        </span>
+      </div>
+
+    </a>
+
+
+    <div class="header-actions">
+
+      <a
+        href="dashboard.html"
+        class="header-button"
+      >
+        Tableau de bord
+      </a>
+
+      <a
+        href="projets.html"
+        class="header-button"
+      >
+        Mes projets
+      </a>
+
+
+      <div class="language-switcher">
+
+        <button
+          type="button"
+          class="header-button language-button"
+          id="languageButton"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="languageMenu"
+        >
+          <span aria-hidden="true">
+            🌍
+          </span>
+
+          <span id="currentLanguageLabel">
+            Français
+          </span>
+
+          <span aria-hidden="true">
+            ▾
+          </span>
+        </button>
+
+
+        <div
+          class="language-menu"
+          id="languageMenu"
+          role="menu"
+          hidden
+        >
+
+          <button
+            type="button"
+            class="language-option active"
+            data-lang="fr"
+            role="menuitem"
+          >
+            🇫🇷 Français
+          </button>
+
+          <button
+            type="button"
+            class="language-option"
+            data-lang="en"
+            role="menuitem"
+          >
+            🇬🇧 English
+          </button>
+
+          <button
+            type="button"
+            class="language-option"
+            data-lang="ar"
+            role="menuitem"
+          >
+            🇲🇦 العربية
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <main class="projects-main literature-main">
+
+    <section class="projects-hero">
+
+      <div>
+
+        <span class="section-kicker">
+          📚 Analyse scientifique
+        </span>
+
+        <h1>
+          Revue de littérature
+        </h1>
+
+        <p>
+          Organisez vos références, comparez les études
+          et construisez progressivement votre cadre théorique.
+        </p>
+
+      </div>
+
+
+      <a
+        class="secondary-button"
+        id="backToProject"
+        href="projets.html"
+      >
+        ← Retour au projet
+      </a>
+
+    </section>
+
+
+    <section class="literature-project-header">
+
+      <span class="section-kicker">
+        Projet sélectionné
+      </span>
+
+      <h2 id="literatureProjectName">
+        Chargement du projet…
+      </h2>
+
+      <p id="literatureProjectGoal"></p>
+
+    </section>
+
+
+    <section class="literature-toolbar">
+
+      <div>
+
+        <span class="section-kicker">
+          Bibliographie
+        </span>
+
+        <h2>
+          Matrice de littérature
+        </h2>
+
+        <p>
+          Centralisez les informations essentielles
+          de chaque article ou document scientifique.
+        </p>
+
+      </div>
+
+
+      <button
+        class="primary-button"
+        type="button"
+        id="addLiteratureReference"
+      >
+        + Ajouter une référence
+      </button>
+
+    </section>
+
+
+    <section class="literature-stats">
+
+      <article class="literature-stat">
+
+        <strong id="literatureReferenceCount">
+          0
+        </strong>
+
+        <span>
+          Références
+        </span>
+
+      </article>
+
+    </section>
+
+
+    <section
+      id="literatureEmpty"
+      class="literature-empty"
+    >
+
+      <div class="literature-empty__icon">
+        📖
+      </div>
+
+      <h2>
+        Aucune référence pour le moment
+      </h2>
+
+      <p>
+        Commencez votre revue de littérature
+        en ajoutant votre premier article,
+        ouvrage ou document scientifique.
+      </p>
+
+    </section>
+
+
+    <section
+      id="literatureMatrix"
+      class="literature-matrix"
+      hidden
+    >
+
+      <div class="literature-table-wrapper">
+
+        <table class="literature-table">
+
+          <thead>
+
+            <tr>
+              <th>Auteur(s)</th>
+              <th>Année</th>
+              <th>Titre</th>
+              <th>Source</th>
+              <th>Méthodologie</th>
+              <th>Résultats</th>
+              <th>Limites</th>
+              <th>Apport</th>
+              <th>Actions</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="literatureTableBody"></tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+  ></div>
+
+</body>
+
+</html>
