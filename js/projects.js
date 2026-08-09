@@ -381,6 +381,12 @@ function saveProjects() {
 >
   🔎 Explorer le sujet
 </a>
+<a
+  class="edit-project literature-project"
+  href="literature.html?project=${encodeURIComponent(project.id)}"
+>
+  📚 Revue de littérature
+</a>
           <button class="edit-project" data-action="edit-project" data-project="${project.id}">${escapeHtml(t('edit_project'))}</button>
           <button
   class="edit-project duplicate-project"
