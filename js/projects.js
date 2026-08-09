@@ -98,6 +98,84 @@ function normalizeExploration(exploration, projectGoal = '') {
     limits: cleanText(exploration?.limits, 2500)
   };
 }
+  function normalizeLiteratureReference(reference) {
+  const createdAt = validIso(
+    reference?.createdAt,
+    nowIso()
+  );
+
+  return {
+    id: cleanText(reference?.id, 80) || id(),
+
+    authors: cleanText(reference?.authors, 500),
+
+    year: cleanText(reference?.year, 20),
+
+    title: cleanText(reference?.title, 1000),
+
+    source: cleanText(reference?.source, 500),
+
+    doi: cleanText(reference?.doi, 500),
+
+    url: cleanText(reference?.url, 1500),
+
+    keywords: Array.isArray(reference?.keywords)
+      ? reference.keywords
+          .map(item => cleanText(item, 100))
+          .filter(Boolean)
+          .slice(0, 20)
+      : [],
+
+    methodology: cleanText(
+      reference?.methodology,
+      2000
+    ),
+
+    sample: cleanText(
+      reference?.sample,
+      2000
+    ),
+
+    results: cleanText(
+      reference?.results,
+      4000
+    ),
+
+    limitations: cleanText(
+      reference?.limitations,
+      3000
+    ),
+
+    contribution: cleanText(
+      reference?.contribution,
+      3000
+    ),
+
+    notes: cleanText(
+      reference?.notes,
+      4000
+    ),
+
+    createdAt,
+
+    updatedAt: validIso(
+      reference?.updatedAt,
+      createdAt
+    )
+  };
+}
+
+
+function normalizeLiterature(literature) {
+  return {
+    references: Array.isArray(literature?.references)
+      ? literature.references
+          .map(normalizeLiteratureReference)
+          .filter(reference => reference.title)
+      : []
+  };
+}
+
   function normalizeProject(project) {
     const createdAt = validIso(project?.createdAt, nowIso());
     return {
@@ -108,6 +186,9 @@ function normalizeExploration(exploration, projectGoal = '') {
       exploration: normalizeExploration(
   project?.exploration,
   project?.goal
+),
+literature: normalizeLiterature(
+  project?.literature
 ),
       archived: Boolean(project?.archived),
 archivedAt: Boolean(project?.archived)
@@ -562,6 +643,9 @@ function restoreArchivedProject(projectId) {
   stage: $('#projectStage').value,
   archived: false,
   archivedAt: '',
+      literature: {
+  references: []
+},
   milestones: [],
   tasks: [],
   notes: '',
