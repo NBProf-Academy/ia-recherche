@@ -597,6 +597,16 @@ function matchesLiteratureSearch(reference) {
 
 
   function bind() {
+    $('#literatureSearch')
+  ?.addEventListener(
+    'input',
+    event => {
+      literatureSearchQuery =
+        event.target.value || '';
+
+      renderReferences();
+    }
+  );
     $('#addLiteratureReference')
       ?.addEventListener(
         'click',
