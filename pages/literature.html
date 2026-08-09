@@ -332,6 +332,219 @@
     role="status"
     aria-live="polite"
   ></div>
+  <dialog
+  id="literatureReferenceDialog"
+  class="project-dialog literature-reference-dialog"
+>
+
+  <form
+    method="dialog"
+    id="literatureReferenceForm"
+  >
+
+    <div class="dialog-heading">
+
+      <div>
+        <span class="section-kicker">
+          📚 Référence scientifique
+        </span>
+
+        <h2 id="literatureReferenceDialogTitle">
+          Ajouter une référence
+        </h2>
+      </div>
+
+      <button
+        class="icon-button"
+        type="button"
+        id="closeLiteratureReferenceDialog"
+        aria-label="Fermer"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <label>
+      <span>Auteur(s)</span>
+
+      <input
+        id="literatureAuthors"
+        maxlength="500"
+        required
+        placeholder="Ex. Dupont, Martin & Bernard"
+      >
+    </label>
+
+
+    <label>
+      <span>Année</span>
+
+      <input
+        id="literatureYear"
+        maxlength="20"
+        placeholder="Ex. 2025"
+      >
+    </label>
+
+
+    <label>
+      <span>Titre</span>
+
+      <textarea
+        id="literatureTitle"
+        rows="3"
+        maxlength="1000"
+        required
+        placeholder="Titre de l’article, ouvrage ou document"
+      ></textarea>
+    </label>
+
+
+    <label>
+      <span>Revue / source</span>
+
+      <input
+        id="literatureSource"
+        maxlength="500"
+        placeholder="Ex. Journal of Strategic Management"
+      >
+    </label>
+
+
+    <label>
+      <span>DOI</span>
+
+      <input
+        id="literatureDoi"
+        maxlength="500"
+        placeholder="Ex. 10.1000/xyz123"
+      >
+    </label>
+
+
+    <label>
+      <span>URL</span>
+
+      <input
+        id="literatureUrl"
+        type="url"
+        maxlength="1500"
+        placeholder="https://..."
+      >
+    </label>
+
+
+    <label>
+      <span>Mots-clés</span>
+
+      <input
+        id="literatureKeywords"
+        placeholder="IA, audit, gouvernance, performance..."
+      >
+
+      <small class="field-help">
+        Séparez les mots-clés par des virgules.
+      </small>
+    </label>
+
+
+    <label>
+      <span>Méthodologie</span>
+
+      <textarea
+        id="literatureMethodology"
+        rows="4"
+        maxlength="2000"
+        placeholder="Approche qualitative, quantitative, mixte, revue systématique..."
+      ></textarea>
+    </label>
+
+
+    <label>
+      <span>Échantillon / terrain</span>
+
+      <textarea
+        id="literatureSample"
+        rows="3"
+        maxlength="2000"
+        placeholder="Population, taille de l’échantillon, pays, secteur..."
+      ></textarea>
+    </label>
+
+
+    <label>
+      <span>Principaux résultats</span>
+
+      <textarea
+        id="literatureResults"
+        rows="5"
+        maxlength="4000"
+        placeholder="Quels sont les principaux résultats de cette étude ?"
+      ></textarea>
+    </label>
+
+
+    <label>
+      <span>Limites de l’étude</span>
+
+      <textarea
+        id="literatureLimitations"
+        rows="4"
+        maxlength="3000"
+        placeholder="Quelles limites les auteurs identifient-ils ?"
+      ></textarea>
+    </label>
+
+
+    <label>
+      <span>Apport pour ma recherche</span>
+
+      <textarea
+        id="literatureContribution"
+        rows="5"
+        maxlength="3000"
+        placeholder="Comment cette référence contribue-t-elle à votre problématique ou cadre théorique ?"
+      ></textarea>
+    </label>
+
+
+    <label>
+      <span>Notes personnelles</span>
+
+      <textarea
+        id="literatureNotes"
+        rows="4"
+        maxlength="4000"
+        placeholder="Commentaires, idées, citations à retrouver..."
+      ></textarea>
+    </label>
+
+
+    <div class="dialog-actions">
+
+      <button
+        class="secondary-button"
+        type="button"
+        id="cancelLiteratureReference"
+      >
+        Annuler
+      </button>
+
+      <button
+        class="primary-button"
+        type="submit"
+        id="saveLiteratureReference"
+      >
+        Enregistrer la référence
+      </button>
+
+    </div>
+
+  </form>
+
+</dialog>
 
 </body>
 
