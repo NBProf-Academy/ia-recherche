@@ -172,6 +172,9 @@
     practicalInterest: '',
     limits: ''
   },
+literature: {
+  references: []
+},
 
   milestones: generatedPlan.milestones,
   tasks: generatedPlan.tasks,
