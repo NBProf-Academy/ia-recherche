@@ -371,13 +371,19 @@
     <div class="dialog-heading">
 
       <div>
-        <span class="section-kicker">
-          📚 Référence scientifique
-        </span>
+        <span
+  class="section-kicker"
+  data-i18n="literature_reference_kicker"
+>
+  📚 Référence scientifique
+</span>
 
-        <h2 id="literatureReferenceDialogTitle">
-          Ajouter une référence
-        </h2>
+        <h2
+  id="literatureReferenceDialogTitle"
+  data-i18n="literature_add_reference_title"
+>
+  Ajouter une référence
+</h2>
       </div>
 
       <button
@@ -385,6 +391,7 @@
         type="button"
         id="closeLiteratureReferenceDialog"
         aria-label="Fermer"
+        data-i18n-aria-label="literature_close"
       >
         ×
       </button>
@@ -393,30 +400,32 @@
 
 
     <label>
-      <span>Auteur(s)</span>
+      <span data-i18n="literature_authors">Auteur(s)</span>
 
       <input
         id="literatureAuthors"
         maxlength="500"
         required
         placeholder="Ex. Dupont, Martin & Bernard"
+        data-i18n-placeholder="literature_authors_placeholder"
       >
     </label>
 
 
     <label>
-      <span>Année</span>
+      <span data-i18n="literature_year">Année</span>
 
       <input
         id="literatureYear"
         maxlength="20"
         placeholder="Ex. 2025"
+        data-i18n-placeholder="literature_year_placeholder"
       >
     </label>
 
 
     <label>
-      <span>Titre</span>
+     <span data-i18n="literature_reference_title">Titre</span>
 
       <textarea
         id="literatureTitle"
@@ -424,55 +433,63 @@
         maxlength="1000"
         required
         placeholder="Titre de l’article, ouvrage ou document"
+        data-i18n-placeholder="literature_reference_title_placeholder"
       ></textarea>
     </label>
 
 
     <label>
-      <span>Revue / source</span>
+     <span data-i18n="literature_source_label">Revue / source</span>
 
       <input
         id="literatureSource"
         maxlength="500"
         placeholder="Ex. Journal of Strategic Management"
+        data-i18n-placeholder="literature_source_placeholder"
       >
     </label>
 
 
     <label>
-      <span>DOI</span>
+      <span data-i18n="literature_doi">DOI</span>
 
       <input
         id="literatureDoi"
         maxlength="500"
         placeholder="Ex. 10.1000/xyz123"
+        data-i18n-placeholder="literature_doi_placeholder"
       >
     </label>
 
 
     <label>
-      <span>URL</span>
+      <span data-i18n="literature_url">URL</span>
 
       <input
         id="literatureUrl"
         type="url"
         maxlength="1500"
         placeholder="https://..."
+        data-i18n-placeholder="literature_url_placeholder"
       >
     </label>
 
 
     <label>
-      <span>Mots-clés</span>
+      <span data-i18n="literature_keywords">Mots-clés</span>
 
       <input
         id="literatureKeywords"
+        data-i18n-placeholder="literature_keywords_placeholder"
         placeholder="IA, audit, gouvernance, performance..."
       >
 
-      <small class="field-help">
-        Séparez les mots-clés par des virgules.
-      </small>
+      <small
+  class="field-help"
+  data-i18n="literature_keywords_help"
+>
+  Séparez les mots-clés par des virgules.
+</small>
     </label>
 
 
