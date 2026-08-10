@@ -2,6 +2,8 @@
   const STORAGE_KEY = 'nbprof-research-projects-v1';
 
   const $ = selector => document.querySelector(selector);
+  const t = (key, fallback = '') =>
+  window.NBProfI18n?.t(key, fallback) || fallback || key;
 
   const cleanText = (value, maxLength = 400) =>
     typeof value === 'string'
@@ -341,7 +343,8 @@
 
   function renderProjectHeader() {
     $('#explorationProjectName').textContent =
-      currentProject.name || 'Projet';
+      currentProject.name ||
+  t('exploration_project_fallback', 'Projet');
 
     $('#explorationProjectGoal').textContent =
       currentProject.goal || '';
@@ -382,9 +385,12 @@
 
     renderProjectHeader();
 
-    showToast(
-      'Exploration enregistrée avec succès.'
-    );
+   showToast(
+  t(
+    'exploration_saved_success',
+    'Exploration enregistrée avec succès.'
+  )
+);
   }
 
 
@@ -394,12 +400,17 @@
     const form = $('#explorationForm');
 
     if (name) {
-      name.textContent = 'Projet introuvable';
+      name.textContent = t(
+  'exploration_project_not_found',
+  'Projet introuvable'
+);
     }
 
     if (goal) {
-      goal.textContent =
-        'Retournez dans Mes projets et ouvrez de nouveau l’exploration.';
+      goal.textContent = t(
+  'exploration_project_not_found_help',
+  'Retournez dans Mes projets et ouvrez de nouveau l’exploration.'
+);
     }
 
     if (form) {
