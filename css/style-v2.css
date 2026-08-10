@@ -65,3 +65,652 @@ html[dir=rtl] .launch-trust-strip>div+div{border-right:1px solid var(--border);b
 @media(max-width:1120px){.launch-hero{grid-template-columns:1fr;min-height:0}.launch-hero__copy{justify-items:center;text-align:center}.launch-hero__copy>p{margin:auto}.launch-cta-row{justify-content:center}.launch-proof{max-width:760px}.launch-hero__visual{width:min(960px,100%);margin:auto}.launch-feature-card--wide{grid-template-columns:1fr}.launch-privacy-section{grid-template-columns:auto 1fr}.launch-privacy-points{grid-column:2}.launch-final-cta{align-items:flex-start;flex-direction:column}.launch-final-actions{justify-content:flex-start}}
 @media(max-width:860px){.launch-main{width:min(100% - 30px,1420px);padding-top:34px}.launch-trust-strip{grid-template-columns:1fr}.launch-trust-strip>div+div{border-top:1px solid var(--border);border-left:0}.launch-shift-grid{grid-template-columns:1fr 1fr}.launch-feature-grid{grid-template-columns:1fr}.launch-feature-card--wide{grid-column:auto}.launch-flow{grid-template-columns:1fr}.launch-flow>i{display:none}.launch-audience{grid-template-columns:1fr;padding:30px}.launch-privacy-section{grid-template-columns:1fr}.launch-privacy-points{grid-column:auto}.launch-floating-badge{display:none}}
 @media(max-width:620px){.launch-page .brand-text{display:none}.launch-open-app{width:42px;min-height:42px;padding:0;font-size:0}.launch-open-app::before{content:"↗";font-size:1.1rem}.launch-hero{gap:20px;padding-top:25px}.launch-hero h1{font-size:clamp(2.7rem,14vw,4.2rem)}.launch-proof{grid-template-columns:1fr 1fr}.launch-shift-grid{grid-template-columns:1fr}.launch-audience__cards{grid-template-columns:1fr}.launch-final-cta{padding:30px}.launch-final-actions{width:100%;display:grid}.launch-final-actions>*{width:100%}.launch-browser-card{border-radius:15px}}
+/* === v1.1 — Statut de sauvegarde locale === */
+
+.local-save-status {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 28px;
+  margin-top: 4px;
+  color: #a7f3d0;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  opacity: 0.92;
+}
+
+.local-save-status[data-state="saving"] {
+  color: #fde68a;
+}
+
+@media (max-width: 700px) {
+  .local-save-status {
+    justify-content: center;
+    margin-top: 6px;
+    white-space: normal;
+    text-align: center;
+  }
+}
+/* === v1.1 — Centre des échéances === */
+
+.deadline-group {
+  margin-bottom: 18px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.38);
+}
+
+.deadline-group:last-child {
+  margin-bottom: 0;
+}
+
+.deadline-group__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.deadline-group__heading h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.deadline-group__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.deadline-group__tasks {
+  display: grid;
+  gap: 10px;
+}
+
+.deadline-group-empty {
+  padding: 10px 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* En retard */
+.deadline-group--overdue {
+  border-color: rgba(251, 113, 133, 0.28);
+}
+
+/* Aujourd’hui */
+.deadline-group--today {
+  border-color: rgba(251, 146, 60, 0.28);
+}
+
+/* Cette semaine */
+.deadline-group--week {
+  border-color: rgba(250, 204, 21, 0.25);
+}
+
+/* À venir */
+.deadline-group--upcoming {
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+@media (max-width: 700px) {
+  .deadline-group {
+    padding: 12px;
+    border-radius: 15px;
+  }
+
+  .deadline-group__heading h3 {
+    font-size: 0.88rem;
+  }
+}
+/* === v1.1 — Ma prochaine action === */
+
+.next-action-card {
+  margin-bottom: 20px;
+  padding: 18px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(14, 165, 233, 0.10),
+      rgba(139, 92, 246, 0.10)
+    );
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.next-action-card__label {
+  margin-bottom: 10px;
+  color: #38bdf8;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.next-action-card__title {
+  display: block;
+  margin-bottom: 6px;
+  color: #f8fafc;
+  font-size: 1.08rem;
+  line-height: 1.35;
+}
+
+.next-action-card__project {
+  display: block;
+  margin-bottom: 12px;
+  color: #94a3b8;
+  font-size: 0.84rem;
+}
+
+.next-action-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.next-action-card__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  text-decoration: none;
+}
+
+@media (max-width: 700px) {
+  .next-action-card {
+    padding: 15px;
+  }
+
+  .next-action-card__button {
+    width: 100%;
+  }
+}
+/* === v1.1 — Mise en évidence du projet ciblé === */
+
+.project-card--focused {
+  position: relative;
+  border-color: rgba(56, 189, 248, 0.85) !important;
+  box-shadow:
+    0 0 0 2px rgba(56, 189, 248, 0.18),
+    0 0 32px rgba(56, 189, 248, 0.22);
+  transform: translateY(-2px);
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    transform 0.35s ease;
+}
+
+.project-card--focused::before {
+  content: "🎯";
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  font-size: 1rem;
+}
+/* =========================================================
+   NBProf Research Hub v1.1
+   Exploration du sujet
+   ========================================================= */
+
+.exploration-main {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding-bottom: 70px;
+}
+
+.exploration-project-header {
+  margin: 24px 0;
+  padding: 24px 28px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 20px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(14, 165, 233, 0.08),
+      rgba(139, 92, 246, 0.08)
+    );
+}
+
+.exploration-project-header h2 {
+  margin: 8px 0 6px;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.exploration-project-header p {
+  margin: 0;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.exploration-form {
+  display: grid;
+  gap: 22px;
+}
+
+.exploration-section {
+  padding: 26px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 22px;
+  background: rgba(15, 23, 42, 0.72);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
+}
+
+.exploration-section__heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.exploration-section__heading > span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+}
+
+.exploration-section__heading h2 {
+  margin: 0 0 5px;
+  font-size: 1.35rem;
+}
+
+.exploration-section__heading p {
+  margin: 0;
+  color: #94a3b8;
+  line-height: 1.55;
+}
+
+.exploration-form label {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+  color: #e2e8f0;
+  font-weight: 700;
+}
+
+.exploration-form label:last-child {
+  margin-bottom: 0;
+}
+
+.exploration-form input,
+.exploration-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 14px;
+  outline: none;
+  background: rgba(2, 6, 23, 0.7);
+  color: #f8fafc;
+  font: inherit;
+  font-weight: 400;
+  line-height: 1.55;
+  resize: vertical;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.exploration-form input::placeholder,
+.exploration-form textarea::placeholder {
+  color: #64748b;
+}
+
+.exploration-form input:focus,
+.exploration-form textarea:focus {
+  border-color: rgba(56, 189, 248, 0.8);
+  background: rgba(15, 23, 42, 0.92);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+}
+
+.exploration-form .field-help {
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+.exploration-save-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 26px;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 20px;
+  background: rgba(34, 197, 94, 0.06);
+}
+
+.exploration-save-area strong {
+  color: #d1fae5;
+}
+
+.exploration-save-area p {
+  margin: 5px 0 0;
+  color: #94a3b8;
+  font-size: 0.86rem;
+}
+
+@media (max-width: 700px) {
+  .exploration-section {
+    padding: 20px 16px;
+  }
+
+  .exploration-project-header {
+    padding: 20px;
+  }
+
+  .exploration-save-area {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .exploration-save-area .primary-button {
+    width: 100%;
+  }
+}
+/* =========================================================
+   NBProf Research Hub v1.1
+   Revue de littérature
+   ========================================================= */
+
+.literature-main {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding-bottom: 70px;
+}
+
+.literature-project-header {
+  margin: 24px 0;
+  padding: 24px 28px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 20px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(14, 165, 233, 0.08),
+      rgba(139, 92, 246, 0.08)
+    );
+}
+
+.literature-project-header h2 {
+  margin: 8px 0 6px;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.literature-project-header p {
+  margin: 0;
+  color: #94a3b8;
+}
+
+.literature-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 24px 0;
+  padding: 26px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 22px;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.literature-toolbar h2 {
+  margin: 7px 0;
+  font-size: 1.7rem;
+}
+
+.literature-toolbar p {
+  margin: 0;
+  color: #94a3b8;
+  line-height: 1.55;
+}
+
+.literature-stats {
+  display: flex;
+  margin-bottom: 22px;
+}
+
+.literature-stat {
+  min-width: 150px;
+  padding: 18px 22px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 18px;
+  background: rgba(14, 165, 233, 0.07);
+}
+
+.literature-stat strong {
+  display: block;
+  color: #38bdf8;
+  font-size: 1.8rem;
+}
+
+.literature-stat span {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.literature-empty {
+  padding: 50px 28px;
+  border: 1px dashed rgba(148, 163, 184, 0.3);
+  border-radius: 22px;
+  text-align: center;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.literature-empty__icon {
+  margin-bottom: 12px;
+  font-size: 2rem;
+}
+
+.literature-empty h2 {
+  margin: 0 0 10px;
+}
+
+.literature-empty p {
+  max-width: 620px;
+  margin: 0 auto;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.literature-matrix {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.literature-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.literature-table {
+  width: 100%;
+  min-width: 1200px;
+  border-collapse: collapse;
+}
+
+.literature-table th,
+.literature-table td {
+  padding: 15px 16px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  vertical-align: top;
+  text-align: left;
+}
+
+.literature-table th {
+  background: rgba(2, 6, 23, 0.72);
+  color: #38bdf8;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.literature-table td {
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.literature-table tbody tr:hover {
+  background: rgba(56, 189, 248, 0.04);
+}
+
+.literature-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.literature-reference-dialog form {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.literature-reference-dialog label {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.literature-reference-dialog input,
+.literature-reference-dialog textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 15px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 13px;
+  outline: none;
+  background: rgba(2, 6, 23, 0.72);
+  color: #f8fafc;
+  font: inherit;
+}
+
+.literature-reference-dialog input:focus,
+.literature-reference-dialog textarea:focus {
+  border-color: rgba(56, 189, 248, 0.8);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+}
+
+@media (max-width: 700px) {
+  .literature-project-header {
+    padding: 20px;
+  }
+
+  .literature-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .literature-toolbar .primary-button {
+    width: 100%;
+  }
+
+  .literature-stat {
+    width: 100%;
+  }
+}
+/* ===== Revue de littérature — Recherche v1.1 ===== */
+
+.literature-toolbar label[for="literatureSearch"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #f5f7ff;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+#literatureSearch {
+  width: min(100%, 360px);
+  min-height: 48px;
+  padding: 0 16px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(7, 19, 38, 0.96),
+      rgba(12, 18, 48, 0.96)
+    );
+
+  border: 1px solid rgba(48, 207, 255, 0.72);
+  border-radius: 12px;
+
+  outline: none;
+
+  font: inherit;
+  font-size: 0.96rem;
+
+  box-shadow:
+    0 0 0 1px rgba(48, 207, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  color-scheme: dark;
+}
+
+#literatureSearch::placeholder {
+  color: rgba(220, 228, 245, 0.55);
+}
+
+#literatureSearch:hover {
+  border-color: rgba(91, 220, 255, 0.95);
+}
+
+#literatureSearch:focus {
+  border-color: #39d5ff;
+
+  box-shadow:
+    0 0 0 3px rgba(57, 213, 255, 0.14),
+    0 0 24px rgba(57, 213, 255, 0.10);
+}
+
+@media (max-width: 760px) {
+  #literatureSearch {
+    width: 100%;
+    max-width: none;
+  }
+}

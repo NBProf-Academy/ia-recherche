@@ -30,6 +30,7 @@
       name: typeof project?.name === 'string' ? project.name.trim().slice(0, 120) : '',
       goal: typeof project?.goal === 'string' ? project.goal.trim().slice(0, 400) : '',
       stage: STAGES.includes(project?.stage) ? project.stage : 'exploration',
+      archived: Boolean(project?.archived),
       tasks: Array.isArray(project?.tasks) ? project.tasks.map(normalizeTask).filter(task => task.text) : [],
       updatedAt: typeof project?.updatedAt === 'string' && !Number.isNaN(Date.parse(project.updatedAt)) ? project.updatedAt : ''
     };
@@ -38,7 +39,11 @@
   function readProjects() {
     try {
       const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      return Array.isArray(raw) ? raw.map(normalizeProject).filter(project => project.name) : [];
+     return Array.isArray(raw)
+  ? raw
+      .map(normalizeProject)
+      .filter(project => project.name && !project.archived)
+  : [];
     } catch (error) {
       console.error('NBProf dashboard storage error:', error);
       return [];
@@ -218,6 +223,31 @@
     if (item.dueDate) return remaining ?? 999;
     return item.priority === 'medium' ? 1500 : 2000;
   }
+  function getNextAction(view) {
+  const pendingTasks = view.tasks.filter(
+    item => !item.done
+  );
+
+  if (!pendingTasks.length) return null;
+
+  return [...pendingTasks].sort((a, b) => {
+    const urgencyDifference =
+      urgencyScore(a) - urgencyScore(b);
+
+    if (urgencyDifference !== 0) {
+      return urgencyDifference;
+    }
+
+    if (a.dueDate && b.dueDate) {
+      return a.dueDate.localeCompare(b.dueDate);
+    }
+
+    if (a.dueDate) return -1;
+    if (b.dueDate) return 1;
+
+    return a.text.localeCompare(b.text);
+  })[0];
+}
 
   function dueText(task) {
     const state = taskState(task);
@@ -227,22 +257,182 @@
     if (task.dueDate) return `${t('due_on')} ${formatDate(task.dueDate)}`;
     return t('dashboard_no_deadline');
   }
+function deadlineGroups(view) {
+  const pendingWithDeadline = view.tasks
+    .filter(item => !item.done && item.dueDate)
+    .sort((a, b) => urgencyScore(a) - urgencyScore(b));
 
+  return {
+    overdue: pendingWithDeadline.filter(
+      item => taskState(item) === 'overdue'
+    ),
+
+    today: pendingWithDeadline.filter(
+      item => taskState(item) === 'today'
+    ),
+
+    week: pendingWithDeadline.filter(
+      item => taskState(item) === 'soon'
+    ),
+
+    upcoming: pendingWithDeadline.filter(
+      item => taskState(item) === 'scheduled'
+    )
+  };
+}
   function renderTasks(view) {
-    const container = $('#dashboardTasks');
-    const ordered = [...view.tasks].sort((a, b) => urgencyScore(a) - urgencyScore(b)).slice(0, 10);
-    if (!ordered.length) {
-      container.innerHTML = `<div class="dashboard-panel-empty">✓ ${escapeHtml(t('dashboard_no_tasks'))}</div>`;
-      return;
+  const container = $('#dashboardTasks');
+  const groups = deadlineGroups(view);
+    const nextAction = getNextAction(view);
+
+const nextActionMarkup = nextAction
+  ? `
+    <section class="next-action-card">
+      <div class="next-action-card__label">
+        🎯 ${escapeHtml(
+          t('next_action_label', 'Ma prochaine action')
+        )}
+      </div>
+
+      <strong class="next-action-card__title">
+        ${escapeHtml(nextAction.text)}
+      </strong>
+
+      <span class="next-action-card__project">
+        ${escapeHtml(nextAction.project.name)}
+      </span>
+
+      <div class="next-action-card__meta">
+        <span class="priority-badge priority-${nextAction.priority}">
+          ${escapeHtml(priorityLabel(nextAction.priority))}
+        </span>
+
+        <span class="due-badge due-${taskState(nextAction)}">
+          ${escapeHtml(dueText(nextAction))}
+        </span>
+      </div>
+
+      <a
+  class="secondary-button next-action-card__button"
+  href="projets.html?project=${encodeURIComponent(nextAction.project.id)}"
+>
+        ${escapeHtml(
+          t('next_action_start', 'Commencer')
+        )}
+      </a>
+    </section>
+  `
+  : '';
+
+  const groupConfig = [
+    {
+      key: 'overdue',
+      icon: '🔴',
+      label: t('deadline_group_overdue', 'En retard')
+    },
+    {
+      key: 'today',
+      icon: '🟠',
+      label: t('deadline_group_today', 'Aujourd’hui')
+    },
+    {
+      key: 'week',
+      icon: '🟡',
+      label: t('deadline_group_week', 'Cette semaine')
+    },
+    {
+      key: 'upcoming',
+      icon: '🔵',
+      label: t('deadline_group_upcoming', 'À venir')
     }
-    container.innerHTML = ordered.map(item => {
-      const state = taskState(item);
-      return `<a class="dashboard-task dashboard-task--${state}" href="projets.html">
-        <span class="dashboard-task__marker" aria-hidden="true"></span>
-        <span class="dashboard-task__body"><strong>${escapeHtml(item.text)}</strong><small>${escapeHtml(item.project.name)}</small><span class="task-tags"><span class="priority-badge priority-${item.priority}">${escapeHtml(priorityLabel(item.priority))}</span><span class="due-badge due-${state}">${escapeHtml(dueText(item))}</span></span></span>
-      </a>`;
-    }).join('');
-  }
+  ];
+
+  const totalTasks = Object.values(groups)
+    .reduce((total, items) => total + items.length, 0);
+
+  if (!totalTasks) {
+  container.innerHTML = `
+    ${nextActionMarkup}
+
+    <div class="dashboard-panel-empty">
+      ✓ ${escapeHtml(
+        t(
+          'deadline_center_empty',
+          'Aucune échéance à traiter pour le moment.'
+        )
+      )}
+    </div>
+  `;
+  return;
+}
+
+  container.innerHTML = nextActionMarkup + groupConfig.map(group => {
+    const items = groups[group.key];
+
+    const tasksMarkup = items.length
+      ? items.map(item => {
+          const state = taskState(item);
+
+          return `
+            <a
+              class="dashboard-task dashboard-task--${state}"
+              href="projets.html"
+            >
+              <span
+                class="dashboard-task__marker"
+                aria-hidden="true"
+              ></span>
+
+              <span class="dashboard-task__body">
+                <strong>${escapeHtml(item.text)}</strong>
+
+                <small>
+                  ${escapeHtml(item.project.name)}
+                </small>
+
+                <span class="task-tags">
+                  <span
+                    class="priority-badge priority-${item.priority}"
+                  >
+                    ${escapeHtml(priorityLabel(item.priority))}
+                  </span>
+
+                  <span class="due-badge due-${state}">
+                    ${escapeHtml(dueText(item))}
+                  </span>
+                </span>
+              </span>
+            </a>
+          `;
+        }).join('')
+      : `
+        <div class="deadline-group-empty">
+          ${escapeHtml(
+            t('deadline_group_empty', 'Aucune tâche')
+          )}
+        </div>
+      `;
+
+    return `
+      <section class="deadline-group deadline-group--${group.key}">
+        <div class="deadline-group__heading">
+          <h3>
+            ${group.icon}
+            ${escapeHtml(group.label)}
+          </h3>
+
+          <span class="deadline-group__count">
+            ${items.length}
+          </span>
+        </div>
+
+        <div class="deadline-group__tasks">
+          ${tasksMarkup}
+        </div>
+      </section>
+    `;
+  }).join('');
+}
 
   function renderStages(view) {
     const container = $('#dashboardStages');

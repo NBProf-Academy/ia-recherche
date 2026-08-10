@@ -11,7 +11,8 @@
   let editingProjectId = null;
   let taskProjectId = null;
   let editingTaskId = null;
-
+  let saveStatusTimer = null;
+  
   function cleanText(value, maxLength = 400) {
     return typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
   }
@@ -37,6 +38,143 @@
       dueDate: validDateKey(item?.dueDate)
     };
   }
+function normalizeExploration(exploration, projectGoal = '') {
+  return {
+    initialIdea: cleanText(exploration?.initialIdea, 1500),
+
+    problem: cleanText(exploration?.problem, 3000),
+
+    mainQuestion: cleanText(
+      exploration?.mainQuestion,
+      1000
+    ),
+
+    secondaryQuestions: Array.isArray(exploration?.secondaryQuestions)
+      ? exploration.secondaryQuestions
+          .map(item => cleanText(item, 500))
+          .filter(Boolean)
+          .slice(0, 10)
+      : [],
+
+    generalObjective: cleanText(
+      exploration?.generalObjective || projectGoal,
+      1500
+    ),
+
+    specificObjectives: Array.isArray(exploration?.specificObjectives)
+      ? exploration.specificObjectives
+          .map(item => cleanText(item, 500))
+          .filter(Boolean)
+          .slice(0, 10)
+      : [],
+
+    keywords: Array.isArray(exploration?.keywords)
+      ? exploration.keywords
+          .map(item => cleanText(item, 100))
+          .filter(Boolean)
+          .slice(0, 20)
+      : [],
+
+    population: cleanText(exploration?.population, 1000),
+
+    field: cleanText(exploration?.field, 1000),
+
+    geography: cleanText(exploration?.geography, 500),
+
+    period: cleanText(exploration?.period, 500),
+
+    discipline: cleanText(exploration?.discipline, 500),
+
+    scientificInterest: cleanText(
+      exploration?.scientificInterest,
+      2500
+    ),
+
+    practicalInterest: cleanText(
+      exploration?.practicalInterest,
+      2500
+    ),
+
+    limits: cleanText(exploration?.limits, 2500)
+  };
+}
+  function normalizeLiteratureReference(reference) {
+  const createdAt = validIso(
+    reference?.createdAt,
+    nowIso()
+  );
+
+  return {
+    id: cleanText(reference?.id, 80) || id(),
+
+    authors: cleanText(reference?.authors, 500),
+
+    year: cleanText(reference?.year, 20),
+
+    title: cleanText(reference?.title, 1000),
+
+    source: cleanText(reference?.source, 500),
+
+    doi: cleanText(reference?.doi, 500),
+
+    url: cleanText(reference?.url, 1500),
+
+    keywords: Array.isArray(reference?.keywords)
+      ? reference.keywords
+          .map(item => cleanText(item, 100))
+          .filter(Boolean)
+          .slice(0, 20)
+      : [],
+
+    methodology: cleanText(
+      reference?.methodology,
+      2000
+    ),
+
+    sample: cleanText(
+      reference?.sample,
+      2000
+    ),
+
+    results: cleanText(
+      reference?.results,
+      4000
+    ),
+
+    limitations: cleanText(
+      reference?.limitations,
+      3000
+    ),
+
+    contribution: cleanText(
+      reference?.contribution,
+      3000
+    ),
+
+    notes: cleanText(
+      reference?.notes,
+      4000
+    ),
+
+    createdAt,
+
+    updatedAt: validIso(
+      reference?.updatedAt,
+      createdAt
+    )
+  };
+}
+
+
+function normalizeLiterature(literature) {
+  return {
+    references: Array.isArray(literature?.references)
+      ? literature.references
+          .map(normalizeLiteratureReference)
+          .filter(reference => reference.title)
+      : []
+  };
+}
 
   function normalizeProject(project) {
     const createdAt = validIso(project?.createdAt, nowIso());
@@ -45,6 +183,17 @@
       name: cleanText(project?.name, 120),
       goal: cleanText(project?.goal, 400),
       stage: STAGES.includes(project?.stage) ? project.stage : 'exploration',
+      exploration: normalizeExploration(
+  project?.exploration,
+  project?.goal
+),
+literature: normalizeLiterature(
+  project?.literature
+),
+      archived: Boolean(project?.archived),
+archivedAt: Boolean(project?.archived)
+  ? validIso(project?.archivedAt, createdAt)
+  : '',
       milestones: Array.isArray(project?.milestones)
         ? project.milestones.map(item => ({ id: cleanText(item?.id, 80) || id(), text: cleanText(item?.text, 160) })).filter(item => item.text)
         : [],
@@ -67,7 +216,55 @@
     }
   }
 
-  function saveProjects() { localStorage.setItem(STORAGE_KEY, JSON.stringify(projects)); }
+  function saveStatusTime() {
+  const language =
+    window.NBProfI18n?.getLanguage?.() ||
+    document.documentElement.lang ||
+    'fr';
+
+  try {
+    return new Intl.DateTimeFormat(language, {
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date());
+  } catch {
+    return new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+}
+
+function setSaveStatus(state = 'saved') {
+  const status = $('#localSaveStatus');
+  if (!status) return;
+
+  if (state === 'saving') {
+    status.textContent = `⏳ ${t('saving_local', 'Enregistrement...')}`;
+    status.dataset.state = 'saving';
+    return;
+  }
+
+  status.textContent =
+    `✓ ${t('saved_local', 'Sauvegardé localement')} · ${saveStatusTime()}`;
+
+  status.dataset.state = 'saved';
+}
+
+function saveProjects() {
+  setSaveStatus('saving');
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(projects)
+  );
+
+  clearTimeout(saveStatusTimer);
+
+  saveStatusTimer = setTimeout(() => {
+    setSaveStatus('saved');
+  }, 350);
+}
   function touch(project) { if (project) project.updatedAt = nowIso(); }
   function toast(message) { const el = $('#toast'); el.textContent = message; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2600); }
   function stageLabel(stage) { return t(`stage_${stage}`, stage); }
@@ -174,11 +371,37 @@
     const progress = projectProgress(project);
     const milestones = project.milestones.map(item => `<li>${escapeHtml(item.text)}</li>`).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
     const tasks = project.tasks.map(task => taskMarkup(project, task)).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
-    return `<article class="project-card">
+    return `<article class="project-card" data-project-card="${escapeHtml(project.id)}">
       <div class="project-card__top">
         <div><span class="project-stage">${escapeHtml(stageLabel(project.stage))}</span><h2>${escapeHtml(project.name)}</h2></div>
         <div class="project-card__actions">
+        <a
+  class="edit-project exploration-project"
+  href="exploration.html?project=${encodeURIComponent(project.id)}"
+>
+  🔎 ${escapeHtml(t('open_exploration', 'Explorer le sujet'))}
+</a>
+<a
+  class="edit-project literature-project"
+  href="literature.html?project=${encodeURIComponent(project.id)}"
+>
+  📚 ${escapeHtml(t('open_literature', 'Revue de littérature'))}
+</a>
           <button class="edit-project" data-action="edit-project" data-project="${project.id}">${escapeHtml(t('edit_project'))}</button>
+          <button
+  class="edit-project duplicate-project"
+  data-action="duplicate-project"
+  data-project="${project.id}"
+>
+  ${escapeHtml(t('duplicate_project', 'Dupliquer'))}
+</button>
+          <button
+  class="edit-project archive-project"
+  data-action="archive-project"
+  data-project="${project.id}"
+>
+  ${escapeHtml(t('archive_project', 'Archiver'))}
+</button>
           <button class="delete-project" data-action="delete-project" data-project="${project.id}">${escapeHtml(t('delete_project'))}</button>
         </div>
       </div>
@@ -199,11 +422,177 @@
       <section class="notes-section"><h3>${escapeHtml(t('research_notes'))}</h3><textarea data-action="notes" data-project="${project.id}" rows="4" placeholder="${escapeHtml(t('notes_placeholder'))}">${escapeHtml(project.notes || '')}</textarea></section>
     </article>`;
   }
+  function duplicateProject(projectId) {
+  const source = projectById(projectId);
+  if (!source) return;
 
-  function render() {
-    const container = $('#projectsContainer');
-    container.innerHTML = projects.length ? projects.map(card).join('') : emptyState();
+  const createdAt = nowIso();
+
+  const duplicate = {
+    ...JSON.parse(JSON.stringify(source)),
+
+    id: id(),
+
+    name: cleanText(
+      `${source.name} — ${t('project_copy_suffix', 'Copie')}`,
+      120
+    ),
+
+    archived: false,
+    archivedAt: '',
+
+    milestones: source.milestones.map(item => ({
+      ...item,
+      id: id()
+    })),
+
+    tasks: source.tasks.map(task => ({
+      ...task,
+      id: id()
+    })),
+
+    createdAt,
+    updatedAt: createdAt
+  };
+
+  projects.unshift(duplicate);
+
+  saveProjects();
+  render();
+
+  toast(
+    t(
+      'project_duplicated',
+      'Projet dupliqué avec succès.'
+    )
+  );
+}
+function archiveProject(projectId) {
+  const project = projectById(projectId);
+  if (!project) return;
+
+  if (
+    !confirm(
+      t(
+        'archive_project_confirm',
+        'Archiver ce projet ? Vous pourrez le restaurer ultérieurement.'
+      )
+    )
+  ) {
+    return;
   }
+
+  project.archived = true;
+  project.archivedAt = nowIso();
+
+  touch(project);
+  saveProjects();
+  render();
+
+  toast(
+    t(
+      'project_archived',
+      'Projet archivé avec succès.'
+    )
+  );
+}
+
+function restoreArchivedProject(projectId) {
+  const project = projectById(projectId);
+  if (!project) return;
+
+  project.archived = false;
+  project.archivedAt = '';
+
+  touch(project);
+  saveProjects();
+  render();
+
+  toast(
+    t(
+      'project_restored',
+      'Projet restauré avec succès.'
+    )
+  );
+}
+
+  function archivedProjectCard(project) {
+  return `
+    <article class="project-card archived-project-card">
+      <div class="project-card__top">
+        <div>
+          <span class="project-stage">
+            📦 ${escapeHtml(t('archived_project', 'Projet archivé'))}
+          </span>
+
+          <h2>${escapeHtml(project.name)}</h2>
+        </div>
+
+        <div class="project-card__actions">
+          <button
+            class="edit-project restore-project"
+            data-action="restore-project"
+            data-project="${project.id}"
+          >
+            ${escapeHtml(t('restore_project', 'Restaurer'))}
+          </button>
+        </div>
+      </div>
+
+      <p class="project-goal">
+        ${escapeHtml(project.goal || '—')}
+      </p>
+
+      <div class="project-meta">
+        <span>
+          <strong>
+            ${escapeHtml(t('archived_on', 'Archivé le'))}
+          </strong>
+          ${escapeHtml(formatDate(project.archivedAt))}
+        </span>
+      </div>
+    </article>
+  `;
+}
+  function render() {
+  const container = $('#projectsContainer');
+
+  const activeProjects = projects.filter(
+    project => !project.archived
+  );
+
+  const archivedProjects = projects.filter(
+    project => project.archived
+  );
+
+  const activeMarkup = activeProjects.length
+    ? activeProjects.map(card).join('')
+    : emptyState();
+
+  const archivedMarkup = archivedProjects.length
+    ? `
+      <section class="archived-projects-section">
+        <div class="archived-projects-heading">
+          <h2>
+            📦 ${escapeHtml(
+              t('archived_projects', 'Projets archivés')
+            )}
+          </h2>
+
+          <span class="archived-projects-count">
+            ${archivedProjects.length}
+          </span>
+        </div>
+
+        <div class="archived-projects-list">
+          ${archivedProjects.map(archivedProjectCard).join('')}
+        </div>
+      </section>
+    `
+    : '';
+
+  container.innerHTML = activeMarkup + archivedMarkup;
+}
 
   function updateProjectDialogMode() {
     const isEditing = Boolean(editingProjectId);
@@ -253,7 +642,24 @@
       return;
     }
     const createdAt = nowIso();
-    projects.unshift({ id: id(), name, goal: $('#projectGoal').value.trim(), stage: $('#projectStage').value, milestones: [], tasks: [], notes: '', createdAt, updatedAt: createdAt });
+    projects.unshift({
+  id: id(),
+  name,
+  goal: $('#projectGoal').value.trim(),
+  stage: $('#projectStage').value,
+  archived: false,
+  archivedAt: '',
+  exploration: normalizeExploration(
+    null,
+    $('#projectGoal').value.trim()
+  ),
+  literature: normalizeLiterature(null),
+  milestones: [],
+  tasks: [],
+  notes: '',
+  createdAt,
+  updatedAt: createdAt
+});
     saveProjects();
     closeProjectDialog();
     render();
@@ -329,15 +735,132 @@
   }
 
   function exportProjects() {
-    const blob = new Blob([JSON.stringify({ exportedAt: nowIso(), version: '1.0.0', projects }, null, 2)], { type: 'application/json' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `nbprof-projets-${new Date().toISOString().slice(0, 10)}.json`;
-    link.click();
-    URL.revokeObjectURL(link.href);
-    toast(t('export_ready'));
-  }
+  const backup = {
+    app: 'NBProf Research Hub',
+    backupType: 'research-hub-backup',
+    schemaVersion: 1,
+    appVersion: '1.1.0',
+    exportedAt: nowIso(),
+    storageKey: STORAGE_KEY,
+    projectCount: projects.length,
+    projects
+  };
 
+  const blob = new Blob(
+    [JSON.stringify(backup, null, 2)],
+    { type: 'application/json' }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = `NBProf-Research-Backup-${new Date().toISOString().slice(0, 10)}.json`;
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+
+  toast(t('export_ready'));
+}
+function createSafetyBackup() {
+  if (!projects.length) return null;
+
+  const safetyBackup = {
+    app: 'NBProf Research Hub',
+    backupType: 'pre-restore-safety-backup',
+    schemaVersion: 1,
+    appVersion: '1.1.0',
+    createdAt: nowIso(),
+    sourceStorageKey: STORAGE_KEY,
+    projectCount: projects.length,
+    projects: JSON.parse(JSON.stringify(projects))
+  };
+
+  localStorage.setItem(
+    `${STORAGE_KEY}-safety-backup`,
+    JSON.stringify(safetyBackup)
+  );
+
+  return safetyBackup;
+}
+  function restoreSafetyBackup() {
+  try {
+    const raw = localStorage.getItem(`${STORAGE_KEY}-safety-backup`);
+
+    if (!raw) {
+      toast(
+        t(
+          'safety_backup_missing',
+          'Aucune sauvegarde de sécurité disponible.'
+        )
+      );
+      return;
+    }
+
+    const payload = JSON.parse(raw);
+    const restored = normalizeImportedProjects(payload);
+
+    if (!restored.length) {
+      toast(
+        t(
+          'safety_backup_empty',
+          'La sauvegarde de sécurité est vide.'
+        )
+      );
+      return;
+    }
+
+    if (
+      !confirm(
+        t(
+          'restore_safety_confirm',
+          'Restaurer la sauvegarde de sécurité ? Les données actuelles seront remplacées.'
+        )
+      )
+    ) {
+      return;
+    }
+
+    // Conserver également l’état actuel avant la restauration.
+    const currentStateBackup = {
+      app: 'NBProf Research Hub',
+      backupType: 'before-safety-restore',
+      schemaVersion: 1,
+      appVersion: '1.1.0',
+      createdAt: nowIso(),
+      projectCount: projects.length,
+      projects: JSON.parse(JSON.stringify(projects))
+    };
+
+    localStorage.setItem(
+      `${STORAGE_KEY}-before-safety-restore`,
+      JSON.stringify(currentStateBackup)
+    );
+
+    projects = restored;
+    saveProjects();
+    render();
+
+    toast(
+      t(
+        'safety_restore_success',
+        'Sauvegarde de sécurité restaurée avec succès.'
+      )
+    );
+  } catch (error) {
+    console.error('NBProf safety restore error:', error);
+
+    toast(
+      t(
+        'safety_restore_failed',
+        'Impossible de restaurer la sauvegarde de sécurité.'
+      )
+    );
+  }
+}
   async function importProjects(file) {
     if (!file) return;
     try {
@@ -345,8 +868,24 @@
       const payload = JSON.parse(await file.text());
       const imported = normalizeImportedProjects(payload);
       if (!imported.length) { toast(t('import_empty')); return; }
-      if (projects.length && !confirm(t('import_confirm'))) return;
-      projects = imported;
+      if (projects.length) {
+  if (!confirm(t('import_confirm'))) return;
+
+  try {
+    createSafetyBackup();
+  } catch (error) {
+    console.error('NBProf safety backup error:', error);
+    toast(
+      t(
+        'safety_backup_failed',
+        'Impossible de créer la sauvegarde de sécurité. Importation annulée.'
+      )
+    );
+    return;
+  }
+}
+
+projects = imported;
       saveProjects();
       render();
       toast(t('import_success').replace('{count}', String(imported.length)));
@@ -376,6 +915,15 @@
     const newProjectButton = $('#newProjectButton');
     hero.append(actionGroup);
     actionGroup.append(newProjectButton);
+    const saveStatus = document.createElement('div');
+saveStatus.id = 'localSaveStatus';
+saveStatus.className = 'local-save-status';
+saveStatus.setAttribute('role', 'status');
+saveStatus.setAttribute('aria-live', 'polite');
+
+actionGroup.append(saveStatus);
+
+setSaveStatus('saved');
 
     const assistantButton = document.createElement('a');
     assistantButton.className = 'secondary-button assistant-launch';
@@ -401,7 +949,22 @@
     exportButton.dataset.action = 'export';
     exportButton.dataset.i18n = 'export_projects';
     exportButton.textContent = t('export_projects');
-    actionGroup.append(importButton, exportButton, importInput);
+    const restoreSafetyButton = document.createElement('button');
+
+restoreSafetyButton.className = 'secondary-button restore-safety-button';
+restoreSafetyButton.type = 'button';
+restoreSafetyButton.dataset.action = 'restore-safety';
+restoreSafetyButton.dataset.i18n = 'restore_safety_backup';
+restoreSafetyButton.textContent = t(
+  'restore_safety_backup',
+  'Restaurer la sauvegarde de sécurité'
+);
+    actionGroup.append(
+  importButton,
+  exportButton,
+  restoreSafetyButton,
+  importInput
+);
 
     newProjectButton.addEventListener('click', () => openProjectDialog());
     $('#closeDialog').addEventListener('click', closeProjectDialog);
@@ -421,10 +984,22 @@
       if (!target) return;
       if (target.dataset.action === 'create') openProjectDialog();
       if (target.dataset.action === 'edit-project') openProjectDialog(target.dataset.project);
+      if (target.dataset.action === 'duplicate-project') {
+  duplicateProject(target.dataset.project);
+}
+      if (target.dataset.action === 'archive-project') {
+  archiveProject(target.dataset.project);
+}
+      if (target.dataset.action === 'restore-project') {
+  restoreArchivedProject(target.dataset.project);
+}
       if (target.dataset.action === 'add-task') openTaskDialog(target.dataset.project);
       if (target.dataset.action === 'edit-task') openTaskDialog(target.dataset.project, target.dataset.item);
       if (target.dataset.action === 'import') $('#importProjectsInput')?.click();
       if (target.dataset.action === 'export') exportProjects();
+      if (target.dataset.action === 'restore-safety') {
+  restoreSafetyBackup();
+}
       if (target.dataset.action === 'delete-project' && confirm(t('delete_project_confirm'))) {
         projects = projects.filter(project => project.id !== target.dataset.project);
         saveProjects();
@@ -470,13 +1045,42 @@
       render();
       updateProjectDialogMode();
       updateTaskDialogMode();
+      setSaveStatus('saved');
+      restoreSafetyButton.textContent = t(
+        'restore_safety_backup',
+        'Restaurer la sauvegarde de sécurité'
+      );
     });
   }
+function focusRequestedProject() {
+  const params = new URLSearchParams(window.location.search);
+  const requestedProjectId = params.get('project');
 
+  if (!requestedProjectId) return;
+
+  const card = [...document.querySelectorAll('[data-project-card]')]
+    .find(element => element.dataset.projectCard === requestedProjectId);
+
+  if (!card) return;
+
+  setTimeout(() => {
+    card.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
+
+    card.classList.add('project-card--focused');
+
+    setTimeout(() => {
+      card.classList.remove('project-card--focused');
+    }, 3000);
+  }, 150);
+}
   function init() {
     projects = readProjects();
     render();
     bind();
+    focusRequestedProject();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
