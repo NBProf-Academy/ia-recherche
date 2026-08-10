@@ -34,6 +34,7 @@
       name: typeof project?.name === 'string' ? project.name.trim().slice(0, 120) : '',
       goal: typeof project?.goal === 'string' ? project.goal.trim().slice(0, 400) : '',
       stage: STAGES.includes(project?.stage) ? project.stage : 'exploration',
+      archived: Boolean(project?.archived),
       tasks: Array.isArray(project?.tasks) ? project.tasks.map(normalizeTask).filter(task => task.text) : [],
       createdAt: typeof project?.createdAt === 'string' && !Number.isNaN(Date.parse(project.createdAt)) ? project.createdAt : '',
       updatedAt: typeof project?.updatedAt === 'string' && !Number.isNaN(Date.parse(project.updatedAt)) ? project.updatedAt : ''
@@ -43,7 +44,11 @@
   function readProjects() {
     try {
       const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      return Array.isArray(raw) ? raw.map(normalizeProject).filter(project => project.name) : [];
+      return Array.isArray(raw)
+  ? raw
+      .map(normalizeProject)
+      .filter(project => project.name && !project.archived)
+  : [];
     } catch (error) {
       console.error('NBProf report storage error:', error);
       return [];
