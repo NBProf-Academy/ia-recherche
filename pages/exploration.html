@@ -212,47 +212,61 @@
           <span>02</span>
 
           <div>
-            <h2>Problématique</h2>
-            <p>
-              Décrivez précisément le problème scientifique ou pratique.
-            </p>
+            <h2 data-i18n="exploration_problem_title">
+  Problématique
+</h2>
+            <p data-i18n="exploration_problem_description">
+  Décrivez précisément le problème scientifique ou pratique.
+</p>
           </div>
         </div>
 
         <label>
-          <span>Problématique</span>
+         <span data-i18n="exploration_problem_label">
+  Problématique
+</span>
 
           <textarea
             id="explorationProblem"
             rows="7"
             maxlength="3000"
+            data-i18n-placeholder="exploration_problem_placeholder"
             placeholder="Quel problème votre recherche cherche-t-elle à comprendre ou résoudre ?"
           ></textarea>
         </label>
 
         <label>
-          <span>Question principale de recherche</span>
+          <span data-i18n="exploration_main_question">
+  Question principale de recherche
+</span>
 
           <textarea
             id="explorationMainQuestion"
             rows="3"
             maxlength="1000"
+            data-i18n-placeholder="exploration_main_question_placeholder"
             placeholder="Ex. Dans quelle mesure… ?"
           ></textarea>
         </label>
 
         <label>
-          <span>Questions secondaires</span>
+          <span data-i18n="exploration_secondary_questions">
+  Questions secondaires
+</span>
 
           <textarea
             id="explorationSecondaryQuestions"
             rows="5"
+            data-i18n-placeholder="exploration_secondary_questions_placeholder"
             placeholder="Une question par ligne"
           ></textarea>
 
-          <small class="field-help">
-            Vous pourrez saisir jusqu’à 10 questions secondaires.
-          </small>
+          <small
+  class="field-help"
+  data-i18n="exploration_secondary_questions_help"
+>
+  Vous pourrez saisir jusqu’à 10 questions secondaires.
+</small>
         </label>
 
       </section>
