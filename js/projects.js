@@ -379,13 +379,13 @@ function saveProjects() {
   class="edit-project exploration-project"
   href="exploration.html?project=${encodeURIComponent(project.id)}"
 >
-  🔎 Explorer le sujet
+  🔎 ${escapeHtml(t('open_exploration', 'Explorer le sujet'))}
 </a>
 <a
   class="edit-project literature-project"
   href="literature.html?project=${encodeURIComponent(project.id)}"
 >
-  📚 Revue de littérature
+  📚 ${escapeHtml(t('open_literature', 'Revue de littérature'))}
 </a>
           <button class="edit-project" data-action="edit-project" data-project="${project.id}">${escapeHtml(t('edit_project'))}</button>
           <button
@@ -434,7 +434,7 @@ function saveProjects() {
     id: id(),
 
     name: cleanText(
-      `${source.name} — Copie`,
+      `${source.name} — ${t('project_copy_suffix', 'Copie')}`,
       120
     ),
 
@@ -649,9 +649,11 @@ function restoreArchivedProject(projectId) {
   stage: $('#projectStage').value,
   archived: false,
   archivedAt: '',
-      literature: {
-  references: []
-},
+  exploration: normalizeExploration(
+    null,
+    $('#projectGoal').value.trim()
+  ),
+  literature: normalizeLiterature(null),
   milestones: [],
   tasks: [],
   notes: '',
@@ -952,6 +954,7 @@ setSaveStatus('saved');
 restoreSafetyButton.className = 'secondary-button restore-safety-button';
 restoreSafetyButton.type = 'button';
 restoreSafetyButton.dataset.action = 'restore-safety';
+restoreSafetyButton.dataset.i18n = 'restore_safety_backup';
 restoreSafetyButton.textContent = t(
   'restore_safety_backup',
   'Restaurer la sauvegarde de sécurité'
@@ -1042,6 +1045,11 @@ restoreSafetyButton.textContent = t(
       render();
       updateProjectDialogMode();
       updateTaskDialogMode();
+      setSaveStatus('saved');
+      restoreSafetyButton.textContent = t(
+        'restore_safety_backup',
+        'Restaurer la sauvegarde de sécurité'
+      );
     });
   }
 function focusRequestedProject() {
