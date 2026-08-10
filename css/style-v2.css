@@ -728,3 +728,79 @@ html[dir=rtl] .launch-trust-strip>div+div{border-right:1px solid var(--border);b
     max-width: none;
   }
 }
+/* ===== Revue de littérature — Barre de recherche ===== */
+
+.literature-search {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(100%, 360px);
+}
+
+.literature-search label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  padding: 6px 12px;
+  color: #f5f7ff;
+  background: rgba(10, 18, 38, 0.78);
+  border: 1px solid rgba(124, 148, 255, 0.28);
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.literature-search input[type="search"] {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 46px 0 16px;
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(7, 19, 38, 0.96),
+      rgba(12, 18, 48, 0.96)
+    );
+
+  border: 1px solid rgba(48, 207, 255, 0.72);
+  border-radius: 12px;
+  outline: none;
+  font: inherit;
+  font-size: 0.96rem;
+
+  box-shadow:
+    0 0 0 1px rgba(48, 207, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  color-scheme: dark;
+}
+
+.literature-search input[type="search"]::placeholder {
+  color: rgba(220, 228, 245, 0.55);
+}
+
+.literature-search input[type="search"]:hover {
+  border-color: rgba(91, 220, 255, 0.95);
+}
+
+.literature-search input[type="search"]:focus {
+  border-color: #39d5ff;
+
+  box-shadow:
+    0 0 0 3px rgba(57, 213, 255, 0.14),
+    0 0 24px rgba(57, 213, 255, 0.10);
+}
+
+@media (max-width: 760px) {
+  .literature-search {
+    width: 100%;
+    max-width: none;
+  }
+}
