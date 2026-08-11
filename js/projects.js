@@ -664,6 +664,9 @@ function restoreArchivedProject(projectId) {
     closeProjectDialog();
     render();
     toast(t('project_created'));
+    if (typeof window.plausible === 'function') {
+  window.plausible('project_created');
+}
   }
 
   function updateTaskDialogMode() {
