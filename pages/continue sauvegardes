@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr" data-base-path="../">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#03040a">
+  <meta name="description" content="Guide des sauvegardes de NBProf Research Hub — stockage local, export, import, sauvegarde de sécurité et bonnes pratiques.">
+  <meta property="og:title" content="Sauvegardes — NBProf Research Hub">
+  <meta property="og:description" content="Comprendre où sont stockés vos projets et comment les sauvegarder correctement.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="../icon-512.png">
+  <title>Sauvegardes — NBProf Research Hub</title>
+
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png">
+  <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style-v2.css">
+  <script src="../js/i18n.js" defer></script>
+
+  <!-- Privacy-friendly analytics by Plausible -->
+  <script async src="https://plausible.io/js/pa--IIL0gRkmqR9IgBq8ps8Q.js"></script>
+  <script>
+    window.plausible = window.plausible || function () {
+      (plausible.q = plausible.q || []).push(arguments);
+    };
+
+    plausible.init = plausible.init || function (i) {
+      plausible.o = i || {};
+    };
+
+    plausible.init();
+  </script>
+</head>
+
+<body class="launch-page">
+  <div class="bg" aria-hidden="true"></div>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <header class="app-header launch-header">
+    <a href="../index.html" class="brand" aria-label="Accueil NBProf Research Hub">
+      <img src="../icon-192.png" alt="Logo NBProf Research Hub" class="brand-logo">
+      <div class="brand-text">
+        <strong>NBProf Research Hub</strong>
+        <span>De l’idée à la soutenance</span>
+      </div>
+    </a>
+
+    <div class="header-actions">
+      <a href="../index.html" class="header-button launch-open-app">Ouvrir l’application</a>
+      <a href="confidentialite.html" class="header-button">Confidentialité</a>
+    </div>
+  </header>
+
+  <main class="launch-main">
+
+    <section class="launch-hero">
+      <div class="launch-hero__copy">
+        <div class="launch-version">
+          <span>v1.1.2</span>
+          <strong>Sauvegardes</strong>
+        </div>
+
+        <span class="section-kicker">Protection du travail</span>
+
+        <h1>
+          <span>Sauvegardez vos projets.</span>
+          <span class="launch-gradient">Gardez toujours une copie de votre recherche.</span>
+        </h1>
+
+        <p>
+          NBProf Research Hub fonctionne actuellement selon une approche local-first :
+          vos projets sont stockés dans votre navigateur. Cette page explique où se trouvent
+          vos données, comment les exporter, les importer et utiliser la sauvegarde de sécurité.
+        </p>
+      </div>
+
+      <div class="launch-hero__visual">
+        <div class="launch-browser-card launch-browser-card--hero"
+             style="padding:32px;min-height:280px;display:flex;align-items:center;justify-content:center;text-align:center;">
+          <div>
+            <div style="font-size:72px;margin-bottom:18px;">💾</div>
+            <h2 style="margin:0 0 10px;">Votre travail, votre sauvegarde</h2>
+            <p style="margin:0;opacity:.78;">Exportez régulièrement vos projets pour éviter toute perte.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="launch-trust-strip" aria-label="Principes de sauvegarde">
+      <div><span>💻</span><div><strong>Stockage local</strong><small>Les projets restent dans le navigateur utilisé.</small></div></div>
+      <div><span>📤</span><div><strong>Export manuel</strong><small>Vous pouvez télécharger une copie de tous vos projets.</small></div></div>
+      <div><span>🛡️</span><div><strong>Sauvegarde de sécurité</strong><small>Une copie locale est créée avant certains imports.</small></div></div>
+    </section>
+
+    <section class="launch-section">
+      <div class="launch-section__intro">
+        <span class="section-kicker">1. Où sont stockés vos projets ?</span>
+        <h2>Dans le navigateur de l’appareil utilisé.</h2>
+        <p>
+          Les projets, tâches, jalons, notes, explorations et références bibliographiques
+          sont actuellement enregistrés dans le stockage local du navigateur.
+        </p>
+        <p>
+          Cela signifie qu’un projet créé sur un ordinateur n’apparaîtra pas automatiquement
+          sur un autre ordinateur, un autre téléphone ou un autre navigateur.
+        </p>
+      </div>
+    </section>
+
+    <section class="launch-section launch-privacy-section">
+      <div class="launch-privacy-icon">⚠️</div>
+      <div>
+        <span class="section-kicker">2. Risque de perte</span>
+        <h2>Le stockage local n’est pas une sauvegarde externe.</h2>
+        <p>
+          La suppression des données du navigateur, une réinitialisation de l’appareil,
+          un changement de navigateur, certaines opérations de nettoyage ou une panne
+          peuvent entraîner la perte des projets stockés localement.
+        </p>
+        <p>
+          NBProf Research Hub ne peut pas restaurer un projet supprimé du navigateur
+          si aucune sauvegarde exportée n’a été conservée par l’utilisateur.
+        </p>
+      </div>
+
+      <div class="launch-privacy-points">
+        <span>✓ Exportez régulièrement</span>
+        <span>✓ Conservez plusieurs copies</span>
+        <span>✓ Évitez de dépendre d’un seul appareil</span>
+      </div>
+    </section>
+
+    <section class="launch-section">
+      <div class="launch-section__intro">
+        <span class="section-kicker">3. Exporter vos projets</span>
+        <h2>Créer une copie de sauvegarde.</h2>
+        <p>
+          Dans la page <strong>Mes projets</strong>, utilisez le bouton
+          <strong>« Exporter mes projets »</strong>.
+        </p>
+        <p>
+          NBProf Research Hub télécharge alors un fichier JSON contenant les données
+          de vos projets au moment de l’export.
+        </p>
+        <p>
+          Conservez ce fichier dans un emplacement sûr : dossier personnel,
+          clé USB, disque externe ou autre espace de stockage auquel vous faites confiance.
+        </p>
+      </div>
+    </section>
+
+    <section class="launch-section">
+      <div class="launch-section__intro">
+        <span class="section-kicker">4. Importer une sauvegarde</span>
+        <h2>Restaurer des projets depuis un fichier exporté.</h2>
+        <p>
+          Le bouton <strong>« Importer une sauvegarde »</strong> permet de sélectionner
+          un fichier JSON précédemment exporté par NBProf Research Hub.
+        </p>
+        <p>
+          L’import peut remplacer l’état actuel des projets enregistrés dans le navigateur.
+          Il est donc important de lire les messages de confirmation avant de poursuivre.
+        </p>
+      </div>
+    </section>
+
+    <section class="launch-section">
+      <div class="launch-section__intro">
+        <span class="section-kicker">5. Sauvegarde de sécurité avant import</span>
+        <h2>Une protection supplémentaire contre une mauvaise manipulation.</h2>
+        <p>
+          Lorsqu’un import remplace des projets existants, NBProf Research Hub crée
+          une sauvegarde de sécurité locale de l’état précédent.
+        </p>
+        <p>
+          Cette sauvegarde peut être restaurée à l’aide du bouton
+          <strong>« Restaurer la sauvegarde de sécurité »</strong>.
+        </p>
+        <p>
+          Cette fonction constitue une protection pratique, mais elle reste stockée
+          localement dans le navigateur. Elle ne remplace donc pas un export manuel
+          conservé sur un autre support.
+        </p>
+      </div>
+    </section>
+
+    <section class="launch-section">
+      <div class="launch-section__intro">
+        <span class="section-kicker">6. Bonne pratique recommandée</span>
+        <h2>Une routine simple de sauvegarde.</h2>
+      </div>
+
+      <div class="launch-shift-grid">
+        <article>
+          <span class="launch-shift-number">01</span>
+          <h3>Avant une modification importante</h3>
+          <p>Exportez vos projets avant un import, un nettoyage du navigateur ou une intervention technique importante.</p>
+        </article>
+
+        <article>
+          <span class="launch-shift-number">02</span>
+          <h3>Chaque semaine</h3>
+          <p>Si vous utilisez régulièrement Research Hub, créez au moins une sauvegarde hebdomadaire.</p>
+        </article>
+
+        <article>
+          <span class="launch-shift-number">03</span>
+          <h3>Avant une étape importante</h3>
+          <p>Faites une copie avant une remise de mémoire, un changement d’appareil ou une soutenance.</p>
+        </article>
+
+        <article>
+          <span class="launch-shift-number">04</span>
+          <h3>Conservez plusieurs versions</h3>
+          <p>Ne remplacez pas toujours le même fichier. Gardez plusieurs sauvegardes datées lorsque le projet est important.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="launch-section">
+      <div class="launch-section__intro">
+        <span class="section-kicker">7. Exemple simple</span>
+        <h2>Un étudiant prépare son mémoire.</h2>
+        <p>
+          Il crée son projet, ajoute ses tâches et ses références bibliographiques.
+          À la fin de chaque semaine, il clique sur <strong>« Exporter mes projets »</strong>
+          et conserve le fichier dans un dossier intitulé « Sauvegardes mémoire ».
+        </p>
+        <p>
+          S’il change d’ordinateur, il ouvre NBProf Research Hub sur le nouvel appareil
+          puis utilise <strong>« Importer une sauvegarde »</strong> pour retrouver son travail.
+        </p>
+      </div>
+    </section>
+
+    <section class="launch-section">
+      <div class="launch-section__intro">
+        <span class="section-kicker">8. Ce que NBProf Research Hub ne fait pas encore</span>
+        <h2>Pas de synchronisation automatique entre appareils.</h2>
+        <p>
+          Dans la version actuelle, NBProf Research Hub ne propose pas encore de compte utilisateur,
+          de cloud personnel ou de synchronisation automatique des projets entre plusieurs appareils.
+        </p>
+        <p>
+          Si ces fonctions sont ajoutées à l’avenir, les règles de sécurité,
+          de confidentialité et de sauvegarde seront mises à jour en conséquence.
+        </p>
+      </div>
+    </section>
+
+    <section class="launch-final-cta">
+      <div>
+        <span class="launch-version"><span>NBProf</span><strong>Sauvegardes</strong></span>
+        <h2>Une recherche importante mérite plusieurs copies.</h2>
+        <p>
+          Le meilleur réflexe aujourd’hui : exportez régulièrement vos projets
+          et conservez vos fichiers dans un emplacement distinct de votre navigateur.
+        </p>
+      </div>
+
+      <div class="launch-final-actions">
+        <a class="primary-button" href="projets.html">Mes projets</a>
+        <a class="secondary-button" href="confidentialite.html">Voir la confidentialité</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer launch-footer">
+    <div class="footer-inner">
+      <div class="signature">
+        <img src="../icon-192.png" alt="" class="signature-logo">
+        <div>
+          <strong>Noamane Boulahcen — NBProf</strong>
+          <span>NBProf Research Hub — Sauvegardes</span>
+        </div>
+      </div>
+      <div class="footer-return-text">De l’idée à la soutenance</div>
+    </div>
+  </footer>
+</body>
+</html>
