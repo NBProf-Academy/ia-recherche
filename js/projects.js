@@ -767,6 +767,9 @@ function restoreArchivedProject(projectId) {
   setTimeout(() => URL.revokeObjectURL(url), 0);
 
   toast(t('export_ready'));
+    if (typeof window.plausible === 'function') {
+  window.plausible('backup_exported');
+}
 }
 function createSafetyBackup() {
   if (!projects.length) return null;
