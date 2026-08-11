@@ -514,6 +514,9 @@ const nextActionMarkup = nextAction
   }
 
   function init() {
+    if (typeof window.plausible === 'function') {
+  window.plausible('dashboard_opened');
+}
     bindFilters();
     render();
     window.addEventListener('nbprof:languagechange', render);

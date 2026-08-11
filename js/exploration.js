@@ -443,6 +443,9 @@
       showMissingProject();
       return;
     }
+    if (typeof window.plausible === 'function') {
+  window.plausible('exploration_opened');
+}
 
     renderProjectHeader();
     fillForm();

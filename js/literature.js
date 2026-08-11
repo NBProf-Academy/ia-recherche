@@ -671,6 +671,9 @@
           'Référence ajoutée avec succès.'
         )
       );
+      if (typeof window.plausible === 'function') {
+  window.plausible('literature_reference_added');
+}
     }
 
     currentProject.updatedAt =
