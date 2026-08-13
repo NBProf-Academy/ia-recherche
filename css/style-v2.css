@@ -714,3 +714,264 @@ html[dir=rtl] .launch-trust-strip>div+div{border-right:1px solid var(--border);b
     max-width: none;
   }
 }
+/* =========================================================
+   v1.2 — Onboarding de première visite
+   ========================================================= */
+
+body.onboarding-open{
+  overflow:hidden;
+}
+
+.onboarding-overlay{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(2,4,10,.82);
+  backdrop-filter:blur(14px);
+}
+
+.onboarding-card{
+  width:min(720px,100%);
+  overflow:hidden;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17,24,39,.98),
+      rgba(9,14,26,.98)
+    );
+  border:1px solid rgba(66,212,255,.26);
+  border-radius:28px;
+  box-shadow:0 35px 120px rgba(0,0,0,.65);
+}
+
+.onboarding-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  padding:22px 26px 16px;
+}
+
+.onboarding-brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+}
+
+.onboarding-brand img{
+  width:42px;
+  height:42px;
+  flex:0 0 42px;
+  border-radius:12px;
+  object-fit:cover;
+}
+
+.onboarding-brand span{
+  color:var(--white);
+  font-size:.84rem;
+  font-weight:800;
+}
+
+.onboarding-skip{
+  padding:8px 12px;
+  color:var(--muted);
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:10px;
+  font-size:.74rem;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.onboarding-skip:hover{
+  color:var(--white);
+  background:rgba(255,255,255,.045);
+  border-color:var(--border);
+}
+
+.onboarding-progress{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  padding:0 26px;
+}
+
+.onboarding-progress span{
+  height:5px;
+  overflow:hidden;
+  background:rgba(255,255,255,.08);
+  border-radius:999px;
+  transition:
+    background .25s ease,
+    box-shadow .25s ease;
+}
+
+.onboarding-progress span.is-active{
+  background:linear-gradient(
+    90deg,
+    var(--primary),
+    var(--secondary)
+  );
+  box-shadow:0 0 14px rgba(66,212,255,.18);
+}
+
+.onboarding-content{
+  min-height:330px;
+  padding:46px 46px 38px;
+  text-align:center;
+}
+
+.onboarding-icon{
+  display:grid;
+  place-items:center;
+  width:82px;
+  height:82px;
+  margin:0 auto 25px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(66,212,255,.13),
+      rgba(127,90,240,.15)
+    );
+  border:1px solid rgba(66,212,255,.22);
+  border-radius:24px;
+  font-size:2.35rem;
+}
+
+.onboarding-kicker{
+  display:block;
+  margin-bottom:11px;
+  color:var(--primary);
+  font:700 .7rem "Space Mono",monospace;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+
+.onboarding-content h2{
+  max-width:580px;
+  margin:0 auto;
+  color:var(--white);
+  font-size:clamp(1.75rem,4vw,2.55rem);
+  line-height:1.08;
+  letter-spacing:-.035em;
+}
+
+.onboarding-text{
+  max-width:590px;
+  margin:20px auto 0;
+  color:var(--text);
+  font-size:.98rem;
+  line-height:1.75;
+}
+
+.onboarding-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  padding:20px 26px 24px;
+  border-top:1px solid var(--border);
+  background:rgba(3,4,10,.3);
+}
+
+.onboarding-guide{
+  color:var(--primary);
+  font-size:.75rem;
+  font-weight:800;
+  text-decoration:none;
+}
+
+.onboarding-guide:hover{
+  text-decoration:underline;
+}
+
+.onboarding-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.onboarding-actions .primary-button,
+.onboarding-actions .secondary-button{
+  min-width:118px;
+}
+
+.onboarding-back[hidden]{
+  display:none;
+}
+
+/* RTL */
+html[dir=rtl] .onboarding-content,
+html[dir=rtl] .onboarding-top,
+html[dir=rtl] .onboarding-footer{
+  direction:rtl;
+}
+
+/* Mobile */
+@media(max-width:620px){
+
+  .onboarding-overlay{
+    align-items:flex-end;
+    padding:10px;
+  }
+
+  .onboarding-card{
+    max-height:calc(100vh - 20px);
+    overflow-y:auto;
+    border-radius:24px;
+  }
+
+  .onboarding-top{
+    padding:18px 18px 14px;
+  }
+
+  .onboarding-progress{
+    padding:0 18px;
+  }
+
+  .onboarding-content{
+    min-height:auto;
+    padding:34px 22px 30px;
+  }
+
+  .onboarding-icon{
+    width:70px;
+    height:70px;
+    margin-bottom:20px;
+    border-radius:20px;
+    font-size:2rem;
+  }
+
+  .onboarding-content h2{
+    font-size:1.75rem;
+  }
+
+  .onboarding-text{
+    font-size:.9rem;
+  }
+
+  .onboarding-footer{
+    align-items:stretch;
+    flex-direction:column;
+    padding:18px;
+  }
+
+  .onboarding-guide{
+    text-align:center;
+  }
+
+  .onboarding-actions{
+    width:100%;
+  }
+
+  .onboarding-actions .primary-button,
+  .onboarding-actions .secondary-button{
+    flex:1;
+    min-width:0;
+  }
+}
