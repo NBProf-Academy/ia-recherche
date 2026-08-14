@@ -9,6 +9,35 @@
   function showToast(message,duration=2600){const el=$('#toast');if(!el)return;el.textContent=message;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),duration);}
   function getDescription(tool){return tool.description?.[lang()]||tool.description?.fr||'';}
   function categoryLabel(cat){return t(categoryKeys[cat],cat);}
+  function initMobileMenu(){
+  const toggle = document.getElementById('mobileMenuToggle');
+  const menu = document.getElementById('mobileNavMenu');
+
+  if(!toggle || !menu) return;
+
+  toggle.addEventListener('click', () => {
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+    menu.hidden = isOpen;
+  });
+
+  menu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      menu.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('click', (event) => {
+    if(!menu.hidden &&
+       !menu.contains(event.target) &&
+       !toggle.contains(event.target)){
+      menu.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
   function render(){
     const container=$('#cardsContainer'), empty=$('#noResults'); if(!container||!empty)return;
     const q=searchTerm.trim().toLocaleLowerCase(lang());
@@ -68,6 +97,10 @@
     if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register(`${base()}sw.js`).catch(console.error));
     window.addEventListener('load',()=>setTimeout(()=>{const splash=$('#splash-screen');if(splash){splash.style.opacity='0';setTimeout(()=>splash.remove(),600);}},850));
   }
-  function init(){bind();loadTools();}
+  function init(){
+  bind();
+  initMobileMenu();
+  loadTools();
+}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
