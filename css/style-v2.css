@@ -714,3 +714,68 @@ html[dir=rtl] .launch-trust-strip>div+div{border-right:1px solid var(--border);b
     max-width: none;
   }
 }
+/* v1.2 — Navigation mobile compacte */
+
+.mobile-menu-toggle{
+  display:none;
+}
+
+@media(max-width:620px){
+
+  .app-header{
+    padding:11px 14px;
+    gap:10px;
+  }
+
+  .brand{
+    flex:0 0 auto;
+  }
+
+  .brand-logo{
+    width:42px;
+    height:42px;
+  }
+
+  .brand-text{
+    display:none;
+  }
+
+  .header-actions{
+    flex:1;
+    justify-content:flex-end;
+    gap:7px;
+    min-width:0;
+  }
+
+  .header-actions > .header-button:not(.language-button):not(.mobile-menu-toggle){
+    display:none;
+  }
+
+  .language-button{
+    min-width:46px;
+    width:46px;
+    height:42px;
+    padding:0;
+    justify-content:center;
+  }
+
+  .language-button #currentLanguageLabel,
+  .language-chevron{
+    display:none;
+  }
+
+  .mobile-menu-toggle{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:46px;
+    height:42px;
+    padding:0;
+    color:var(--primary);
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    font-size:1.45rem;
+    cursor:pointer;
+  }
+}
