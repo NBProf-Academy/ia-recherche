@@ -822,3 +822,49 @@ html[dir=rtl] .launch-trust-strip>div+div{border-right:1px solid var(--border);b
     background:rgba(66,212,255,.10);
   }
 }
+/* v1.2 — Aide contextuelle des projets */
+.projects-help{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  margin:0 0 28px;
+  padding:18px 20px;
+  background:rgba(66,212,255,.055);
+  border:1px solid rgba(66,212,255,.20);
+  border-radius:16px;
+}
+
+.projects-help__icon{
+  flex:0 0 auto;
+  font-size:1.35rem;
+  line-height:1;
+  margin-top:2px;
+}
+
+.projects-help__content{
+  min-width:0;
+}
+
+.projects-help__content strong{
+  display:block;
+  margin-bottom:6px;
+  color:var(--white);
+  font-size:.9rem;
+}
+
+.projects-help__content p{
+  color:var(--text);
+  font-size:.8rem;
+  line-height:1.65;
+}
+
+@media(max-width:620px){
+  .projects-help{
+    padding:16px;
+    gap:11px;
+  }
+
+  .projects-help__content p{
+    font-size:.77rem;
+  }
+}
