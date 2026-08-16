@@ -40,9 +40,53 @@ sessionStorage.setItem(RETURNING_SESSION_KEY, '1');
 <body>
 <div class="bg" aria-hidden="true"></div><div class="grid-bg" aria-hidden="true"></div>
 <div id="splash-screen" aria-hidden="true"><div class="splash-content"><img src="icon-512.png" alt=""><h1>NBProf Research Hub</h1><p>L’intelligence artificielle au service de la recherche scientifique</p><div class="loader"><span></span><span></span><span></span></div></div></div>
-<header class="app-header"><a href="index.html" class="brand" aria-label="Accueil NBProf Research Hub"><img src="icon-192.png" alt="Logo NBProf Research Hub" class="brand-logo"><div class="brand-text"><strong data-i18n="app_name">NBProf Research Hub</strong><span data-i18n="app_slogan">De l’idée à la soutenance</span></div></a><div class="header-actions"><a href="pages/presentation.html" class="header-button launch-link" data-i18n="public_launch_nav">Présentation</a>
-  <a href="pages/bien-demarrer.html" class="header-button">Bien démarrer</a>
-  <a href="pages/assistant.html" class="header-button assistant-link" data-i18n="assistant_nav" data-i18n-aria-label="assistant_nav">Assistant guidé</a><div class="language-switcher"><button type="button" class="header-button language-button" id="languageButton" aria-haspopup="true" aria-expanded="false" aria-controls="languageMenu"><span aria-hidden="true">🌍</span><span id="currentLanguageLabel">Français</span><span class="language-chevron" aria-hidden="true">▾</span></button><div class="language-menu" id="languageMenu" role="menu" hidden><button type="button" class="language-option active" data-lang="fr" role="menuitem"><span>🇫🇷</span><span>Français</span></button><button type="button" class="language-option" data-lang="en" role="menuitem"><span>🇬🇧</span><span>English</span></button><button type="button" class="language-option" data-lang="ar" role="menuitem"><span>🇲🇦</span><span>العربية</span></button></div></div><button type="button" class="header-button" id="aboutBtn" data-i18n-aria-label="about_button" aria-label="À propos">ℹ️</button></div></header>
+<header class="app-header"><a href="index.html" class="brand" aria-label="Accueil NBProf Research Hub"><img src="icon-192.png" alt="Logo NBProf Research Hub" class="brand-logo"><div class="brand-text"><strong data-i18n="app_name">NBProf Research Hub</strong><span data-i18n="app_slogan">De l’idée à la soutenance</span></div></a><div class="header-actions"><a href="pages/presentation.html" class="header-button launch-link" data-i18n="public_launch_nav">Présentation</a><a href="pages/assistant.html" class="header-button assistant-link" data-i18n="assistant_nav" data-i18n-aria-label="assistant_nav">Assistant guidé</a>
+  <a href="pages/bien-demarrer.html" class="header-button">
+  Bien démarrer
+</a>
+
+<a href="pages/assistant.html"
+   class="header-button assistant-link"
+   data-i18n="assistant_nav"
+   data-i18n-aria-label="assistant_nav">
+  Assistant guidé
+</a>
+  <button
+  class="header-button mobile-menu-toggle"
+  id="mobileMenuToggle"
+  type="button"
+  aria-label="Ouvrir le menu"
+  aria-expanded="false"
+>
+  ☰
+  </button>
+  <div class="mobile-nav-menu" id="mobileNavMenu" hidden>
+
+  <a href="pages/presentation.html" class="mobile-nav-link">
+    Présentation
+  </a>
+
+  <a href="pages/bien-demarrer.html" class="mobile-nav-link">
+    Bien démarrer
+  </a>
+
+  <a href="pages/assistant.html" class="mobile-nav-link">
+    Assistant guidé
+  </a>
+
+  <a href="pages/projets.html" class="mobile-nav-link">
+    Mes projets
+  </a>
+
+  <a href="pages/dashboard.html" class="mobile-nav-link">
+    Dashboard
+  </a>
+
+  <a href="pages/rapport.html" class="mobile-nav-link">
+    Rapport
+  </a>
+</div>
+ <div class="language-switcher"> <button type="button" class="header-button language-button" id="languageButton" aria-haspopup="true" aria-expanded="false" aria-controls="languageMenu"><span aria-hidden="true">🌍</span><span id="currentLanguageLabel">Français</span><span class="language-chevron" aria-hidden="true">▾</span></button><div class="language-menu" id="languageMenu" role="menu" hidden><button type="button" class="language-option active" data-lang="fr" role="menuitem"><span>🇫🇷</span><span>Français</span></button><button type="button" class="language-option" data-lang="en" role="menuitem"><span>🇬🇧</span><span>English</span></button><button type="button" class="language-option" data-lang="ar" role="menuitem"><span>🇲🇦</span><span>العربية</span></button></div></div><button type="button" class="header-button" id="aboutBtn" data-i18n-aria-label="about_button" aria-label="À propos">ℹ️</button></div></header>
 <main class="hub-main">
 <section class="hub-hero"><div class="hero-badge" data-i18n="hero_badge">Assistant intelligent du chercheur</div><h1><span data-i18n="hero_title_start">De l’idée à la</span> <span data-i18n="hero_title_highlight">soutenance</span></h1><p class="hero-description" data-i18n="hero_description">Trouvez les outils, les méthodes et les parcours adaptés à chaque étape de votre recherche scientifique.</p><div class="hub-search" role="search"><span class="hub-search-icon" aria-hidden="true">🔍</span><input type="search" id="hubSearch" data-i18n-placeholder="search_placeholder" placeholder="Rechercher un outil, une méthode ou une étape..." autocomplete="off"><button type="button" id="hubSearchButton" data-i18n="search_button">Rechercher</button></div><div class="stats"><div class="stat"><strong id="toolCount">14</strong><span data-i18n="tools_count">outils référencés</span></div><div class="stat"><strong>6</strong><span data-i18n="journeys_count">parcours guidés</span></div><div class="stat"><strong>3</strong><span data-i18n="languages_count">langues</span></div></div></section>
 <section class="research-goals" aria-labelledby="goalsTitle"><div class="section-heading"><div><span class="section-kicker" data-i18n="goals_kicker">Parcours personnalisés</span><h2 id="goalsTitle" data-i18n="goals_title">Que souhaitez-vous faire aujourd’hui ?</h2></div><p data-i18n="goals_description">Choisissez votre objectif pour découvrir les étapes, les outils et les conseils adaptés à votre travail scientifique.</p></div><div class="goal-grid">
