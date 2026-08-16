@@ -140,6 +140,7 @@
   "project_name_placeholder": "Ex. Revue de littérature sur l’IA éducative",
   "project_goal": "Objectif de recherche",
   "project_goal_placeholder": "Quel résultat souhaitez-vous atteindre ?",
+  "project_context_tip": "Utilisez les jalons pour structurer les grandes étapes de votre recherche, puis les tâches pour suivre les actions concrètes à réaliser.",
   "project_stage": "Étape actuelle",
   "stage_exploration": "Exploration du sujet",
   "stage_literature": "Revue de littérature",
