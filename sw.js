@@ -1,4 +1,4 @@
-const CACHE='nbprof-research-hub-v1.1.0';
+const CACHE='nbprof-research-hub-v1.3.0-dev';
 const ASSETS=[
   './',
   './index.html',
@@ -15,6 +15,7 @@ const ASSETS=[
   './js/assistant.js',
   './js/exploration.js',
   './js/literature.js',
+  './js/diagnostic.js',
   './data/tools.json',
   './data/journeys.json',
   './lang/fr.json',
@@ -27,6 +28,7 @@ const ASSETS=[
   './pages/assistant.html',
   './pages/exploration.html',
   './pages/literature.html',
+  './pages/diagnostic-recherche.html',
   './pages/presentation.html',
   './images/launch/home.png',
   './images/launch/assistant.png',

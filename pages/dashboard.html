@@ -41,7 +41,7 @@
   <main class="dashboard-main">
     <section class="dashboard-hero">
       <div><span class="section-kicker" data-i18n="dashboard_kicker">Cockpit du chercheur</span><h1 data-i18n="dashboard_title">Tableau de bord de recherche</h1><p data-i18n="dashboard_description">Visualisez vos projets, vos priorités et vos prochaines échéances en un coup d’œil.</p></div>
-      <div class="report-actions"><a class="secondary-button" href="rapport.html" data-i18n="report_nav">Rapport</a><a class="primary-button" href="projets.html" data-i18n="dashboard_open_projects">Gérer mes projets</a></div>
+      <div class="report-actions"><a class="secondary-button" href="diagnostic-recherche.html" data-i18n="diagnostic_nav">Diagnostic</a><a class="secondary-button" href="rapport.html" data-i18n="report_nav">Rapport</a><a class="primary-button" href="projets.html" data-i18n="dashboard_open_projects">Gérer mes projets</a></div>
     </section>
 
     <section class="dashboard-kpis" id="dashboardKpis" aria-label="Indicateurs de recherche"></section>
@@ -74,6 +74,11 @@
       <article class="dashboard-panel">
         <div class="dashboard-panel__heading"><div><span class="section-kicker" data-i18n="dashboard_stages_kicker">Parcours</span><h2 data-i18n="dashboard_stages_title">Répartition par étape</h2></div><p data-i18n="dashboard_stages_description">Repérez où se situent vos projets dans le cycle de recherche.</p></div>
         <div id="dashboardStages" class="dashboard-stages"></div>
+      </article>
+
+      <article class="dashboard-panel">
+        <div class="dashboard-panel__heading"><div><span class="section-kicker" data-i18n="diagnostic_kicker">Pilotage méthodologique</span><h2 data-i18n="dashboard_diagnostic_title">Diagnostic méthodologique</h2></div><p data-i18n="dashboard_diagnostic_text">Visualisez la maturité méthodologique de vos projets et reprenez votre diagnostic.</p></div>
+        <div id="dashboardDiagnostic" class="dashboard-diagnostic-summary"></div>
       </article>
     </section>
 

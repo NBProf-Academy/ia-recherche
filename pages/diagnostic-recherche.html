@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr" data-base-path="../">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#03040a">
+  <meta name="description" content="Diagnostic méthodologique du projet de recherche — NBProf Research Hub.">
+  <title>Diagnostic de recherche — NBProf Research Hub</title>
+  <link rel="icon" href="../images/favicon-32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style-v2.css">
+  <script async src="https://plausible.io/js/pa--IIL0gRkmqR9IgBq8ps8Q.js"></script>
+  <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)};</script>
+  <script src="../js/i18n.js" defer></script>
+  <script src="../js/diagnostic.js" defer></script>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div><div class="grid-bg" aria-hidden="true"></div>
+  <header class="app-header">
+    <a href="../index.html" class="brand" aria-label="Accueil NBProf Research Hub"><img src="../icon-192.png" alt="Logo NBProf Research Hub" class="brand-logo"><div class="brand-text"><strong data-i18n="app_name">NBProf Research Hub</strong><span data-i18n="app_slogan">De l’idée à la soutenance</span></div></a>
+    <div class="header-actions">
+      <a href="projets.html" class="header-button projects-link" data-i18n="projects_nav">Mes projets</a>
+      <a href="dashboard.html" class="header-button dashboard-link" data-i18n="dashboard_nav">Tableau de bord</a>
+      <button class="header-button mobile-menu-toggle" id="mobileMenuToggle" type="button" data-i18n-aria-label="mobile_menu_open" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+      <div class="mobile-nav-menu" id="mobileNavMenu" hidden>
+        <a href="projets.html" class="mobile-nav-link" data-i18n="projects_nav">Mes projets</a>
+        <a href="dashboard.html" class="mobile-nav-link" data-i18n="dashboard_nav">Tableau de bord</a>
+        <a href="assistant.html" class="mobile-nav-link" data-i18n="assistant_nav">Assistant guidé</a>
+        <a href="bien-demarrer.html" class="mobile-nav-link" data-i18n="getting_started_nav">Bien démarrer</a>
+      </div>
+      <div class="language-switcher"><button type="button" class="header-button language-button" id="languageButton" aria-haspopup="true" aria-expanded="false" aria-controls="languageMenu"><span aria-hidden="true">🌍</span><span id="currentLanguageLabel">Français</span><span class="language-chevron" aria-hidden="true">▾</span></button><div class="language-menu" id="languageMenu" role="menu" hidden><button type="button" class="language-option active" data-lang="fr" role="menuitem">🇫🇷 Français</button><button type="button" class="language-option" data-lang="en" role="menuitem">🇬🇧 English</button><button type="button" class="language-option" data-lang="ar" role="menuitem">🇲🇦 العربية</button></div></div>
+    </div>
+  </header>
+
+  <main class="diagnostic-main">
+    <section class="diagnostic-hero">
+      <div><span class="section-kicker" data-i18n="diagnostic_kicker">Pilotage méthodologique</span><h1 data-i18n="diagnostic_title">Diagnostic du projet de recherche</h1><p data-i18n="diagnostic_description">Évaluez rapidement l’état de votre projet, repérez ce qui manque et obtenez des prochaines actions concrètes.</p></div>
+      <div class="diagnostic-hero__badge"><span aria-hidden="true">🧭</span><strong data-i18n="diagnostic_private">100 % local</strong><small data-i18n="diagnostic_private_text">Vos réponses restent sur cet appareil.</small></div>
+    </section>
+
+    <section class="diagnostic-setup" id="diagnosticSetup">
+      <div class="diagnostic-field"><label for="diagnosticProject" data-i18n="diagnostic_choose_project">Projet à diagnostiquer</label><select id="diagnosticProject"></select><small data-i18n="diagnostic_project_help">Le résultat sera associé à ce projet.</small></div>
+      <div class="diagnostic-field"><label for="diagnosticWorkType" data-i18n="diagnostic_work_type">Type de travail</label><select id="diagnosticWorkType"><option value="memoire" data-i18n="work_type_memoire">Mémoire</option><option value="pfe" data-i18n="work_type_pfe">PFE</option><option value="article" data-i18n="work_type_article">Article scientifique</option><option value="these" data-i18n="work_type_these">Thèse</option><option value="other" data-i18n="work_type_other">Autre travail de recherche</option></select></div>
+    </section>
+
+    <section id="diagnosticNoProjects" class="diagnostic-empty" hidden><span aria-hidden="true">📁</span><h2 data-i18n="diagnostic_no_project_title">Commencez par créer un projet</h2><p data-i18n="diagnostic_no_project_text">Le diagnostic s’appuie sur un projet enregistré dans votre espace chercheur.</p><a class="primary-button" href="projets.html" data-i18n="new_project">Nouveau projet</a></section>
+
+    <form id="diagnosticForm" class="diagnostic-form">
+      <div id="diagnosticQuestions" class="diagnostic-sections"></div>
+      <div class="diagnostic-form-actions"><button type="button" class="secondary-button" id="diagnosticReset" data-i18n="diagnostic_reset">Réinitialiser</button><button type="submit" class="primary-button" data-i18n="diagnostic_analyze">Analyser mon projet</button></div>
+    </form>
+
+    <section id="diagnosticResults" class="diagnostic-results" hidden aria-live="polite">
+      <div class="diagnostic-score-card"><div class="diagnostic-score-ring" id="diagnosticScoreRing"><strong id="diagnosticScore">0%</strong><span data-i18n="diagnostic_score_label">maturité méthodologique</span></div><div><span class="section-kicker" data-i18n="diagnostic_result_kicker">Votre diagnostic</span><h2 id="diagnosticLevel">—</h2><p id="diagnosticSummary"></p><small id="diagnosticSavedAt"></small></div></div>
+      <div class="diagnostic-result-grid">
+        <article class="diagnostic-panel"><div class="diagnostic-panel__heading"><span aria-hidden="true">🎯</span><div><h3 data-i18n="diagnostic_priorities_title">Prochaines actions prioritaires</h3><p data-i18n="diagnostic_priorities_text">Concentrez-vous d’abord sur les points les moins avancés.</p></div></div><ol id="diagnosticPriorities" class="diagnostic-priorities"></ol></article>
+        <article class="diagnostic-panel"><div class="diagnostic-panel__heading"><span aria-hidden="true">✅</span><div><h3 data-i18n="diagnostic_checklist_title">Checklist de progression</h3><p data-i18n="diagnostic_checklist_text">Une vue synthétique de vos acquis et points à consolider.</p></div></div><div id="diagnosticChecklist" class="diagnostic-checklist"></div></article>
+      </div>
+      <article class="diagnostic-panel diagnostic-panel--tools"><div class="diagnostic-panel__heading"><span aria-hidden="true">🧰</span><div><h3 data-i18n="diagnostic_tools_title">Ressources NBProf recommandées</h3><p data-i18n="diagnostic_tools_text">Poursuivez directement avec les espaces les plus utiles pour votre situation.</p></div></div><div id="diagnosticTools" class="diagnostic-tools"></div></article>
+      <div class="diagnostic-results-actions"><a href="projets.html" class="secondary-button" data-i18n="diagnostic_back_projects">Retour à Mes projets</a><a href="dashboard.html" class="primary-button" data-i18n="dashboard_nav">Tableau de bord</a></div>
+    </section>
+  </main>
+  <footer class="site-footer diagnostic-footer"><div class="footer-inner"><div class="signature"><img src="../icon-192.png" alt="" class="signature-logo"><div><strong>Noamane Boulahcen — NB Prof</strong><span data-i18n="diagnostic_footer">v1.3 — Pilotage intelligent du parcours de recherche</span></div></div><div class="footer-return-text" data-i18n="app_slogan">De l’idée à la soutenance</div></div></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
