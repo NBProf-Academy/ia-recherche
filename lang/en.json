@@ -140,6 +140,7 @@
   "project_name_placeholder": "E.g. Literature review on educational AI",
   "project_goal": "Research objective",
   "project_goal_placeholder": "What result do you want to achieve?",
+  "project_context_tip": "Use milestones to structure the main stages of your research, then use tasks to track the concrete actions you need to complete.",
   "project_stage": "Current stage",
   "stage_exploration": "Topic exploration",
   "stage_literature": "Literature review",
