@@ -40,17 +40,7 @@ sessionStorage.setItem(RETURNING_SESSION_KEY, '1');
 <body>
 <div class="bg" aria-hidden="true"></div><div class="grid-bg" aria-hidden="true"></div>
 <div id="splash-screen" aria-hidden="true"><div class="splash-content"><img src="icon-512.png" alt=""><h1>NBProf Research Hub</h1><p>L’intelligence artificielle au service de la recherche scientifique</p><div class="loader"><span></span><span></span><span></span></div></div></div>
-<header class="app-header"><a href="index.html" class="brand" aria-label="Accueil NBProf Research Hub"><img src="icon-192.png" alt="Logo NBProf Research Hub" class="brand-logo"><div class="brand-text"><strong data-i18n="app_name">NBProf Research Hub</strong><span data-i18n="app_slogan">De l’idée à la soutenance</span></div></a><div class="header-actions"><a href="pages/presentation.html" class="header-button launch-link" data-i18n="public_launch_nav">Présentation</a><a href="pages/assistant.html" class="header-button assistant-link" data-i18n="assistant_nav" data-i18n-aria-label="assistant_nav">Assistant guidé</a>
-  <a href="pages/bien-demarrer.html" class="header-button">
-  Bien démarrer
-</a>
-
-<a href="pages/assistant.html"
-   class="header-button assistant-link"
-   data-i18n="assistant_nav"
-   data-i18n-aria-label="assistant_nav">
-  Assistant guidé
-</a>
+<header class="app-header"><a href="index.html" class="brand" aria-label="Accueil NBProf Research Hub"><img src="icon-192.png" alt="Logo NBProf Research Hub" class="brand-logo"><div class="brand-text"><strong data-i18n="app_name">NBProf Research Hub</strong><span data-i18n="app_slogan">De l’idée à la soutenance</span></div></a><div class="header-actions"><a href="pages/presentation.html" class="header-button launch-link" data-i18n="public_launch_nav">Présentation</a><a href="pages/bien-demarrer.html" class="header-button" data-i18n="getting_started_nav">Bien démarrer</a><a href="pages/assistant.html" class="header-button assistant-link" data-i18n="assistant_nav" data-i18n-aria-label="assistant_nav">Assistant guidé</a><a href="pages/diagnostic-recherche.html" class="header-button" data-i18n="diagnostic_nav">Diagnostic</a>
   <button
   class="header-button mobile-menu-toggle"
   id="mobileMenuToggle"
@@ -70,8 +60,12 @@ sessionStorage.setItem(RETURNING_SESSION_KEY, '1');
     Bien démarrer
   </a>
 
-  <a href="pages/assistant.html" class="mobile-nav-link">
+  <a href="pages/assistant.html" class="mobile-nav-link" data-i18n="assistant_nav">
     Assistant guidé
+  </a>
+
+  <a href="pages/diagnostic-recherche.html" class="mobile-nav-link" data-i18n="diagnostic_nav">
+    Diagnostic
   </a>
 
   <a href="pages/projets.html" class="mobile-nav-link">

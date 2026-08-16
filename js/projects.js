@@ -387,6 +387,12 @@ function saveProjects() {
 >
   📚 ${escapeHtml(t('open_literature', 'Revue de littérature'))}
 </a>
+<a
+  class="edit-project project-diagnostic"
+  href="diagnostic-recherche.html?project=${encodeURIComponent(project.id)}"
+>
+  🧭 ${escapeHtml(t('diagnostic_nav', 'Diagnostic'))}
+</a>
           <button class="edit-project" data-action="edit-project" data-project="${project.id}">${escapeHtml(t('edit_project'))}</button>
           <button
   class="edit-project duplicate-project"

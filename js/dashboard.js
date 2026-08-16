@@ -1,5 +1,6 @@
 (() => {
   const STORAGE_KEY = 'nbprof-research-projects-v1';
+  const DIAGNOSTICS_KEY = 'nbprof-research-diagnostics-v1';
   const STAGES = ['exploration', 'literature', 'method', 'data', 'writing', 'defense'];
   const PRIORITIES = ['low', 'medium', 'high'];
   const $ = selector => document.querySelector(selector);
@@ -48,6 +49,32 @@
       console.error('NBProf dashboard storage error:', error);
       return [];
     }
+  }
+
+  function readDiagnostics() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(DIAGNOSTICS_KEY) || '{}');
+      return raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function renderDiagnostic(view) {
+    const container = $('#dashboardDiagnostic');
+    if (!container) return;
+    const diagnostics = readDiagnostics();
+    const rows = view.projects
+      .map(project => ({ project, diagnostic: diagnostics[project.id] }))
+      .filter(item => item.diagnostic && Number.isFinite(Number(item.diagnostic.score)))
+      .sort((a, b) => new Date(b.diagnostic.updatedAt || 0) - new Date(a.diagnostic.updatedAt || 0));
+
+    if (!rows.length) {
+      container.innerHTML = `<div class="dashboard-panel-empty">${escapeHtml(t('dashboard_diagnostic_empty','Aucun diagnostic enregistré pour les projets affichés.'))}</div><div class="dashboard-diagnostic-cta"><span>${escapeHtml(t('dashboard_diagnostic_cta_text','Évaluez votre projet pour identifier vos prochaines priorités.'))}</span><a class="secondary-button" href="diagnostic-recherche.html">${escapeHtml(t('diagnostic_start','Lancer le diagnostic'))}</a></div>`;
+      return;
+    }
+
+    container.innerHTML = rows.slice(0, 4).map(({ project, diagnostic }) => `<a class="dashboard-diagnostic-row" href="diagnostic-recherche.html?project=${encodeURIComponent(project.id)}"><div><strong>${escapeHtml(project.name)}</strong><small>${escapeHtml(t('diagnostic_saved_at','Dernière analyse'))} · ${escapeHtml(formatDate(diagnostic.updatedAt, true))}</small></div><span class="dashboard-diagnostic-score">${Math.max(0,Math.min(100,Number(diagnostic.score)||0))}%</span></a>`).join('') + `<div class="dashboard-diagnostic-cta"><span>${escapeHtml(t('dashboard_diagnostic_cta_text','Évaluez votre projet pour identifier vos prochaines priorités.'))}</span><a class="secondary-button" href="diagnostic-recherche.html">${escapeHtml(t('diagnostic_start','Lancer le diagnostic'))}</a></div>`;
   }
 
   function dateFromKey(value) {
@@ -491,6 +518,7 @@ const nextActionMarkup = nextAction
     renderProjects(view);
     renderTasks(view);
     renderStages(view);
+    renderDiagnostic(view);
     renderFilterSummary(view);
   }
 
@@ -520,7 +548,7 @@ const nextActionMarkup = nextAction
     bindFilters();
     render();
     window.addEventListener('nbprof:languagechange', render);
-    window.addEventListener('storage', event => { if (event.key === STORAGE_KEY) render(); });
+    window.addEventListener('storage', event => { if ([STORAGE_KEY, DIAGNOSTICS_KEY].includes(event.key)) render(); });
     if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('../sw.js').catch(console.error));
   }
 
