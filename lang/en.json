@@ -133,6 +133,8 @@
   "projects_kicker": "Researcher space",
   "projects_title": "My research projects",
   "projects_description": "Turn your research into clear steps and progress at your own pace.",
+  "projects_help_title": "How do I use this space?",
+"projects_help_text": "Create a project, define your research objective, indicate your current stage, then gradually add your tasks, deadlines and notes.",
   "new_project": "New project",
   "project_name": "Project title",
   "project_name_placeholder": "E.g. Literature review on educational AI",
