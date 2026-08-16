@@ -975,3 +975,37 @@ html[dir=rtl] .onboarding-footer{
     min-width:0;
   }
 }
+/* v1.2 — Conseil contextuel dans les cartes projet */
+.project-context-tip{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin:0 0 20px;
+  padding:14px 16px;
+  background:rgba(66,212,255,.045);
+  border:1px solid rgba(66,212,255,.16);
+  border-radius:14px;
+}
+
+.project-context-tip > span{
+  flex:0 0 auto;
+  margin-top:1px;
+  font-size:1.05rem;
+}
+
+.project-context-tip p{
+  margin:0;
+  color:var(--text);
+  font-size:.76rem;
+  line-height:1.6;
+}
+
+@media(max-width:620px){
+  .project-context-tip{
+    padding:13px 14px;
+  }
+
+  .project-context-tip p{
+    font-size:.73rem;
+  }
+}
