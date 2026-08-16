@@ -409,6 +409,15 @@ function saveProjects() {
       <div class="project-meta"><span><strong>${escapeHtml(t('created_on'))}</strong> ${escapeHtml(formatDate(project.createdAt))}</span><span><strong>${escapeHtml(t('updated_on'))}</strong> ${escapeHtml(formatDate(project.updatedAt))}</span></div>
       <div class="progress-label"><strong>${progress.percent}%</strong><span>${escapeHtml(t('project_progress'))} · ${progress.done}/${progress.total} ${escapeHtml(t('tasks_done'))}</span></div>
       <div class="progress-track"><span style="width:${progress.percent}%"></span></div>
+      <div class="project-context-tip">
+  <span aria-hidden="true">💡</span>
+  <p>
+    ${escapeHtml(t(
+      'project_context_tip',
+      'Utilisez les jalons pour structurer les grandes étapes de votre recherche, puis les tâches pour suivre les actions concrètes à réaliser.'
+    ))}
+  </p>
+</div>
       <div class="task-indicators">
         ${indicator(`${progress.done}/${progress.total}`, t('indicator_completed'), 'completed')}
         ${indicator(progress.overdue, t('indicator_overdue'), progress.overdue ? 'overdue' : '')}
