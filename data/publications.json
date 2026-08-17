@@ -1,0 +1,53 @@
+[
+  {
+    "id": "nbprof-ajmet-2026-ia-management-scolaire",
+    "type": "article",
+    "priority": 100,
+    "title": "L’intelligence artificielle comme levier de transformation des pratiques managériales dans les établissements scolaires publics",
+    "subtitle": "Une revue de littérature systématique selon la méthode PRISMA 2020",
+    "authors": [
+      "Abdellah Nouib",
+      "Layla Boulkhir",
+      "Noamane Boulahcen"
+    ],
+    "year": 2026,
+    "journal": "African Journal of Management, Engineering and Technology",
+    "volume": "4(2)",
+    "pages": "153–165",
+    "url": "https://revues.imist.ma/index.php/AJMET/article/view/65683",
+    "doi": "",
+    "abstract": {
+      "fr": "Revue systématique consacrée au rôle de l’intelligence artificielle dans la transformation des pratiques managériales des établissements scolaires publics, avec une démarche PRISMA 2020 et une analyse bibliométrique.",
+      "en": "Systematic review on the role of artificial intelligence in transforming management practices in public schools, using a PRISMA 2020 approach and bibliometric analysis.",
+      "ar": "مراجعة منهجية حول دور الذكاء الاصطناعي في تحويل الممارسات الإدارية بالمؤسسات التعليمية العمومية، بالاعتماد على منهجية PRISMA 2020 وتحليل ببليومتري."
+    },
+    "keywords": [
+      "intelligence artificielle",
+      "IA",
+      "management scolaire",
+      "établissements scolaires publics",
+      "pratiques managériales",
+      "PRISMA 2020",
+      "bibliométrie",
+      "VOSviewer",
+      "gouvernance scolaire",
+      "transformation digitale",
+      "éducation publique",
+      "artificial intelligence",
+      "school management",
+      "public schools",
+      "management practices",
+      "systematic review",
+      "bibliometrics",
+      "school governance",
+      "digital transformation",
+      "public education",
+      "الذكاء الاصطناعي",
+      "الإدارة المدرسية",
+      "المؤسسات التعليمية العمومية",
+      "الحوكمة المدرسية",
+      "التحول الرقمي",
+      "مراجعة منهجية"
+    ]
+  }
+]
