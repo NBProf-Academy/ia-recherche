@@ -68,7 +68,7 @@
   }
 
   function setCategory(cat,scroll=true){activeCategory=cat;document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.dataset.cat===cat));render();if(scroll)$('#recommendedTools')?.scrollIntoView({behavior:'smooth',block:'start'});}
-  function runSearch(){searchTerm=$('#hubSearch')?.value||'';setCategory('all');}
+  function runSearch(){searchTerm=$('#hubSearch')?.value||'';window.NBProfUnifiedSearch?.search(searchTerm);if(!searchTerm.trim())setCategory('all');}
 
   async function loadTools(){
     const state=$('#cardsContainer'); if(state)state.innerHTML=`<div class="loading-state">${t('loading','Chargement...')}</div>`;
@@ -493,8 +493,7 @@
     });
 
     $('#hubSearch')?.addEventListener('input',e=>{
-      searchTerm=e.target.value;
-      render();
+      if(!e.target.value.trim()){searchTerm='';render();}
     });
 
     $('.goal-grid')?.addEventListener('click',e=>{
