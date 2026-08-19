@@ -113,4 +113,35 @@ sessionStorage.setItem(RETURNING_SESSION_KEY, '1');
   <a href="pages/sauvegardes.html">Sauvegardes</a>
 </div> </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div><div class="install-banner" id="installBanner"><span class="install-banner__icon">📱</span><div class="install-banner__text"><strong data-i18n="install_title">Installer NBProf Research Hub</strong><span data-i18n="install_text">Accès rapide et fonctionnement hors connexion.</span></div><button type="button" class="install-action" id="installBtn" data-i18n="install_button">Installer</button><button type="button" class="install-dismiss" id="dismissBtn" data-i18n-aria-label="later_button" aria-label="Plus tard">✕</button></div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const params = new URLSearchParams(window.location.search);
+  const query = params.get('q');
+
+  if (!query) return;
+
+  const input = document.getElementById('hubSearch');
+  const button = document.getElementById('hubSearchButton');
+
+  if (!input || !button) return;
+
+  input.value = query;
+
+  input.dispatchEvent(
+    new Event('input', {
+      bubbles: true
+    })
+  );
+
+  input.dispatchEvent(
+    new Event('change', {
+      bubbles: true
+    })
+  );
+
+  setTimeout(function () {
+    button.click();
+  }, 500);
+});
+</script>
 </body></html>
