@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="fr" data-base-path="../">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Articles enregistrés | Recherche NBProf</title>
+
+  <meta
+    name="description"
+    content="Retrouvez les articles scientifiques enregistrés dans Recherche NBProf."
+  >
+
+  <style>
+    :root {
+      --bg: #03040a;
+      --surface: #111827;
+      --surface-2: #0b1220;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --cyan: #42d4ff;
+      --violet: #7f5af0;
+      --border: rgba(255,255,255,.08);
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at top left,
+          rgba(66,212,255,.10),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at top right,
+          rgba(127,90,240,.10),
+          transparent 35%
+        ),
+        var(--bg);
+
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 60px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 34px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow:
+        0 10px 30px rgba(66,212,255,.15);
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .brand-text p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      min-height: 42px;
+
+      padding: 0 16px;
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 12px;
+
+      background:
+        rgba(17,24,39,.8);
+
+      color: var(--text);
+
+      transition: .2s ease;
+    }
+
+    .back-button:hover {
+      border-color:
+        rgba(66,212,255,.4);
+
+      transform:
+        translateY(-1px);
+    }
+
+    .hero {
+      padding: 28px;
+
+      border:
+        1px solid rgba(66,212,255,.18);
+
+      border-radius: 24px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(66,212,255,.08),
+          rgba(127,90,240,.07)
+        );
+
+      margin-bottom: 28px;
+    }
+
+    .hero-kicker {
+      margin: 0 0 10px;
+
+      color: var(--cyan);
+
+      font-size: 12px;
+
+      font-weight: 800;
+
+      letter-spacing: .08em;
+
+      text-transform: uppercase;
+    }
+
+    .hero h2 {
+      margin: 0;
+
+      font-size:
+        clamp(26px, 4vw, 40px);
+
+      line-height: 1.1;
+    }
+
+    .hero p {
+      max-width: 760px;
+
+      margin: 14px 0 0;
+
+      color: var(--muted);
+
+      line-height: 1.7;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+
+      margin-bottom: 20px;
+    }
+
+    .count {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .count strong {
+      color: var(--text);
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      border: 0;
+      cursor: pointer;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      min-height: 42px;
+
+      padding: 0 15px;
+
+      border-radius: 12px;
+
+      font-weight: 750;
+
+      transition: .2s ease;
+    }
+
+    .button:hover {
+      transform:
+        translateY(-1px);
+    }
+
+    .button-secondary {
+      background:
+        var(--surface);
+
+      color:
+        var(--text);
+
+      border:
+        1px solid var(--border);
+    }
+
+    .button-danger {
+      background:
+        rgba(239,68,68,.10);
+
+      color:
+        #fecaca;
+
+      border:
+        1px solid rgba(239,68,68,.28);
+    }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 18px;
+    }
+
+    .article-card {
+      position: relative;
+
+      padding: 22px;
+
+      border-radius: 20px;
+
+      background:
+        rgba(17,24,39,.92);
+
+      border:
+        1px solid var(--border);
+
+      box-shadow:
+        0 10px 30px rgba(0,0,0,.14);
+    }
+
+    .article-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+
+      margin-bottom: 14px;
+    }
+
+    .source-badge {
+      display: inline-flex;
+
+      padding:
+        6px 10px;
+
+      border-radius:
+        999px;
+
+      background:
+        rgba(66,212,255,.09);
+
+      color:
+        var(--cyan);
+
+      font-size:
+        11px;
+
+      font-weight:
+        800;
+    }
+
+    .saved-date {
+      color:
+        var(--muted);
+
+      font-size:
+        11px;
+    }
+
+    .article-card h3 {
+      margin:
+        0 0 10px;
+
+      font-size:
+        18px;
+
+      line-height:
+        1.35;
+    }
+
+    .meta {
+      margin-bottom:
+        12px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        13px;
+
+      line-height:
+        1.5;
+    }
+
+    .abstract {
+      margin:
+        0 0 18px;
+
+      color:
+        #cbd5e1;
+
+      font-size:
+        14px;
+
+      line-height:
+        1.65;
+    }
+
+    .doi {
+      margin:
+        0 0 16px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        12px;
+
+      word-break:
+        break-all;
+    }
+
+    .actions {
+      display:
+        flex;
+
+      flex-wrap:
+        wrap;
+
+      gap:
+        10px;
+    }
+
+    .article-link,
+    .remove-button {
+      min-height:
+        40px;
+
+      padding:
+        0 13px;
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      gap:
+        7px;
+
+      border-radius:
+        11px;
+
+      font-size:
+        13px;
+
+      font-weight:
+        750;
+
+      cursor:
+        pointer;
+    }
+
+    .article-link {
+      background:
+        rgba(66,212,255,.09);
+
+      color:
+        var(--cyan);
+
+      border:
+        1px solid rgba(66,212,255,.22);
+    }
+
+    .remove-button {
+      background:
+        rgba(239,68,68,.08);
+
+      color:
+        #fecaca;
+
+      border:
+        1px solid rgba(239,68,68,.18);
+    }
+
+    .empty {
+      padding:
+        56px 22px;
+
+      border-radius:
+        22px;
+
+      text-align:
+        center;
+
+      background:
+        rgba(17,24,39,.78);
+
+      border:
+        1px solid var(--border);
+    }
+
+    .empty-icon {
+      font-size:
+        44px;
+
+      margin-bottom:
+        14px;
+    }
+
+    .empty h3 {
+      margin:
+        0 0 8px;
+    }
+
+    .empty p {
+      margin:
+        0 auto 20px;
+
+      max-width:
+        560px;
+
+      color:
+        var(--muted);
+
+      line-height:
+        1.6;
+    }
+
+    .footer {
+      margin-top:
+        46px;
+
+      text-align:
+        center;
+
+      color:
+        var(--muted);
+
+      font-size:
+        12px;
+    }
+
+    @media (max-width: 800px) {
+      .articles-grid {
+        grid-template-columns:
+          1fr;
+      }
+
+      .topbar {
+        align-items:
+          flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width:
+          min(100% - 20px, 1180px);
+      }
+
+      .hero {
+        padding:
+          22px 18px;
+      }
+
+      .article-card {
+        padding:
+          18px;
+      }
+
+      .toolbar {
+        align-items:
+          stretch;
+      }
+
+      .toolbar-actions {
+        width:
+          100%;
+      }
+
+      .toolbar-actions .button {
+        flex:
+          1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="page">
+
+    <header class="topbar">
+
+      <div class="brand">
+
+        <img
+          src="../assets/images/icon-512.png"
+          alt="Recherche NBProf"
+          class="brand-logo"
+        >
+
+        <div class="brand-text">
+          <h1>
+            Recherche NBProf
+          </h1>
+
+          <p>
+            De l’idée à la soutenance
+          </p>
+        </div>
+
+      </div>
+
+      <a
+        href="../"
+        class="back-button"
+      >
+        ← Accueil
+      </a>
+
+    </header>
+
+    <section class="hero">
+
+      <p class="hero-kicker">
+        Bibliothèque personnelle
+      </p>
+
+      <h2>
+        Articles enregistrés
+      </h2>
+
+      <p>
+        Retrouvez ici les publications et articles scientifiques
+        que vous avez enregistrés lors de vos recherches.
+      </p>
+
+    </section>
+
+    <section class="toolbar">
+
+      <div
+        id="savedCount"
+        class="count"
+      >
+        Chargement...
+      </div>
+
+      <div class="toolbar-actions">
+
+        <a
+          href="../"
+          class="button button-secondary"
+        >
+          🔍 Nouvelle recherche
+        </a>
+
+        <button
+          id="clearAllButton"
+          type="button"
+          class="button button-danger"
+        >
+          🗑 Tout supprimer
+        </button>
+
+      </div>
+
+    </section>
+
+    <section
+      id="savedArticles"
+      class="articles-grid"
+    ></section>
+
+    <footer class="footer">
+      Recherche NBProf • Recherche • Méthodologie • Innovation
+    </footer>
+
+  </main>
+
+  <script>
+
+    (() => {
+
+      const STORAGE_KEY =
+        'nbprof_saved_articles_v1';
+
+      const container =
+        document.getElementById(
+          'savedArticles'
+        );
+
+      const countElement =
+        document.getElementById(
+          'savedCount'
+        );
+
+      const clearAllButton =
+        document.getElementById(
+          'clearAllButton'
+        );
+
+      function escapeHtml(
+        value = ''
+      ) {
+        return String(value)
+          .replace(
+            /[&<>'"]/g,
+            c => ({
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              "'": '&#39;',
+              '"': '&quot;'
+            }[c])
+          );
+      }
+
+      function getArticles() {
+        try {
+
+          const raw =
+            localStorage.getItem(
+              STORAGE_KEY
+            );
+
+          if (!raw) {
+            return [];
+          }
+
+          const parsed =
+            JSON.parse(raw);
+
+          return Array.isArray(parsed)
+            ? parsed
+            : [];
+
+        } catch (error) {
+
+          console.warn(
+            'NBProf saved articles read error',
+            error
+          );
+
+          return [];
+        }
+      }
+
+      function setArticles(
+        items
+      ) {
+
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(items)
+        );
+
+      }
+
+      function formatDate(
+        value
+      ) {
+
+        if (!value) {
+          return '';
+        }
+
+        try {
+
+          return new Intl.DateTimeFormat(
+            'fr-FR',
+            {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric'
+            }
+          ).format(
+            new Date(value)
+          );
+
+        } catch (_) {
+
+          return '';
+
+        }
+
+      }
+
+      function metaText(
+        article
+      ) {
+
+        const parts =
+          [];
+
+        if (
+          Array.isArray(
+            article.authors
+          ) &&
+          article.authors.length
+        ) {
+
+          parts.push(
+            article.authors
+              .slice(0, 3)
+              .join(', ') +
+            (
+              article.authors.length > 3
+                ? ' et al.'
+                : ''
+            )
+          );
+
+        }
+
+        if (article.year) {
+          parts.push(
+            article.year
+          );
+        }
+
+        if (article.journal) {
+          parts.push(
+            article.journal
+          );
+        }
+
+        return parts.join(
+          ' · '
+        );
+
+      }
+
+      function render() {
+
+        const articles =
+          getArticles();
+
+        countElement.innerHTML =
+          articles.length === 0
+            ? 'Aucun article enregistré'
+            : `<strong>${articles.length}</strong> article${articles.length > 1 ? 's' : ''} enregistré${articles.length > 1 ? 's' : ''}`;
+
+        clearAllButton.style.display =
+          articles.length
+            ? 'inline-flex'
+            : 'none';
+
+        if (
+          !articles.length
+        ) {
+
+          container.className =
+            '';
+
+          container.innerHTML =
+            `
+              <div class="empty">
+
+                <div class="empty-icon">
+                  📚
+                </div>
+
+                <h3>
+                  Aucun article enregistré
+                </h3>
+
+                <p>
+                  Lancez une recherche scientifique puis utilisez
+                  le bouton « Enregistrer » sous un article pour le
+                  retrouver ici.
+                </p>
+
+                <a
+                  href="../"
+                  class="button button-secondary"
+                >
+                  🔍 Lancer une recherche
+                </a>
+
+              </div>
+            `;
+
+          return;
+        }
+
+        container.className =
+          'articles-grid';
+
+        container.innerHTML =
+          articles
+            .map(
+              article => {
+
+                const title =
+                  escapeHtml(
+                    article.title ||
+                    'Sans titre'
+                  );
+
+                const source =
+                  escapeHtml(
+                    article.source ||
+                    (
+                      article.kind === 'nbprof'
+                        ? 'NBProf'
+                        : 'Article scientifique'
+                    )
+                  );
+
+                const meta =
+                  escapeHtml(
+                    metaText(article)
+                  );
+
+                const abstract =
+                  escapeHtml(
+                    article.abstract ||
+                    ''
+                  );
+
+                const doi =
+                  escapeHtml(
+                    article.doi ||
+                    ''
+                  );
+
+                const url =
+                  escapeHtml(
+                    article.url ||
+                    ''
+                  );
+
+                const pdf =
+                  escapeHtml(
+                    article.pdf ||
+                    ''
+                  );
+
+                const date =
+                  formatDate(
+                    article.savedAt
+                  );
+
+                const id =
+                  escapeHtml(
+                    article.id ||
+                    ''
+                  );
+
+                return `
+                  <article class="article-card">
+
+                    <div class="article-top">
+
+                      <span class="source-badge">
+                        ${source}
+                      </span>
+
+                      ${
+                        date
+                          ? `
+                            <span class="saved-date">
+                              Enregistré le ${escapeHtml(date)}
+                            </span>
+                          `
+                          : ''
+                      }
+
+                    </div>
+
+                    <h3>
+                      ${title}
+                    </h3>
+
+                    ${
+                      meta
+                        ? `
+                          <div class="meta">
+                            ${meta}
+                          </div>
+                        `
+                        : ''
+                    }
+
+                    ${
+                      abstract
+                        ? `
+                          <p class="abstract">
+                            ${
+                              abstract.length > 500
+                                ? abstract.slice(0, 497) + '…'
+                                : abstract
+                            }
+                          </p>
+                        `
+                        : ''
+                    }
+
+                    ${
+                      doi
+                        ? `
+                          <div class="doi">
+                            DOI: ${doi}
+                          </div>
+                        `
+                        : ''
+                    }
+
+                    <div class="actions">
+
+                      ${
+                        url
+                          ? `
+                            <a
+                              href="${url}"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="article-link"
+                            >
+                              Ouvrir ↗
+                            </a>
+                          `
+                          : ''
+                      }
+
+                      ${
+                        pdf
+                          ? `
+                            <a
+                              href="${pdf}"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="article-link"
+                            >
+                              PDF ↗
+                            </a>
+                          `
+                          : ''
+                      }
+
+                      <button
+                        type="button"
+                        class="remove-button"
+                        data-remove-id="${id}"
+                      >
+                        🗑 Supprimer
+                      </button>
+
+                    </div>
+
+                  </article>
+                `;
+
+              }
+            )
+            .join('');
+
+      }
+
+      document.addEventListener(
+        'click',
+        event => {
+
+          const button =
+            event.target.closest(
+              '[data-remove-id]'
+            );
+
+          if (!button) {
+            return;
+          }
+
+          const id =
+            button.dataset.removeId;
+
+          if (!id) {
+            return;
+          }
+
+          const articles =
+            getArticles()
+              .filter(
+                article =>
+                  article.id !== id
+              );
+
+          setArticles(
+            articles
+          );
+
+          render();
+
+        }
+      );
+
+      clearAllButton.addEventListener(
+        'click',
+        () => {
+
+          const articles =
+            getArticles();
+
+          if (!articles.length) {
+            return;
+          }
+
+          const confirmation =
+            window.confirm(
+              'Supprimer tous les articles enregistrés ?'
+            );
+
+          if (!confirmation) {
+            return;
+          }
+
+          setArticles([]);
+
+          render();
+
+        }
+      );
+
+      window.addEventListener(
+        'storage',
+        render
+      );
+
+      window.addEventListener(
+        'nbprof:savedarticleschange',
+        render
+      );
+
+      render();
+
+    })();
+
+  </script>
+
+</body>
+</html>
