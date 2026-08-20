@@ -369,6 +369,8 @@ function saveProjects() {
 
   function card(project) {
     const progress = projectProgress(project);
+    const referenceCount =
+  project.literature?.references?.length || 0;
     const milestones = project.milestones.map(item => `<li>${escapeHtml(item.text)}</li>`).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
     const tasks = project.tasks.map(task => taskMarkup(project, task)).join('') || `<li class="muted">${escapeHtml(t('project_empty'))}</li>`;
     return `<article class="project-card" data-project-card="${escapeHtml(project.id)}">
@@ -412,6 +414,25 @@ function saveProjects() {
         </div>
       </div>
       <p class="project-goal">${escapeHtml(project.goal || '—')}</p>
+      <div class="project-reference-count">
+  📚 ${
+    referenceCount === 0
+      ? escapeHtml(
+          t(
+            'project_no_references',
+            'Aucune référence'
+          )
+        )
+      : `${referenceCount} ${escapeHtml(
+          t(
+            'project_references',
+            referenceCount > 1
+              ? 'références'
+              : 'référence'
+          )
+        )}`
+  }
+</div>
       <div class="project-meta"><span><strong>${escapeHtml(t('created_on'))}</strong> ${escapeHtml(formatDate(project.createdAt))}</span><span><strong>${escapeHtml(t('updated_on'))}</strong> ${escapeHtml(formatDate(project.updatedAt))}</span></div>
       <div class="progress-label"><strong>${progress.percent}%</strong><span>${escapeHtml(t('project_progress'))} · ${progress.done}/${progress.total} ${escapeHtml(t('tasks_done'))}</span></div>
       <div class="progress-track"><span style="width:${progress.percent}%"></span></div>
