@@ -34,6 +34,10 @@
   let editingReferenceId = null;
   let literatureSearchQuery = '';
 
+  // =========================================================
+  // LECTURE DES PROJETS
+  // =========================================================
+
   function readProjects() {
     try {
       const stored = JSON.parse(
@@ -51,6 +55,10 @@
     }
   }
 
+  // =========================================================
+  // ID DU PROJET COURANT
+  // =========================================================
+
   function requestedProjectId() {
     const params = new URLSearchParams(
       window.location.search
@@ -59,6 +67,10 @@
     return params.get('project') || '';
   }
 
+  // =========================================================
+  // MOTS-CLÉS
+  // =========================================================
+
   function keywordsToList(value) {
     return String(value || '')
       .split(',')
@@ -66,6 +78,10 @@
       .filter(Boolean)
       .slice(0, 20);
   }
+
+  // =========================================================
+  // TOAST
+  // =========================================================
 
   function showToast(message) {
     const toast = $('#toast');
@@ -79,6 +95,10 @@
       toast.classList.remove('show');
     }, 2600);
   }
+
+  // =========================================================
+  // RÉFÉRENCES DU PROJET
+  // =========================================================
 
   function references() {
     if (!currentProject) return [];
@@ -105,6 +125,10 @@
       reference => reference.id === referenceId
     );
   }
+
+  // =========================================================
+  // EN-TÊTE DU PROJET
+  // =========================================================
 
   function renderProjectHeader() {
     const projectName =
@@ -137,6 +161,10 @@
     }
   }
 
+  // =========================================================
+  // TEXTE COURT
+  // =========================================================
+
   function shortText(
     value,
     maxLength = 120
@@ -155,6 +183,534 @@
       .trim()}…`;
   }
 
+  // =========================================================
+  // URL D'OUVERTURE
+  // =========================================================
+
+  function referenceOpenUrl(reference) {
+    const directUrl = cleanText(
+      reference?.url,
+      1500
+    );
+
+    if (directUrl) {
+      return directUrl;
+    }
+
+    const doi = cleanText(
+      reference?.doi,
+      500
+    );
+
+    if (!doi) {
+      return '';
+    }
+
+    return `https://doi.org/${encodeURIComponent(doi)}`;
+  }
+
+  // =========================================================
+  // LIGNE DE DÉTAIL
+  // =========================================================
+
+  function detailRow(label, value) {
+    const content = cleanText(
+      value,
+      6000
+    );
+
+    if (!content) {
+      return '';
+    }
+
+    return `
+      <div class="nbprof-reference-detail-row">
+
+        <strong>
+          ${escapeHtml(label)}
+        </strong>
+
+        <div>
+          ${escapeHtml(content)}
+        </div>
+
+      </div>
+    `;
+  }
+
+  // =========================================================
+  // FERMER LA FICHE
+  // =========================================================
+
+  function closeReferenceDetails() {
+    const dialog =
+      $('#nbprofReferenceDetailsDialog');
+
+    if (!dialog) return;
+
+    if (dialog.close) {
+      dialog.close();
+    }
+
+    dialog.remove();
+  }
+
+  // =========================================================
+  // AFFICHER LA FICHE DÉTAILLÉE
+  // =========================================================
+
+  function openReferenceDetails(referenceId) {
+    const reference =
+      referenceById(referenceId);
+
+    if (!reference) {
+      showToast(
+        t(
+          'literature_reference_not_found',
+          'Référence introuvable.'
+        )
+      );
+
+      return;
+    }
+
+    closeReferenceDetails();
+
+    const dialog =
+      document.createElement('dialog');
+
+    dialog.id =
+      'nbprofReferenceDetailsDialog';
+
+    dialog.className =
+      'project-dialog nbprof-reference-details-dialog';
+
+    const authors =
+      cleanText(
+        reference.authors,
+        500
+      ) || '—';
+
+    const year =
+      cleanText(
+        reference.year,
+        20
+      ) || '—';
+
+    const source =
+      cleanText(
+        reference.source,
+        500
+      ) || '—';
+
+    const doi =
+      cleanText(
+        reference.doi,
+        500
+      );
+
+    const url =
+      referenceOpenUrl(
+        reference
+      );
+
+    const keywords =
+      Array.isArray(
+        reference.keywords
+      )
+        ? reference.keywords
+            .map(
+              item =>
+                cleanText(
+                  item,
+                  100
+                )
+            )
+            .filter(Boolean)
+            .join(', ')
+        : '';
+
+    dialog.innerHTML = `
+      <div class="nbprof-reference-details-shell">
+
+        <div class="dialog-heading">
+
+          <div>
+
+            <span class="section-kicker">
+              ${escapeHtml(
+                t(
+                  'literature_reference_details_kicker',
+                  'Fiche bibliographique'
+                )
+              )}
+            </span>
+
+            <h2>
+              ${escapeHtml(
+                reference.title ||
+                t(
+                  'literature_reference',
+                  'Référence'
+                )
+              )}
+            </h2>
+
+          </div>
+
+          <button
+            type="button"
+            class="icon-button"
+            id="closeReferenceDetails"
+            aria-label="${escapeHtml(
+              t(
+                'close',
+                'Fermer'
+              )
+            )}"
+          >
+            ×
+          </button>
+
+        </div>
+
+        <div class="nbprof-reference-details-meta">
+
+          <span>
+            👤 ${escapeHtml(authors)}
+          </span>
+
+          <span>
+            📅 ${escapeHtml(year)}
+          </span>
+
+          <span>
+            📚 ${escapeHtml(source)}
+          </span>
+
+        </div>
+
+        <div class="nbprof-reference-details-content">
+
+          ${detailRow(
+            t(
+              'literature_doi',
+              'DOI'
+            ),
+            doi
+          )}
+
+          ${detailRow(
+            t(
+              'literature_keywords',
+              'Mots-clés'
+            ),
+            keywords
+          )}
+
+          ${detailRow(
+            t(
+              'literature_methodology',
+              'Méthodologie'
+            ),
+            reference.methodology
+          )}
+
+          ${detailRow(
+            t(
+              'literature_sample',
+              'Échantillon'
+            ),
+            reference.sample
+          )}
+
+          ${detailRow(
+            t(
+              'literature_results',
+              'Résultats'
+            ),
+            reference.results
+          )}
+
+          ${detailRow(
+            t(
+              'literature_limitations',
+              'Limites'
+            ),
+            reference.limitations
+          )}
+
+          ${detailRow(
+            t(
+              'literature_contribution',
+              'Contribution'
+            ),
+            reference.contribution
+          )}
+
+          ${detailRow(
+            t(
+              'literature_notes',
+              'Notes / résumé'
+            ),
+            reference.notes
+          )}
+
+        </div>
+
+        <div
+          class="dialog-actions nbprof-reference-details-actions"
+        >
+
+          ${
+            url
+              ? `
+                <a
+                  class="secondary-button"
+                  href="${escapeHtml(url)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  🔗 ${escapeHtml(
+                    t(
+                      'literature_open_article',
+                      'Ouvrir l’article'
+                    )
+                  )}
+                </a>
+              `
+              : ''
+          }
+
+          <button
+            type="button"
+            class="secondary-button"
+            data-action="edit-literature-reference"
+            data-reference="${escapeHtml(
+              reference.id
+            )}"
+            id="editReferenceFromDetails"
+          >
+            ✎ ${escapeHtml(
+              t(
+                'literature_edit_action',
+                'Modifier'
+              )
+            )}
+          </button>
+
+          <button
+            type="button"
+            class="primary-button"
+            id="closeReferenceDetailsBottom"
+          >
+            ${escapeHtml(
+              t(
+                'close',
+                'Fermer'
+              )
+            )}
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+    // =====================================================
+    // STYLE DE LA FICHE
+    // =====================================================
+
+    const style =
+      document.createElement('style');
+
+    style.textContent = `
+
+      .nbprof-reference-details-dialog {
+        width:
+          min(
+            760px,
+            calc(100% - 28px)
+          );
+
+        max-height:
+          88vh;
+
+        overflow:
+          auto;
+      }
+
+      .nbprof-reference-details-shell {
+        padding:
+          22px;
+      }
+
+      .nbprof-reference-details-meta {
+        display:
+          flex;
+
+        flex-wrap:
+          wrap;
+
+        gap:
+          8px 14px;
+
+        margin:
+          14px 0 18px;
+
+        color:
+          var(
+            --muted,
+            #94a3b8
+          );
+
+        font-size:
+          13px;
+      }
+
+      .nbprof-reference-details-content {
+        display:
+          grid;
+
+        gap:
+          12px;
+      }
+
+      .nbprof-reference-detail-row {
+        padding:
+          14px;
+
+        border:
+          1px solid
+          rgba(
+            255,
+            255,
+            255,
+            .08
+          );
+
+        border-radius:
+          14px;
+
+        background:
+          rgba(
+            255,
+            255,
+            255,
+            .025
+          );
+      }
+
+      .nbprof-reference-detail-row strong {
+        display:
+          block;
+
+        margin-bottom:
+          6px;
+
+        color:
+          var(
+            --accent,
+            #42d4ff
+          );
+
+        font-size:
+          12px;
+      }
+
+      .nbprof-reference-detail-row div {
+        color:
+          var(
+            --text,
+            #f8fafc
+          );
+
+        line-height:
+          1.6;
+
+        white-space:
+          pre-wrap;
+
+        overflow-wrap:
+          anywhere;
+      }
+
+      .nbprof-reference-details-actions {
+        margin-top:
+          20px;
+
+        flex-wrap:
+          wrap;
+      }
+
+      .literature-row-actions
+      .literature-view-reference,
+
+      .literature-row-actions
+      .literature-open-reference {
+        white-space:
+          nowrap;
+      }
+
+    `;
+
+    dialog.appendChild(
+      style
+    );
+
+    document.body.appendChild(
+      dialog
+    );
+
+    $('#closeReferenceDetails')
+      ?.addEventListener(
+        'click',
+        closeReferenceDetails
+      );
+
+    $('#closeReferenceDetailsBottom')
+      ?.addEventListener(
+        'click',
+        closeReferenceDetails
+      );
+
+    $('#editReferenceFromDetails')
+      ?.addEventListener(
+        'click',
+        () => {
+          closeReferenceDetails();
+
+          openReferenceDialog(
+            reference.id
+          );
+        }
+      );
+
+    dialog.addEventListener(
+      'click',
+      event => {
+        if (
+          event.target === dialog
+        ) {
+          closeReferenceDetails();
+        }
+      }
+    );
+
+    if (dialog.showModal) {
+      dialog.showModal();
+    } else {
+      dialog.setAttribute(
+        'open',
+        ''
+      );
+    }
+  }
+
+  // =========================================================
+  // RECHERCHE DANS LA LITTÉRATURE
+  // =========================================================
+
   function matchesLiteratureSearch(
     reference
   ) {
@@ -170,11 +726,14 @@
       reference.title,
       reference.source,
       reference.methodology,
-      ...(Array.isArray(
-        reference.keywords
+
+      ...(
+        Array.isArray(
+          reference.keywords
+        )
+          ? reference.keywords
+          : []
       )
-        ? reference.keywords
-        : [])
     ]
       .filter(Boolean)
       .join(' ')
@@ -185,12 +744,18 @@
     );
   }
 
-  function renderReferences() {
-    const allItems = references();
+  // =========================================================
+  // AFFICHAGE DES RÉFÉRENCES
+  // =========================================================
 
-    const items = allItems.filter(
-      matchesLiteratureSearch
-    );
+  function renderReferences() {
+    const allItems =
+      references();
+
+    const items =
+      allItems.filter(
+        matchesLiteratureSearch
+      );
 
     const count =
       $('#literatureReferenceCount');
@@ -206,7 +771,9 @@
 
     if (count) {
       count.textContent =
-        String(allItems.length);
+        String(
+          allItems.length
+        );
     }
 
     if (!items.length) {
@@ -235,127 +802,201 @@
 
     if (!body) return;
 
-    body.innerHTML = items
-      .map(reference => {
-        return `
-          <tr>
-            <td>
-              ${escapeHtml(
-                reference.authors || '—'
-              )}
-            </td>
+    body.innerHTML =
+      items
+        .map(
+          reference => {
+            return `
+              <tr>
 
-            <td>
-              ${escapeHtml(
-                reference.year || '—'
-              )}
-            </td>
-
-            <td>
-              <strong>
-                ${escapeHtml(
-                  reference.title || '—'
-                )}
-              </strong>
-            </td>
-
-            <td>
-              ${escapeHtml(
-                reference.source || '—'
-              )}
-            </td>
-
-            <td>
-              ${escapeHtml(
-                shortText(
-                  reference.methodology
-                )
-              )}
-            </td>
-
-            <td>
-              ${escapeHtml(
-                shortText(
-                  reference.results
-                )
-              )}
-            </td>
-
-            <td>
-              ${escapeHtml(
-                shortText(
-                  reference.limitations
-                )
-              )}
-            </td>
-
-            <td>
-              ${escapeHtml(
-                shortText(
-                  reference.contribution
-                )
-              )}
-            </td>
-
-            <td>
-              <div
-                class="literature-row-actions"
-              >
-                <button
-                  type="button"
-                  class="edit-project"
-                  data-action="edit-literature-reference"
-                  data-reference="${escapeHtml(
-                    reference.id
-                  )}"
-                >
+                <td>
                   ${escapeHtml(
-                    t(
-                      'literature_edit_action',
-                      'Modifier'
+                    reference.authors ||
+                    '—'
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    reference.year ||
+                    '—'
+                  )}
+                </td>
+
+                <td>
+                  <strong>
+                    ${escapeHtml(
+                      reference.title ||
+                      '—'
+                    )}
+                  </strong>
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    reference.source ||
+                    '—'
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    shortText(
+                      reference.methodology
                     )
                   )}
-                </button>
+                </td>
 
-                <button
-                  type="button"
-                  class="delete-project"
-                  data-action="delete-literature-reference"
-                  data-reference="${escapeHtml(
-                    reference.id
-                  )}"
-                >
+                <td>
                   ${escapeHtml(
-                    t(
-                      'literature_delete_action',
-                      'Supprimer'
+                    shortText(
+                      reference.results
                     )
                   )}
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
-      })
-      .join('');
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    shortText(
+                      reference.limitations
+                    )
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    shortText(
+                      reference.contribution
+                    )
+                  )}
+                </td>
+
+                <td>
+
+                  <div
+                    class="literature-row-actions"
+                  >
+
+                    <!-- VOIR LA FICHE -->
+
+                    <button
+                      type="button"
+                      class="edit-project literature-view-reference"
+                      data-action="view-literature-reference"
+                      data-reference="${escapeHtml(
+                        reference.id
+                      )}"
+                    >
+                      👁 ${escapeHtml(
+                        t(
+                          'literature_view_action',
+                          'Voir la fiche'
+                        )
+                      )}
+                    </button>
+
+                    <!-- OUVRIR L'ARTICLE -->
+
+                    ${
+                      referenceOpenUrl(
+                        reference
+                      )
+                        ? `
+                          <a
+                            class="edit-project literature-open-reference"
+                            href="${escapeHtml(
+                              referenceOpenUrl(
+                                reference
+                              )
+                            )}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            🔗 ${escapeHtml(
+                              t(
+                                'literature_open_action',
+                                'Ouvrir'
+                              )
+                            )}
+                          </a>
+                        `
+                        : ''
+                    }
+
+                    <!-- MODIFIER -->
+
+                    <button
+                      type="button"
+                      class="edit-project"
+                      data-action="edit-literature-reference"
+                      data-reference="${escapeHtml(
+                        reference.id
+                      )}"
+                    >
+                      ${escapeHtml(
+                        t(
+                          'literature_edit_action',
+                          'Modifier'
+                        )
+                      )}
+                    </button>
+
+                    <!-- SUPPRIMER -->
+
+                    <button
+                      type="button"
+                      class="delete-project"
+                      data-action="delete-literature-reference"
+                      data-reference="${escapeHtml(
+                        reference.id
+                      )}"
+                    >
+                      ${escapeHtml(
+                        t(
+                          'literature_delete_action',
+                          'Supprimer'
+                        )
+                      )}
+                    </button>
+
+                  </div>
+
+                </td>
+
+              </tr>
+            `;
+          }
+        )
+        .join('');
   }
+
+  // =========================================================
+  // UTILITAIRE FORMULAIRE
+  // =========================================================
 
   function setValue(
     selector,
     value
   ) {
-    const field = $(selector);
+    const field =
+      $(selector);
 
     if (field) {
-      field.value = value || '';
+      field.value =
+        value || '';
     }
   }
+
+  // =========================================================
+  // RÉINITIALISER LE FORMULAIRE
+  // =========================================================
 
   function resetReferenceForm() {
     $('#literatureReferenceForm')
       ?.reset();
 
-    editingReferenceId = null;
+    editingReferenceId =
+      null;
 
     const title =
       $('#literatureReferenceDialogTitle');
@@ -364,19 +1005,25 @@
       $('#saveLiteratureReference');
 
     if (title) {
-      title.textContent = t(
-        'literature_add_reference_title',
-        'Ajouter une référence'
-      );
+      title.textContent =
+        t(
+          'literature_add_reference_title',
+          'Ajouter une référence'
+        );
     }
 
     if (submit) {
-      submit.textContent = t(
-        'literature_save_reference',
-        'Enregistrer la référence'
-      );
+      submit.textContent =
+        t(
+          'literature_save_reference',
+          'Enregistrer la référence'
+        );
     }
   }
+
+  // =========================================================
+  // REMPLIR LE FORMULAIRE
+  // =========================================================
 
   function fillReferenceForm(
     reference
@@ -416,7 +1063,8 @@
       Array.isArray(
         reference.keywords
       )
-        ? reference.keywords.join(', ')
+        ? reference.keywords
+            .join(', ')
         : ''
     );
 
@@ -451,6 +1099,10 @@
     );
   }
 
+  // =========================================================
+  // OUVRIR LE FORMULAIRE
+  // =========================================================
+
   function openReferenceDialog(
     referenceId = null
   ) {
@@ -458,14 +1110,18 @@
 
     if (referenceId) {
       const reference =
-        referenceById(referenceId);
+        referenceById(
+          referenceId
+        );
 
       if (!reference) return;
 
       editingReferenceId =
         referenceId;
 
-      fillReferenceForm(reference);
+      fillReferenceForm(
+        reference
+      );
 
       const title =
         $('#literatureReferenceDialogTitle');
@@ -474,17 +1130,19 @@
         $('#saveLiteratureReference');
 
       if (title) {
-        title.textContent = t(
-          'literature_edit_reference_title',
-          'Modifier la référence'
-        );
+        title.textContent =
+          t(
+            'literature_edit_reference_title',
+            'Modifier la référence'
+          );
       }
 
       if (submit) {
-        submit.textContent = t(
-          'literature_save_changes',
-          'Enregistrer les modifications'
-        );
+        submit.textContent =
+          t(
+            'literature_save_changes',
+            'Enregistrer les modifications'
+          );
       }
     }
 
@@ -506,6 +1164,10 @@
       ?.focus();
   }
 
+  // =========================================================
+  // FERMER LE FORMULAIRE
+  // =========================================================
+
   function closeReferenceDialog() {
     const dialog =
       $('#literatureReferenceDialog');
@@ -523,93 +1185,122 @@
     resetReferenceForm();
   }
 
+  // =========================================================
+  // COLLECTER LE FORMULAIRE
+  // =========================================================
+
   function collectReferenceForm() {
     return {
-      authors: cleanText(
-        $('#literatureAuthors')
-          ?.value,
-        500
-      ),
 
-      year: cleanText(
-        $('#literatureYear')
-          ?.value,
-        20
-      ),
+      authors:
+        cleanText(
+          $('#literatureAuthors')
+            ?.value,
+          500
+        ),
 
-      title: cleanText(
-        $('#literatureTitle')
-          ?.value,
-        1000
-      ),
+      year:
+        cleanText(
+          $('#literatureYear')
+            ?.value,
+          20
+        ),
 
-      source: cleanText(
-        $('#literatureSource')
-          ?.value,
-        500
-      ),
+      title:
+        cleanText(
+          $('#literatureTitle')
+            ?.value,
+          1000
+        ),
 
-      doi: cleanText(
-        $('#literatureDoi')
-          ?.value,
-        500
-      ),
+      source:
+        cleanText(
+          $('#literatureSource')
+            ?.value,
+          500
+        ),
 
-      url: cleanText(
-        $('#literatureUrl')
-          ?.value,
-        1500
-      ),
+      doi:
+        cleanText(
+          $('#literatureDoi')
+            ?.value,
+          500
+        ),
 
-      keywords: keywordsToList(
-        $('#literatureKeywords')
-          ?.value
-      ),
+      url:
+        cleanText(
+          $('#literatureUrl')
+            ?.value,
+          1500
+        ),
 
-      methodology: cleanText(
-        $('#literatureMethodology')
-          ?.value,
-        2000
-      ),
+      keywords:
+        keywordsToList(
+          $('#literatureKeywords')
+            ?.value
+        ),
 
-      sample: cleanText(
-        $('#literatureSample')
-          ?.value,
-        2000
-      ),
+      methodology:
+        cleanText(
+          $('#literatureMethodology')
+            ?.value,
+          2000
+        ),
 
-      results: cleanText(
-        $('#literatureResults')
-          ?.value,
-        4000
-      ),
+      sample:
+        cleanText(
+          $('#literatureSample')
+            ?.value,
+          2000
+        ),
 
-      limitations: cleanText(
-        $('#literatureLimitations')
-          ?.value,
-        3000
-      ),
+      results:
+        cleanText(
+          $('#literatureResults')
+            ?.value,
+          4000
+        ),
 
-      contribution: cleanText(
-        $('#literatureContribution')
-          ?.value,
-        3000
-      ),
+      limitations:
+        cleanText(
+          $('#literatureLimitations')
+            ?.value,
+          3000
+        ),
 
-      notes: cleanText(
-        $('#literatureNotes')
-          ?.value,
-        4000
-      )
+      contribution:
+        cleanText(
+          $('#literatureContribution')
+            ?.value,
+          3000
+        ),
+
+      notes:
+        cleanText(
+          $('#literatureNotes')
+            ?.value,
+          4000
+        )
+
     };
   }
+
+  // =========================================================
+  // SAUVEGARDER LES PROJETS
+  // =========================================================
 
   function saveProjects() {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify(projects)
+      JSON.stringify(
+        projects
+      )
     );
   }
+
+  // =========================================================
+  // ENREGISTRER UNE RÉFÉRENCE
+  // =========================================================
 
   function saveReference() {
     const form =
@@ -617,7 +1308,9 @@
 
     if (!form) return;
 
-    if (!form.checkValidity()) {
+    if (
+      !form.checkValidity()
+    ) {
       form.reportValidity();
       return;
     }
@@ -635,6 +1328,8 @@
     const currentTime =
       nowIso();
 
+    // MODIFICATION
+
     if (editingReferenceId) {
       const reference =
         referenceById(
@@ -647,7 +1342,8 @@
         reference,
         data,
         {
-          updatedAt: currentTime
+          updatedAt:
+            currentTime
         }
       );
 
@@ -657,13 +1353,25 @@
           'Référence mise à jour avec succès.'
         )
       );
-    } else {
-      references().unshift({
-        id: id(),
-        ...data,
-        createdAt: currentTime,
-        updatedAt: currentTime
-      });
+    }
+
+    // AJOUT
+
+    else {
+      references().unshift(
+        {
+          id:
+            id(),
+
+          ...data,
+
+          createdAt:
+            currentTime,
+
+          updatedAt:
+            currentTime
+        }
+      );
 
       showToast(
         t(
@@ -671,24 +1379,38 @@
           'Référence ajoutée avec succès.'
         )
       );
-      if (typeof window.plausible === 'function') {
-  window.plausible('literature_reference_added');
-}
+
+      if (
+        typeof window.plausible ===
+        'function'
+      ) {
+        window.plausible(
+          'literature_reference_added'
+        );
+      }
     }
 
     currentProject.updatedAt =
       currentTime;
 
     saveProjects();
+
     closeReferenceDialog();
+
     renderReferences();
   }
+
+  // =========================================================
+  // SUPPRIMER UNE RÉFÉRENCE
+  // =========================================================
 
   function deleteReference(
     referenceId
   ) {
     const reference =
-      referenceById(referenceId);
+      referenceById(
+        referenceId
+      );
 
     if (!reference) return;
 
@@ -707,15 +1429,18 @@
     currentProject
       .literature
       .references =
-      references().filter(
-        item =>
-          item.id !== referenceId
-      );
+      references()
+        .filter(
+          item =>
+            item.id !==
+            referenceId
+        );
 
     currentProject.updatedAt =
       nowIso();
 
     saveProjects();
+
     renderReferences();
 
     showToast(
@@ -725,6 +1450,10 @@
       )
     );
   }
+
+  // =========================================================
+  // PROJET INTROUVABLE
+  // =========================================================
 
   function showMissingProject() {
     const name =
@@ -746,47 +1475,63 @@
       $('#literatureMatrix');
 
     if (name) {
-      name.textContent = t(
-        'literature_project_not_found',
-        'Projet introuvable'
-      );
+      name.textContent =
+        t(
+          'literature_project_not_found',
+          'Projet introuvable'
+        );
     }
 
     if (goal) {
-      goal.textContent = t(
-        'literature_project_not_found_help',
-        'Retournez dans Mes projets et ouvrez de nouveau la revue de littérature.'
-      );
+      goal.textContent =
+        t(
+          'literature_project_not_found_help',
+          'Retournez dans Mes projets et ouvrez de nouveau la revue de littérature.'
+        );
     }
 
     if (toolbar) {
-      toolbar.hidden = true;
+      toolbar.hidden =
+        true;
     }
 
     if (stats) {
-      stats.hidden = true;
+      stats.hidden =
+        true;
     }
 
     if (empty) {
-      empty.hidden = true;
+      empty.hidden =
+        true;
     }
 
     if (matrix) {
-      matrix.hidden = true;
+      matrix.hidden =
+        true;
     }
   }
 
+  // =========================================================
+  // ÉVÉNEMENTS
+  // =========================================================
+
   function bind() {
+
+    // RECHERCHE
+
     $('#literatureSearch')
       ?.addEventListener(
         'input',
         event => {
           literatureSearchQuery =
-            event.target.value || '';
+            event.target.value ||
+            '';
 
           renderReferences();
         }
       );
+
+    // AJOUT MANUEL
 
     $('#addLiteratureReference')
       ?.addEventListener(
@@ -794,6 +1539,8 @@
         () =>
           openReferenceDialog()
       );
+
+    // FERMER DIALOG
 
     $('#closeLiteratureReferenceDialog')
       ?.addEventListener(
@@ -807,14 +1554,19 @@
         closeReferenceDialog
       );
 
+    // ENREGISTRER
+
     $('#literatureReferenceForm')
       ?.addEventListener(
         'submit',
         event => {
           event.preventDefault();
+
           saveReference();
         }
       );
+
+    // ACTIONS SUR LES RÉFÉRENCES
 
     document.addEventListener(
       'click',
@@ -826,6 +1578,21 @@
 
         if (!target) return;
 
+        // VOIR LA FICHE
+
+        if (
+          target.dataset.action ===
+          'view-literature-reference'
+        ) {
+          openReferenceDetails(
+            target.dataset.reference
+          );
+
+          return;
+        }
+
+        // MODIFIER
+
         if (
           target.dataset.action ===
           'edit-literature-reference'
@@ -833,7 +1600,11 @@
           openReferenceDialog(
             target.dataset.reference
           );
+
+          return;
         }
+
+        // SUPPRIMER
 
         if (
           target.dataset.action ===
@@ -842,13 +1613,20 @@
           deleteReference(
             target.dataset.reference
           );
+
+          return;
         }
       }
     );
   }
 
+  // =========================================================
+  // INITIALISATION
+  // =========================================================
+
   function init() {
-    projects = readProjects();
+    projects =
+      readProjects();
 
     const projectId =
       requestedProjectId();
@@ -856,18 +1634,26 @@
     currentProject =
       projects.find(
         project =>
-          project?.id === projectId
+          project?.id ===
+          projectId
       );
 
     if (!currentProject) {
       showMissingProject();
+
       return;
     }
 
     renderProjectHeader();
+
     renderReferences();
+
     bind();
   }
+
+  // =========================================================
+  // DÉMARRAGE
+  // =========================================================
 
   if (
     document.readyState ===
@@ -880,4 +1666,5 @@
   } else {
     init();
   }
+
 })();
