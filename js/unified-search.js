@@ -1,18 +1,14 @@
 (() => {
-  const base = () =>
-    document.documentElement.dataset.basePath || './';
+  'use strict';
 
-  const t = (k, f = '') =>
-    window.NBProfI18n?.t(k, f) || f || k;
+  const $ = (selector) => document.querySelector(selector);
+  const base = () => document.documentElement.dataset.basePath || './';
+  const lang = () => window.NBProfI18n?.getLanguage?.() || 'fr';
+  const t = (key, fallback = '') =>
+    window.NBProfI18n?.t?.(key, fallback) || fallback || key;
 
-  const lang = () =>
-    window.NBProfI18n?.getLanguage() || 'fr';
-
-  const $ = s => document.querySelector(s);
-
-  // =========================================================
-  // DONNÉES PRINCIPALESf
-  // =========================================================
+  const SAVED_ARTICLES_KEY = 'nbprof_saved_articles_v1';
+  const PROJECTS_STORAGE_KEY = 'nbprof-research-projects-v1';
 
   let publications = [];
   let tools = [];
@@ -22,281 +18,181 @@
   let requestSerial = 0;
 
   // =========================================================
-  // ARTICLES ENREGISTRÉS
+  // UTILITAIRES
   // =========================================================
 
-  const SAVED_ARTICLES_KEY =
-    'nbprof_saved_articles_v1';
-  // =========================================================
-// INTÉGRATION AVEC MES PROJETS
-// =========================================================
+  const STOPWORDS = new Set(
+    `a à au aux avec ce ces dans de des du elle en et eux il je la le les leur lui ma mais me même mes moi mon ne nos notre nous on ou par pas pour qu que quelle quelles quel quels qui sa sans se ses son sur ta te tes toi ton tu un une vos votre vous c est sont être the a an and or of in on for to with from by as is are was were be been this that these those into about using use study research article paper etude étude recherche les des une dans pour sur par avec entre selon vers comme their its our your they them we you`
+      .split(/\s+/)
+  );
 
-const PROJECTS_STORAGE_KEY =
-  'nbprof-research-projects-v1';
+  function normalize(value = '') {
+    return String(value)
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9\u0600-\u06ff]+/g, ' ')
+      .trim();
+  }
 
-function getResearchProjects() {
-  try {
-    const raw =
-      localStorage.getItem(
-        PROJECTS_STORAGE_KEY
-      );
+  function tokens(value = '') {
+    return [
+      ...new Set(
+        normalize(value)
+          .split(/\s+/)
+          .filter(
+            (word) =>
+              word.length > 2 &&
+              !STOPWORDS.has(word)
+          )
+      )
+    ];
+  }
 
-    if (!raw) {
-      return [];
+  function textScore(query, text) {
+    const queryTokens = tokens(query);
+
+    if (!queryTokens.length) {
+      return 0;
     }
 
-    const data =
-      JSON.parse(raw);
+    const normalizedText =
+      normalize(text);
 
-    return Array.isArray(data)
-      ? data
-      : [];
-  } catch (error) {
-    console.warn(
-      'NBProf projects read error',
-      error
+    let matched = 0;
+
+    queryTokens.forEach((term) => {
+      if (
+        normalizedText.includes(term)
+      ) {
+        matched += 1;
+      }
+    });
+
+    return Math.round(
+      (matched / queryTokens.length) *
+      100
     );
-
-    return [];
-  }
-}
-
-function saveResearchProjects(projects) {
-  try {
-    localStorage.setItem(
-      PROJECTS_STORAGE_KEY,
-      JSON.stringify(projects)
-    );
-
-    return true;
-  } catch (error) {
-    console.warn(
-      'NBProf projects write error',
-      error
-    );
-
-    return false;
-  }
-}
-
-function newProjectId() {
-  return `${Date.now()}-${Math.random()
-    .toString(36)
-    .slice(2, 8)}`;
-}
-
-function cleanProjectText(
-  value,
-  maxLength = 1000
-) {
-  return String(value || '')
-    .trim()
-    .slice(0, maxLength);
-}
-
-function articleReferenceId(item) {
-  if (item.doi) {
-    return `doi-${normalize(item.doi)}`;
   }
 
-  return `article-${normalize(
-    item.title || ''
-  ).slice(0, 80)}`;
-}
-
-function articleToLiteratureReference(item) {
-  const timestamp =
-    new Date().toISOString();
-
-  return {
-    id:
-      articleReferenceId(item),
-
-    authors:
-      Array.isArray(item.authors)
-        ? item.authors.join(', ')
-        : '',
-
-    year:
-      item.year
-        ? String(item.year)
-        : '',
-
-    title:
-      cleanProjectText(
-        item.title,
-        1000
-      ),
-
-    source:
-      cleanProjectText(
-        item.journal ||
-        item.source ||
-        '',
-        500
-      ),
-
-    doi:
-      cleanProjectText(
-        item.doi || '',
-        500
-      ),
-
-    url:
-      cleanProjectText(
-        item.url ||
-        item.pdf ||
-        '',
-        1500
-      ),
-
-    keywords: [],
-
-    methodology: '',
-
-    sample: '',
-
-    results: '',
-
-    limitations: '',
-
-    contribution: '',
-
-    notes:
-      cleanProjectText(
-        item.abstract || '',
-        4000
-      ),
-
-    createdAt:
-      timestamp,
-
-    updatedAt:
-      timestamp
-  };
-}
-
-function sameReference(
-  existing,
-  article
-) {
-  const existingDoi =
-    normalize(
-      existing?.doi || ''
+  function escapeHtml(value = '') {
+    return String(value).replace(
+      /[&<>'"]/g,
+      (char) =>
+        ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[char])
     );
+  }
 
-  const articleDoi =
-    normalize(
-      article?.doi || ''
-    );
-
-  if (
-    existingDoi &&
-    articleDoi &&
-    existingDoi === articleDoi
+  function cleanText(
+    value,
+    maxLength = 1000
   ) {
-    return true;
+    return String(value || '')
+      .trim()
+      .slice(0, maxLength);
   }
 
-  const existingTitle =
-    normalize(
-      existing?.title || ''
+  function relevanceLabel(score) {
+    if (score >= 78) {
+      return t(
+        'unified_relevance_high',
+        'Très pertinent'
+      );
+    }
+
+    if (score >= 52) {
+      return t(
+        'unified_relevance_medium',
+        'Pertinent'
+      );
+    }
+
+    return t(
+      'unified_relevance_explore',
+      'À explorer'
     );
-
-  const articleTitle =
-    normalize(
-      article?.title || ''
-    );
-
-  return (
-    existingTitle &&
-    articleTitle &&
-    existingTitle === articleTitle
-  );
-}
-
-function addArticleToProject(
-  projectId,
-  item
-) {
-  const projects =
-    getResearchProjects();
-
-  const project =
-    projects.find(
-      project =>
-        project.id === projectId
-    );
-
-  if (!project) {
-    return {
-      success: false,
-      reason: 'PROJECT_NOT_FOUND'
-    };
   }
 
-  if (!project.literature) {
-    project.literature = {
-      references: []
-    };
+  function sourceLabel(item) {
+    if (item.kind === 'nbprof') {
+      return t(
+        'unified_source_nbprof',
+        'Publication NBProf'
+      );
+    }
+
+    if (item.kind === 'tool') {
+      return t(
+        'unified_source_tool',
+        'Outil scientifique'
+      );
+    }
+
+    return (
+      item.source ||
+      t(
+        'unified_source_academic',
+        'Article scientifique'
+      )
+    );
   }
 
-  if (
-    !Array.isArray(
-      project.literature.references
-    )
+  function abstractFor(publication) {
+    return (
+      publication.abstract?.[lang()] ||
+      publication.abstract?.fr ||
+      ''
+    );
+  }
+
+  function publicationHaystack(
+    publication
   ) {
-    project.literature.references = [];
+    return [
+      publication.title,
+      publication.subtitle,
+      (
+        publication.authors || []
+      ).join(' '),
+      publication.journal,
+      (
+        publication.keywords || []
+      ).join(' '),
+      abstractFor(publication)
+    ].join(' ');
   }
 
-  const duplicate =
-    project.literature.references.some(
-      reference =>
-        sameReference(
-          reference,
-          item
-        )
-    );
-
-  if (duplicate) {
-    return {
-      success: false,
-      reason: 'ALREADY_EXISTS',
-      project
-    };
-  }
-
-  project.literature.references.unshift(
-    articleToLiteratureReference(item)
-  );
-
-  project.updatedAt =
-    new Date().toISOString();
-
-  saveResearchProjects(
-    projects
-  );
-
-  return {
-    success: true,
-    project
-  };
-}
+  // =========================================================
+  // ARTICLES ENREGISTRÉS
+  // =========================================================
 
   function getSavedArticles() {
     try {
       const raw =
-        localStorage.getItem(SAVED_ARTICLES_KEY);
+        localStorage.getItem(
+          SAVED_ARTICLES_KEY
+        );
 
-      if (!raw) return [];
+      if (!raw) {
+        return [];
+      }
 
-      const data = JSON.parse(raw);
+      const data =
+        JSON.parse(raw);
 
-      return Array.isArray(data) ? data : [];
-    } catch (err) {
+      return Array.isArray(data)
+        ? data
+        : [];
+    } catch (error) {
       console.warn(
         'NBProf saved articles read error',
-        err
+        error
       );
 
       return [];
@@ -320,17 +216,19 @@ function addArticleToProject(
           }
         )
       );
-    } catch (err) {
+    } catch (error) {
       console.warn(
         'NBProf saved articles write error',
-        err
+        error
       );
     }
   }
 
   function articleKey(item) {
     if (item.doi) {
-      return `doi:${normalize(item.doi)}`;
+      return `doi:${normalize(
+        item.doi
+      )}`;
     }
 
     return `title:${normalize(
@@ -339,16 +237,19 @@ function addArticleToProject(
   }
 
   function isSaved(item) {
-    const key = articleKey(item);
+    const key =
+      articleKey(item);
 
     return getSavedArticles().some(
-      saved => saved.id === key
+      (saved) =>
+        saved.id === key
     );
   }
 
   function articleForStorage(item) {
     return {
-      id: articleKey(item),
+      id:
+        articleKey(item),
 
       kind:
         item.kind || 'academic',
@@ -400,13 +301,12 @@ function addArticleToProject(
     const key =
       articleKey(item);
 
-    const exists =
+    if (
       saved.some(
-        article =>
+        (article) =>
           article.id === key
-      );
-
-    if (exists) {
+      )
+    ) {
       return false;
     }
 
@@ -423,14 +323,13 @@ function addArticleToProject(
     const key =
       articleKey(item);
 
-    const saved =
-      getSavedArticles()
-        .filter(
-          article =>
-            article.id !== key
-        );
+    const updated =
+      getSavedArticles().filter(
+        (article) =>
+          article.id !== key
+      );
 
-    setSavedArticles(saved);
+    setSavedArticles(updated);
 
     return true;
   }
@@ -439,7 +338,7 @@ function addArticleToProject(
     if (isSaved(item)) {
       removeSavedArticle(item);
 
-      showSavedMessage(
+      showMessage(
         t(
           'unified_removed_saved',
           'Article retiré des éléments enregistrés.'
@@ -451,7 +350,7 @@ function addArticleToProject(
 
     saveArticle(item);
 
-    showSavedMessage(
+    showMessage(
       t(
         'unified_article_saved',
         'Article enregistré avec succès.'
@@ -459,19 +358,12 @@ function addArticleToProject(
     );
   }
 
-  // =========================================================
-  // PETIT MESSAGE DE CONFIRMATION
-  // =========================================================
-
-  function showSavedMessage(message) {
-    const old =
-      document.querySelector(
+  function showMessage(message) {
+    document
+      .querySelector(
         '.nbprof-save-toast'
-      );
-
-    if (old) {
-      old.remove();
-    }
+      )
+      ?.remove();
 
     const toast =
       document.createElement('div');
@@ -506,7 +398,7 @@ function addArticleToProject(
           '#ffffff',
 
         border:
-          '1px solid rgba(66, 212, 255, 0.35)',
+          '1px solid rgba(66,212,255,.35)',
 
         boxShadow:
           '0 10px 30px rgba(0,0,0,.35)',
@@ -530,211 +422,719 @@ function addArticleToProject(
     );
 
     setTimeout(
-      () => {
-        toast.remove();
-      },
+      () => toast.remove(),
       2200
     );
   }
 
   // =========================================================
-  // STOPWORDS
+  // MES PROJETS
   // =========================================================
 
-  const STOPWORDS = new Set(
-    `a à au aux avec ce ces dans de des du elle en et eux il je la le les leur lui ma mais me même mes moi mon ne nos notre nous on ou par pas pour qu que quelle quelles quel quels qui sa sans se ses son sur ta te tes toi ton tu un une vos votre vous c est sont être the a an and or of in on for to with from by as is are was were be been this that these those into about using use study research article paper etude étude recherche article les des une dans pour sur par avec entre selon vers comme their its our your they them we you`
-      .split(/\s+/)
-  );
+  function getResearchProjects() {
+    try {
+      const raw =
+        localStorage.getItem(
+          PROJECTS_STORAGE_KEY
+        );
 
-  // =========================================================
-  // NORMALISATION
-  // =========================================================
+      if (!raw) {
+        return [];
+      }
 
-  function normalize(
-    value = ''
-  ) {
-    return String(value)
-      .normalize('NFD')
-      .replace(
-        /[\u0300-\u036f]/g,
-        ''
-      )
-      .toLowerCase()
-      .replace(
-        /[^a-z0-9\u0600-\u06ff]+/g,
-        ' '
-      )
-      .trim();
+      const data =
+        JSON.parse(raw);
+
+      return Array.isArray(data)
+        ? data
+        : [];
+    } catch (error) {
+      console.warn(
+        'NBProf projects read error',
+        error
+      );
+
+      return [];
+    }
   }
 
-  function tokens(
-    value = ''
+  function saveResearchProjects(
+    projects
   ) {
-    return [
-      ...new Set(
-        normalize(value)
-          .split(/\s+/)
-          .filter(
-            w =>
-              w.length > 2 &&
-              !STOPWORDS.has(w)
-          )
-      )
-    ];
+    try {
+      localStorage.setItem(
+        PROJECTS_STORAGE_KEY,
+        JSON.stringify(projects)
+      );
+
+      return true;
+    } catch (error) {
+      console.warn(
+        'NBProf projects write error',
+        error
+      );
+
+      return false;
+    }
   }
 
-  function textScore(
-    query,
-    text
-  ) {
-    const q =
-      tokens(query);
+  function newProjectId() {
+    return `${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 8)}`;
+  }
 
-    if (!q.length) {
-      return 0;
+  function articleReferenceId(item) {
+    if (item.doi) {
+      return `doi-${normalize(
+        item.doi
+      )}`;
     }
 
-    const n =
-      normalize(text);
+    return `article-${normalize(
+      item.title || ''
+    ).slice(0, 80)}`;
+  }
 
-    let matched = 0;
+  function articleToLiteratureReference(
+    item
+  ) {
+    const timestamp =
+      new Date().toISOString();
 
-    q.forEach(
-      term => {
+    return {
+      id:
+        articleReferenceId(item),
+
+      authors:
+        Array.isArray(item.authors)
+          ? item.authors.join(', ')
+          : '',
+
+      year:
+        item.year
+          ? String(item.year)
+          : '',
+
+      title:
+        cleanText(
+          item.title,
+          1000
+        ),
+
+      source:
+        cleanText(
+          item.journal ||
+          item.source ||
+          '',
+          500
+        ),
+
+      doi:
+        cleanText(
+          item.doi || '',
+          500
+        ),
+
+      url:
+        cleanText(
+          item.url ||
+          item.pdf ||
+          '',
+          1500
+        ),
+
+      keywords: [],
+
+      methodology: '',
+
+      sample: '',
+
+      results: '',
+
+      limitations: '',
+
+      contribution: '',
+
+      notes:
+        cleanText(
+          item.abstract || '',
+          4000
+        ),
+
+      createdAt:
+        timestamp,
+
+      updatedAt:
+        timestamp
+    };
+  }
+
+  function sameReference(
+    existing,
+    article
+  ) {
+    const existingDoi =
+      normalize(
+        existing?.doi || ''
+      );
+
+    const articleDoi =
+      normalize(
+        article?.doi || ''
+      );
+
+    if (
+      existingDoi &&
+      articleDoi &&
+      existingDoi === articleDoi
+    ) {
+      return true;
+    }
+
+    const existingTitle =
+      normalize(
+        existing?.title || ''
+      );
+
+    const articleTitle =
+      normalize(
+        article?.title || ''
+      );
+
+    return Boolean(
+      existingTitle &&
+      articleTitle &&
+      existingTitle === articleTitle
+    );
+  }
+
+  function addArticleToProject(
+    projectId,
+    item
+  ) {
+    const projects =
+      getResearchProjects();
+
+    const project =
+      projects.find(
+        (entry) =>
+          entry.id === projectId
+      );
+
+    if (!project) {
+      return {
+        success: false,
+        reason:
+          'PROJECT_NOT_FOUND'
+      };
+    }
+
+    if (!project.literature) {
+      project.literature = {
+        references: []
+      };
+    }
+
+    if (
+      !Array.isArray(
+        project.literature.references
+      )
+    ) {
+      project.literature.references = [];
+    }
+
+    const duplicate =
+      project.literature.references.some(
+        (reference) =>
+          sameReference(
+            reference,
+            item
+          )
+      );
+
+    if (duplicate) {
+      return {
+        success: false,
+        reason:
+          'ALREADY_EXISTS',
+        project
+      };
+    }
+
+    project.literature.references.unshift(
+      articleToLiteratureReference(
+        item
+      )
+    );
+
+    project.updatedAt =
+      new Date().toISOString();
+
+    saveResearchProjects(
+      projects
+    );
+
+    return {
+      success: true,
+      project
+    };
+  }
+
+  function createProjectFromSearch(
+    name
+  ) {
+    const projectName =
+      String(name || '').trim();
+
+    if (!projectName) {
+      return null;
+    }
+
+    const projects =
+      getResearchProjects();
+
+    const createdAt =
+      new Date().toISOString();
+
+    const project = {
+      id:
+        newProjectId(),
+
+      name:
+        projectName.slice(
+          0,
+          120
+        ),
+
+      goal: '',
+
+      stage:
+        'exploration',
+
+      exploration: {
+        initialIdea: '',
+        problem: '',
+        mainQuestion: '',
+        secondaryQuestions: [],
+        generalObjective: '',
+        specificObjectives: [],
+        keywords: [],
+        population: '',
+        field: '',
+        geography: '',
+        period: '',
+        discipline: '',
+        scientificInterest: '',
+        practicalInterest: '',
+        limits: ''
+      },
+
+      literature: {
+        references: []
+      },
+
+      archived:
+        false,
+
+      archivedAt:
+        '',
+
+      milestones: [],
+
+      tasks: [],
+
+      notes: '',
+
+      createdAt,
+
+      updatedAt:
+        createdAt
+    };
+
+    projects.unshift(
+      project
+    );
+
+    saveResearchProjects(
+      projects
+    );
+
+    return project;
+  }
+
+  function closeProjectPicker() {
+    const dialog =
+      document.getElementById(
+        'nbprofProjectPicker'
+      );
+
+    if (!dialog) {
+      return;
+    }
+
+    if (
+      typeof dialog.close ===
+      'function'
+    ) {
+      dialog.close();
+    }
+
+    dialog.remove();
+  }
+
+  function openProjectPicker(item) {
+    closeProjectPicker();
+
+    const projects =
+      getResearchProjects().filter(
+        (project) =>
+          !project.archived
+      );
+
+    const dialog =
+      document.createElement(
+        'dialog'
+      );
+
+    dialog.id =
+      'nbprofProjectPicker';
+
+    dialog.style.cssText = `
+      width:min(560px,calc(100% - 28px));
+      max-height:85vh;
+      overflow:auto;
+      padding:0;
+      border:1px solid rgba(66,212,255,.25);
+      border-radius:20px;
+      background:#111827;
+      color:#fff;
+      box-shadow:0 25px 70px rgba(0,0,0,.55);
+    `;
+
+    const projectsMarkup =
+      projects.length
+        ? projects
+            .map(
+              (project) => `
+                <button
+                  type="button"
+                  data-project-choice="${escapeHtml(
+                    project.id
+                  )}"
+                  style="
+                    width:100%;
+                    text-align:left;
+                    padding:14px;
+                    margin-bottom:10px;
+                    border-radius:12px;
+                    border:1px solid rgba(255,255,255,.08);
+                    background:#0b1220;
+                    color:#fff;
+                    cursor:pointer;
+                  "
+                >
+                  <strong>
+                    ${escapeHtml(
+                      project.name
+                    )}
+                  </strong>
+
+                  ${
+                    project.goal
+                      ? `
+                        <div
+                          style="
+                            margin-top:5px;
+                            color:#94a3b8;
+                            font-size:12px;
+                          "
+                        >
+                          ${escapeHtml(
+                            project.goal
+                          )}
+                        </div>
+                      `
+                      : ''
+                  }
+                </button>
+              `
+            )
+            .join('')
+        : `
+          <div
+            style="
+              padding:18px;
+              text-align:center;
+              color:#94a3b8;
+            "
+          >
+            Aucun projet disponible.
+            Créez votre premier projet
+            ci-dessous.
+          </div>
+        `;
+
+    dialog.innerHTML = `
+      <div style="padding:22px;">
+
+        <div
+          style="
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:15px;
+            margin-bottom:20px;
+          "
+        >
+
+          <div>
+            <div
+              style="
+                color:#42d4ff;
+                font-size:11px;
+                font-weight:800;
+                text-transform:uppercase;
+                letter-spacing:.08em;
+              "
+            >
+              Recherche NBProf
+            </div>
+
+            <h2
+              style="
+                margin:6px 0 0;
+                font-size:22px;
+              "
+            >
+              Ajouter au projet
+            </h2>
+          </div>
+
+          <button
+            id="nbprofCloseProjectPicker"
+            type="button"
+            style="
+              border:0;
+              background:transparent;
+              color:white;
+              font-size:25px;
+              cursor:pointer;
+            "
+          >
+            ×
+          </button>
+
+        </div>
+
+        <div
+          style="
+            margin-bottom:18px;
+            color:#cbd5e1;
+            font-size:14px;
+            line-height:1.5;
+          "
+        >
+          ${escapeHtml(
+            item.title || ''
+          )}
+        </div>
+
+        <div
+          id="nbprofProjectChoices"
+        >
+          ${projectsMarkup}
+        </div>
+
+        <div
+          style="
+            border-top:1px solid rgba(255,255,255,.08);
+            margin-top:20px;
+            padding-top:20px;
+          "
+        >
+
+          <strong>
+            Créer un nouveau projet
+          </strong>
+
+          <div
+            style="
+              display:flex;
+              gap:8px;
+              margin-top:12px;
+            "
+          >
+
+            <input
+              id="nbprofNewProjectName"
+              type="text"
+              maxlength="120"
+              placeholder="Titre du nouveau projet"
+              style="
+                flex:1;
+                min-width:0;
+                padding:12px;
+                border-radius:10px;
+                border:1px solid rgba(255,255,255,.12);
+                background:#03040a;
+                color:#fff;
+                outline:none;
+              "
+            >
+
+            <button
+              id="nbprofCreateAndAdd"
+              type="button"
+              style="
+                border:0;
+                border-radius:10px;
+                padding:0 14px;
+                background:#42d4ff;
+                color:#03040a;
+                font-weight:800;
+                cursor:pointer;
+              "
+            >
+              Créer
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+    document.body.appendChild(
+      dialog
+    );
+
+    dialog
+      .querySelector(
+        '#nbprofCloseProjectPicker'
+      )
+      ?.addEventListener(
+        'click',
+        closeProjectPicker
+      );
+
+    dialog
+      .querySelectorAll(
+        '[data-project-choice]'
+      )
+      .forEach(
+        (button) => {
+          button.addEventListener(
+            'click',
+            () => {
+              const result =
+                addArticleToProject(
+                  button.dataset
+                    .projectChoice,
+                  item
+                );
+
+              if (result.success) {
+                showMessage(
+                  `Article ajouté au projet « ${result.project.name} ».`
+                );
+
+                closeProjectPicker();
+
+                return;
+              }
+
+              if (
+                result.reason ===
+                'ALREADY_EXISTS'
+              ) {
+                showMessage(
+                  `Cet article existe déjà dans « ${result.project.name} ».`
+                );
+
+                return;
+              }
+
+              showMessage(
+                'Impossible d’ajouter cet article au projet.'
+              );
+            }
+          );
+        }
+      );
+
+    dialog
+      .querySelector(
+        '#nbprofCreateAndAdd'
+      )
+      ?.addEventListener(
+        'click',
+        () => {
+          const input =
+            dialog.querySelector(
+              '#nbprofNewProjectName'
+            );
+
+          const project =
+            createProjectFromSearch(
+              input?.value
+            );
+
+          if (!project) {
+            input?.focus();
+            return;
+          }
+
+          const result =
+            addArticleToProject(
+              project.id,
+              item
+            );
+
+          if (result.success) {
+            showMessage(
+              `Projet « ${project.name} » créé et article ajouté.`
+            );
+
+            closeProjectPicker();
+          }
+        }
+      );
+
+    dialog.addEventListener(
+      'click',
+      (event) => {
         if (
-          n.includes(term)
+          event.target === dialog
         ) {
-          matched += 1;
+          closeProjectPicker();
         }
       }
     );
 
-    return Math.round(
-      (matched / q.length) *
-        100
-    );
-  }
-
-  // =========================================================
-  // SÉCURITÉ HTML
-  // =========================================================
-
-  function escapeHtml(
-    value = ''
-  ) {
-    return String(value)
-      .replace(
-        /[&<>'"]/g,
-        c =>
-          ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            "'": '&#39;',
-            '"': '&quot;'
-          }[c])
-      );
-  }
-
-  // =========================================================
-  // PERTINENCE
-  // =========================================================
-
-  function relevanceLabel(
-    score
-  ) {
-    if (score >= 78) {
-      return t(
-        'unified_relevance_high',
-        'Très pertinent'
-      );
-    }
-
-    if (score >= 52) {
-      return t(
-        'unified_relevance_medium',
-        'Pertinent'
-      );
-    }
-
-    return t(
-      'unified_relevance_explore',
-      'À explorer'
-    );
-  }
-
-  function sourceLabel(
-    item
-  ) {
     if (
-      item.kind ===
-      'nbprof'
+      typeof dialog.showModal ===
+      'function'
     ) {
-      return t(
-        'unified_source_nbprof',
-        'Publication NBProf'
+      dialog.showModal();
+    } else {
+      dialog.setAttribute(
+        'open',
+        ''
       );
     }
-
-    if (
-      item.kind ===
-      'tool'
-    ) {
-      return t(
-        'unified_source_tool',
-        'Outil scientifique'
-      );
-    }
-
-    return (
-      item.source ||
-      t(
-        'unified_source_academic',
-        'Article scientifique'
-      )
-    );
-  }
-
-  function abstractFor(
-    pub
-  ) {
-    return (
-      pub.abstract?.[lang()] ||
-      pub.abstract?.fr ||
-      ''
-    );
-  }
-
-  function publicationHaystack(
-    pub
-  ) {
-    return [
-      pub.title,
-      pub.subtitle,
-
-      (
-        pub.authors || []
-      ).join(' '),
-
-      pub.journal,
-
-      (
-        pub.keywords || []
-      ).join(' '),
-
-      abstractFor(pub)
-    ].join(' ');
   }
 
   // =========================================================
-  // CATALOGUES NBPROF
+  // CHARGEMENT DES SOURCES
   // =========================================================
 
   async function loadCatalogs() {
     try {
       const [
-        p,
-        tls
+        publicationData,
+        toolData
       ] =
         await Promise.all([
           fetch(
@@ -744,9 +1144,9 @@ function addArticleToProject(
                 'no-store'
             }
           ).then(
-            r =>
-              r.ok
-                ? r.json()
+            (response) =>
+              response.ok
+                ? response.json()
                 : []
           ),
 
@@ -757,46 +1157,44 @@ function addArticleToProject(
                 'no-store'
             }
           ).then(
-            r =>
-              r.ok
-                ? r.json()
+            (response) =>
+              response.ok
+                ? response.json()
                 : []
           )
         ]);
 
       publications =
-        Array.isArray(p)
-          ? p
+        Array.isArray(
+          publicationData
+        )
+          ? publicationData
           : [];
 
       tools =
-        Array.isArray(tls)
-          ? tls
+        Array.isArray(
+          toolData
+        )
+          ? toolData
           : [];
-    } catch (err) {
+    } catch (error) {
       console.warn(
         'NBProf unified search catalogs',
-        err
+        error
       );
     }
   }
 
-  // =========================================================
-  // RÉSULTATS LOCAUX
-  // =========================================================
-
-  function localResults(
-    query
-  ) {
+  function localResults(query) {
     const own =
       publications
         .map(
-          pub => {
+          (publication) => {
             const score =
               textScore(
                 query,
                 publicationHaystack(
-                  pub
+                  publication
                 )
               );
 
@@ -811,49 +1209,52 @@ function addArticleToProject(
                 ),
 
               title:
-                pub.title,
+                publication.title,
 
               subtitle:
-                pub.subtitle ||
+                publication.subtitle ||
                 '',
 
               authors:
-                pub.authors ||
+                publication.authors ||
                 [],
 
               year:
-                pub.year,
+                publication.year,
 
               journal:
-                pub.journal ||
+                publication.journal ||
                 '',
 
               url:
-                pub.url ||
+                publication.url ||
                 '',
 
               doi:
-                pub.doi ||
+                publication.doi ||
                 '',
 
               abstract:
                 abstractFor(
-                  pub
+                  publication
                 ),
 
               source:
                 'NBProf',
 
               priority:
-                pub.priority ||
-                100
+                publication.priority ||
+                100,
+
+              pdf:
+                publication.pdf ||
+                ''
             };
           }
         )
         .filter(
-          x =>
-            x.score >=
-            35
+          (item) =>
+            item.score >= 35
         )
         .sort(
           (a, b) =>
@@ -870,19 +1271,18 @@ function addArticleToProject(
     const toolResults =
       tools
         .map(
-          tool => {
-            const desc =
+          (tool) => {
+            const description =
               tool.description?.[
                 lang()
               ] ||
-              tool.description
-                ?.fr ||
+              tool.description?.fr ||
               '';
 
             const score =
               textScore(
                 query,
-                `${tool.name} ${desc} ${tool.category || ''}`
+                `${tool.name} ${description} ${tool.category || ''}`
               );
 
             return {
@@ -899,7 +1299,7 @@ function addArticleToProject(
                 tool.name,
 
               abstract:
-                desc,
+                description,
 
               url:
                 tool.url,
@@ -914,14 +1314,16 @@ function addArticleToProject(
                 [],
 
               journal:
+                '',
+
+              pdf:
                 ''
             };
           }
         )
         .filter(
-          x =>
-            x.score >=
-            45
+          (item) =>
+            item.score >= 45
         )
         .sort(
           (a, b) =>
@@ -943,41 +1345,37 @@ function addArticleToProject(
   // SEMANTIC SCHOLAR
   // =========================================================
 
-  function s2Item(
-    p,
+  function semanticScholarItem(
+    paper,
     index,
     query
   ) {
     const authors =
       (
-        p.authors ||
-        []
+        paper.authors || []
       )
         .map(
-          a =>
-            a.name
+          (author) =>
+            author.name
         )
-        .filter(
-          Boolean
-        );
+        .filter(Boolean);
 
     const doi =
-      p.externalIds
+      paper.externalIds
         ?.DOI ||
       '';
 
     const rawScore =
       textScore(
         query,
-        `${p.title || ''} ${p.abstract || ''} ${authors.join(' ')} ${p.venue || ''}`
+        `${paper.title || ''} ${paper.abstract || ''} ${authors.join(' ')} ${paper.venue || ''}`
       );
 
     const rankBonus =
       Math.max(
         0,
         22 -
-          index *
-            2
+        index * 2
       );
 
     const score =
@@ -987,9 +1385,9 @@ function addArticleToProject(
           96,
           Math.round(
             rawScore *
-              .72 +
-              rankBonus +
-              18
+            .72 +
+            rankBonus +
+            18
           )
         )
       );
@@ -1001,7 +1399,7 @@ function addArticleToProject(
       score,
 
       title:
-        p.title ||
+        paper.title ||
         t(
           'unified_untitled',
           'Sans titre'
@@ -1010,15 +1408,15 @@ function addArticleToProject(
       authors,
 
       year:
-        p.year ||
+        paper.year ||
         null,
 
       journal:
-        p.venue ||
+        paper.venue ||
         '',
 
       url:
-        p.url ||
+        paper.url ||
         (
           doi
             ? `https://doi.org/${doi}`
@@ -1028,18 +1426,18 @@ function addArticleToProject(
       doi,
 
       abstract:
-        p.abstract ||
+        paper.abstract ||
         '',
 
       source:
         'Semantic Scholar',
 
       citationCount:
-        p.citationCount ||
+        paper.citationCount ||
         0,
 
       pdf:
-        p.openAccessPdf
+        paper.openAccessPdf
           ?.url ||
         ''
     };
@@ -1061,7 +1459,7 @@ function addArticleToProject(
         }
       );
 
-    const r =
+    const response =
       await fetch(
         `https://api.semanticscholar.org/graph/v1/paper/search?${params}`,
         {
@@ -1074,23 +1472,22 @@ function addArticleToProject(
         }
       );
 
-    if (!r.ok) {
+    if (!response.ok) {
       throw new Error(
-        `Semantic Scholar ${r.status}`
+        `Semantic Scholar ${response.status}`
       );
     }
 
     const data =
-      await r.json();
+      await response.json();
 
     return (
-      data.data ||
-      []
+      data.data || []
     ).map(
-      (p, i) =>
-        s2Item(
-          p,
-          i,
+      (paper, index) =>
+        semanticScholarItem(
+          paper,
+          index,
           query
         )
     );
@@ -1101,65 +1498,60 @@ function addArticleToProject(
   // =========================================================
 
   function crossrefItem(
-    p,
+    paper,
     index,
     query
   ) {
     const title =
       Array.isArray(
-        p.title
+        paper.title
       )
-        ? p.title[0] ||
+        ? paper.title[0] ||
           ''
-        : p.title ||
+        : paper.title ||
           '';
 
     const authors =
       (
-        p.author ||
-        []
+        paper.author || []
       )
         .map(
-          a =>
+          (author) =>
             [
-              a.given,
-              a.family
+              author.given,
+              author.family
             ]
-              .filter(
-                Boolean
-              )
+              .filter(Boolean)
               .join(' ')
         )
-        .filter(
-          Boolean
-        );
+        .filter(Boolean);
 
     const journal =
       Array.isArray(
-        p[
+        paper[
           'container-title'
         ]
       )
-        ? p[
+        ? paper[
             'container-title'
           ][0] ||
           ''
-        : p[
+        : paper[
             'container-title'
           ] ||
           '';
 
     const year =
-      p.published?.[
+      paper.published?.[
         'date-parts'
       ]?.[0]?.[0] ||
-      p.issued?.[
+      paper.issued?.[
         'date-parts'
       ]?.[0]?.[0] ||
       null;
 
     const doi =
-      p.DOI ||
+      paper.DOI ||
       '';
 
     const rawScore =
@@ -1172,8 +1564,7 @@ function addArticleToProject(
       Math.max(
         0,
         20 -
-          index *
-            2
+        index * 2
       );
 
     const score =
@@ -1183,9 +1574,9 @@ function addArticleToProject(
           91,
           Math.round(
             rawScore *
-              .68 +
-              rankBonus +
-              16
+            .68 +
+            rankBonus +
+            16
           )
         )
       );
@@ -1213,7 +1604,7 @@ function addArticleToProject(
         doi
           ? `https://doi.org/${doi}`
           : (
-              p.URL ||
+              paper.URL ||
               ''
             ),
 
@@ -1226,7 +1617,7 @@ function addArticleToProject(
         'Crossref',
 
       citationCount:
-        p[
+        paper[
           'is-referenced-by-count'
         ] ||
         0,
@@ -1254,7 +1645,7 @@ function addArticleToProject(
         }
       );
 
-    const r =
+    const response =
       await fetch(
         `https://api.crossref.org/works?${params}`,
         {
@@ -1267,45 +1658,41 @@ function addArticleToProject(
         }
       );
 
-    if (!r.ok) {
+    if (!response.ok) {
       throw new Error(
-        `Crossref ${r.status}`
+        `Crossref ${response.status}`
       );
     }
 
     const data =
-      await r.json();
+      await response.json();
 
     return (
-      data.message
-        ?.items ||
-      []
+      data.message?.items || []
     ).map(
-      (p, i) =>
+      (paper, index) =>
         crossrefItem(
-          p,
-          i,
+          paper,
+          index,
           query
         )
     );
   }
 
-  // =========================================================
-  // DÉDOUBLONNAGE
-  // =========================================================
-
-  function dedupe(
-    items
-  ) {
+  function dedupe(items) {
     const seen =
       new Set();
 
     return items.filter(
-      item => {
+      (item) => {
         const key =
           item.doi
-            ? `doi:${normalize(item.doi)}`
-            : `title:${normalize(item.title).slice(0, 140)}`;
+            ? `doi:${normalize(
+                item.doi
+              )}`
+            : `title:${normalize(
+                item.title
+              ).slice(0, 140)}`;
 
         if (
           !key ||
@@ -1322,33 +1709,22 @@ function addArticleToProject(
   }
 
   // =========================================================
-  // MÉTADONNÉES
+  // AFFICHAGE
   // =========================================================
 
-  function metaText(
-    item
-  ) {
-    const bits =
-      [];
+  function metaText(item) {
+    const bits = [];
 
-    if (
-      item.authors
-        ?.length
-    ) {
+    if (item.authors?.length) {
       bits.push(
         item.authors
-          .slice(
-            0,
-            3
-          )
+          .slice(0, 3)
           .join(', ') +
-          (
-            item.authors
-              .length >
-            3
-              ? ' et al.'
-              : ''
-          )
+        (
+          item.authors.length > 3
+            ? ' et al.'
+            : ''
+        )
       );
     }
 
@@ -1358,9 +1734,7 @@ function addArticleToProject(
       );
     }
 
-    if (
-      item.journal
-    ) {
+    if (item.journal) {
       bits.push(
         item.journal
       );
@@ -1371,498 +1745,37 @@ function addArticleToProject(
     );
   }
 
-  // =========================================================
-  // CARTE DE RÉSULTAT
-  // =========================================================
-function closeProjectPicker() {
-  const dialog =
-    document.getElementById(
-      'nbprofProjectPicker'
-    );
-
-  if (!dialog) {
-    return;
-  }
-
-  if (typeof dialog.close === 'function') {
-    dialog.close();
-  }
-
-  dialog.remove();
-}
-
-function createProjectFromSearch(
-  name
-) {
-  const projectName =
-    String(name || '').trim();
-
-  if (!projectName) {
-    return null;
-  }
-
-  const projects =
-    getResearchProjects();
-
-  const createdAt =
-    new Date().toISOString();
-
-  const project = {
-    id:
-      newProjectId(),
-
-    name:
-      projectName.slice(
-        0,
-        120
-      ),
-
-    goal: '',
-
-    stage:
-      'exploration',
-
-    exploration: {
-      initialIdea: '',
-      problem: '',
-      mainQuestion: '',
-      secondaryQuestions: [],
-      generalObjective: '',
-      specificObjectives: [],
-      keywords: [],
-      population: '',
-      field: '',
-      geography: '',
-      period: '',
-      discipline: '',
-      scientificInterest: '',
-      practicalInterest: '',
-      limits: ''
-    },
-
-    literature: {
-      references: []
-    },
-
-    archived: false,
-    archivedAt: '',
-
-    milestones: [],
-
-    tasks: [],
-
-    notes: '',
-
-    createdAt,
-
-    updatedAt:
-      createdAt
-  };
-
-  projects.unshift(
-    project
-  );
-
-  saveResearchProjects(
-    projects
-  );
-
-  return project;
-}
-
-function openProjectPicker(
-  item
-) {
-  closeProjectPicker();
-
-  const projects =
-    getResearchProjects()
-      .filter(
-        project =>
-          !project.archived
-      );
-
-  const dialog =
-    document.createElement(
-      'dialog'
-    );
-
-  dialog.id =
-    'nbprofProjectPicker';
-
-  dialog.style.cssText = `
-    width:min(560px,calc(100% - 28px));
-    max-height:85vh;
-    overflow:auto;
-    padding:0;
-    border:1px solid rgba(66,212,255,.25);
-    border-radius:20px;
-    background:#111827;
-    color:#fff;
-    box-shadow:0 25px 70px rgba(0,0,0,.55);
-  `;
-
-  const projectsMarkup =
-    projects.length
-      ? projects
-          .map(
-            project => `
-              <button
-                type="button"
-                data-project-choice="${escapeHtml(
-                  project.id
-                )}"
-                style="
-                  width:100%;
-                  text-align:left;
-                  padding:14px;
-                  margin-bottom:10px;
-                  border-radius:12px;
-                  border:1px solid rgba(255,255,255,.08);
-                  background:#0b1220;
-                  color:#fff;
-                  cursor:pointer;
-                "
-              >
-                <strong>
-                  ${escapeHtml(
-                    project.name
-                  )}
-                </strong>
-
-                ${
-                  project.goal
-                    ? `
-                      <div
-                        style="
-                          margin-top:5px;
-                          color:#94a3b8;
-                          font-size:12px;
-                        "
-                      >
-                        ${escapeHtml(
-                          project.goal
-                        )}
-                      </div>
-                    `
-                    : ''
-                }
-              </button>
-            `
-          )
-          .join('')
-      : `
-          <div
-            style="
-              padding:18px;
-              text-align:center;
-              color:#94a3b8;
-            "
-          >
-            Aucun projet disponible.
-            Créez votre premier projet ci-dessous.
-          </div>
-        `;
-
-  dialog.innerHTML = `
-    <div
-      style="
-        padding:22px;
-      "
-    >
-
-      <div
-        style="
-          display:flex;
-          justify-content:space-between;
-          align-items:flex-start;
-          gap:15px;
-          margin-bottom:20px;
-        "
-      >
-
-        <div>
-          <div
-            style="
-              color:#42d4ff;
-              font-size:11px;
-              font-weight:800;
-              text-transform:uppercase;
-              letter-spacing:.08em;
-            "
-          >
-            Recherche NBProf
-          </div>
-
-          <h2
-            style="
-              margin:6px 0 0;
-              font-size:22px;
-            "
-          >
-            Ajouter au projet
-          </h2>
-        </div>
-
-        <button
-          id="nbprofCloseProjectPicker"
-          type="button"
-          style="
-            border:0;
-            background:transparent;
-            color:white;
-            font-size:25px;
-            cursor:pointer;
-          "
-        >
-          ×
-        </button>
-
-      </div>
-
-      <div
-        style="
-          margin-bottom:18px;
-          color:#cbd5e1;
-          font-size:14px;
-          line-height:1.5;
-        "
-      >
-        ${escapeHtml(
-          item.title || ''
-        )}
-      </div>
-
-      <div
-        id="nbprofProjectChoices"
-      >
-        ${projectsMarkup}
-      </div>
-
-      <div
-        style="
-          border-top:1px solid rgba(255,255,255,.08);
-          margin-top:20px;
-          padding-top:20px;
-        "
-      >
-
-        <strong>
-          Créer un nouveau projet
-        </strong>
-
-        <div
-          style="
-            display:flex;
-            gap:8px;
-            margin-top:12px;
-          "
-        >
-
-          <input
-            id="nbprofNewProjectName"
-            type="text"
-            maxlength="120"
-            placeholder="Titre du nouveau projet"
-            style="
-              flex:1;
-              min-width:0;
-              padding:12px;
-              border-radius:10px;
-              border:1px solid rgba(255,255,255,.12);
-              background:#03040a;
-              color:#fff;
-              outline:none;
-            "
-          >
-
-          <button
-            id="nbprofCreateAndAdd"
-            type="button"
-            style="
-              border:0;
-              border-radius:10px;
-              padding:0 14px;
-              background:#42d4ff;
-              color:#03040a;
-              font-weight:800;
-              cursor:pointer;
-            "
-          >
-            Créer
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-  `;
-
-  document.body.appendChild(
-    dialog
-  );
-
-  dialog
-    .querySelector(
-      '#nbprofCloseProjectPicker'
-    )
-    .addEventListener(
-      'click',
-      closeProjectPicker
-    );
-
-  dialog
-    .querySelectorAll(
-      '[data-project-choice]'
-    )
-    .forEach(
-      button => {
-        button.addEventListener(
-          'click',
-          () => {
-            const result =
-              addArticleToProject(
-                button.dataset
-                  .projectChoice,
-                item
-              );
-
-            if (
-              result.success
-            ) {
-              showSavedMessage(
-                `Article ajouté au projet « ${result.project.name} ».`
-              );
-
-              closeProjectPicker();
-
-              return;
-            }
-
-            if (
-              result.reason ===
-              'ALREADY_EXISTS'
-            ) {
-              showSavedMessage(
-                `Cet article existe déjà dans « ${result.project.name} ».`
-              );
-
-              return;
-            }
-
-            showSavedMessage(
-              'Impossible d’ajouter cet article au projet.'
-            );
-          }
-        );
-      }
-    );
-
-  dialog
-    .querySelector(
-      '#nbprofCreateAndAdd'
-    )
-    .addEventListener(
-      'click',
-      () => {
-        const input =
-          dialog.querySelector(
-            '#nbprofNewProjectName'
-          );
-
-        const project =
-          createProjectFromSearch(
-            input.value
-          );
-
-        if (!project) {
-          input.focus();
-          return;
-        }
-
-        const result =
-          addArticleToProject(
-            project.id,
-            item
-          );
-
-        if (
-          result.success
-        ) {
-          showSavedMessage(
-            `Projet « ${project.name} » créé et article ajouté.`
-          );
-
-          closeProjectPicker();
-        }
-      }
-    );
-
-  dialog.addEventListener(
-    'click',
-    event => {
-      if (
-        event.target === dialog
-      ) {
-        closeProjectPicker();
-      }
-    }
-  );
-
-  if (
-    typeof dialog.showModal ===
-    'function'
-  ) {
-    dialog.showModal();
-  } else {
-    dialog.setAttribute(
-      'open',
-      ''
-    );
-  }
-}
-  function card(
-    item
-  ) {
+  function card(item) {
     const source =
       escapeHtml(
-        sourceLabel(
-          item
-        )
+        sourceLabel(item)
       );
 
     const title =
       escapeHtml(
-        item.title ||
-        ''
+        item.title || ''
       );
 
     const meta =
       escapeHtml(
-        metaText(
-          item
-        )
+        metaText(item)
       );
 
     const abstract =
       escapeHtml(
         (
-          item.abstract ||
-          ''
+          item.abstract || ''
         ).trim()
       );
 
     const url =
       escapeHtml(
-        item.url ||
-        ''
+        item.url || ''
       );
 
     const pdf =
       escapeHtml(
-        item.pdf ||
-        ''
+        item.pdf || ''
       );
 
     const score =
@@ -1871,27 +1784,22 @@ function openProjectPicker(
         Math.min(
           100,
           Math.round(
-            item.score ||
-            0
+            item.score || 0
           )
         )
       );
 
     const key =
       escapeHtml(
-        articleKey(
-          item
-        )
+        articleKey(item)
       );
 
     const saved =
-      item.kind !==
-        'tool' &&
+      item.kind !== 'tool' &&
       isSaved(item);
 
     const saveButton =
-      item.kind ===
-      'tool'
+      item.kind === 'tool'
         ? ''
         : `
           <button
@@ -1917,25 +1825,30 @@ function openProjectPicker(
             }
           </button>
         `;
+
     const projectButton =
-  item.kind === 'tool'
-    ? ''
-    : `
-      <button
-        type="button"
-        class="secondary-button unified-project-button"
-        data-project-key="${key}"
-      >
-        ＋ Ajouter au projet
-      </button>
-    `;
+      item.kind === 'tool'
+        ? ''
+        : `
+          <button
+            type="button"
+            class="secondary-button unified-project-button"
+            data-project-key="${key}"
+          >
+            ＋ Ajouter au projet
+          </button>
+        `;
 
     return `
       <article
-        class="unified-result-card unified-result-card--${item.kind}"
+        class="unified-result-card unified-result-card--${escapeHtml(
+          item.kind || 'academic'
+        )}"
       >
 
-        <div class="unified-result-card__top">
+        <div
+          class="unified-result-card__top"
+        >
 
           <span
             class="unified-source-badge"
@@ -1982,13 +1895,11 @@ function openProjectPicker(
             ? `
               <p>
                 ${
-                  abstract.length >
-                  420
-                    ? abstract.slice(
+                  abstract.length > 420
+                    ? `${abstract.slice(
                         0,
                         417
-                      ) +
-                      '…'
+                      )}…`
                     : abstract
                 }
               </p>
@@ -2002,13 +1913,39 @@ function openProjectPicker(
 
           ${
             url
-              ? `${url?`<a class="secondary-button" href="${url}">${escapeHtml(t('unified_open','Ouvrir'))} ↗</a>`:''}
+              ? `
+                <a
+                  class="secondary-button"
+                  href="${url}"
+                >
+                  ${escapeHtml(
+                    t(
+                      'unified_open',
+                      'Ouvrir'
+                    )
+                  )} ↗
+                </a>
+              `
+              : ''
+          }
 
-${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
+          ${
+            pdf
+              ? `
+                <a
+                  class="secondary-button"
+                  href="${pdf}"
+                >
+                  PDF ↗
+                </a>
+              `
+              : ''
+          }
 
           ${saveButton}
-          
+
           ${projectButton}
+
           ${
             item.doi
               ? `
@@ -2030,9 +1967,60 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
     `;
   }
 
-  // =========================================================
-  // AFFICHAGE DES RÉSULTATS
-  // =========================================================
+  function renderCounts(results) {
+    const counts = {
+      all:
+        results.length,
+
+      nbprof:
+        0,
+
+      academic:
+        0,
+
+      tool:
+        0
+    };
+
+    results.forEach(
+      (item) => {
+        if (
+          counts[item.kind] !==
+          undefined
+        ) {
+          counts[item.kind] +=
+            1;
+        }
+      }
+    );
+
+    document
+      .querySelectorAll(
+        '[data-unified-filter]'
+      )
+      .forEach(
+        (button) => {
+          const key =
+            button.dataset
+              .unifiedFilter;
+
+          const countElement =
+            button.querySelector(
+              '[data-count]'
+            );
+
+          if (countElement) {
+            countElement.textContent =
+              counts[key] || 0;
+          }
+
+          button.classList.toggle(
+            'active',
+            key === activeFilter
+          );
+        }
+      );
+  }
 
   function render(
     results,
@@ -2042,19 +2030,13 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
     } = {}
   ) {
     const section =
-      $(
-        '#unifiedSearchResults'
-      );
+      $('#unifiedSearchResults');
 
     const list =
-      $(
-        '#unifiedResultsList'
-      );
+      $('#unifiedResultsList');
 
     const status =
-      $(
-        '#unifiedSearchStatus'
-      );
+      $('#unifiedSearchStatus');
 
     if (
       !section ||
@@ -2068,12 +2050,11 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
       false;
 
     const filtered =
-      activeFilter ===
-      'all'
+      activeFilter === 'all'
         ? results
         : results.filter(
-            x =>
-              x.kind ===
+            (item) =>
+              item.kind ===
               activeFilter
           );
 
@@ -2095,23 +2076,20 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
           </div>
         `;
 
-    if (
-      loadingExternal
-    ) {
-      status.innerHTML =
-        `
-          <span
-            class="unified-spinner"
-            aria-hidden="true"
-          ></span>
+    if (loadingExternal) {
+      status.innerHTML = `
+        <span
+          class="unified-spinner"
+          aria-hidden="true"
+        ></span>
 
-          ${escapeHtml(
-            t(
-              'unified_searching_academic',
-              'Recherche dans la littérature scientifique…'
-            )
-          )}
-        `;
+        ${escapeHtml(
+          t(
+            'unified_searching_academic',
+            'Recherche dans la littérature scientifique…'
+          )
+        )}
+      `;
     } else if (
       errorExternal
     ) {
@@ -2140,111 +2118,26 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
   }
 
   // =========================================================
-  // COMPTEURS
-  // =========================================================
-
-  function renderCounts(
-    results
-  ) {
-    const counts =
-      {
-        all:
-          results.length,
-
-        nbprof:
-          0,
-
-        academic:
-          0,
-
-        tool:
-          0
-      };
-
-    results.forEach(
-      x => {
-        if (
-          counts[
-            x.kind
-          ] !==
-          undefined
-        ) {
-          counts[
-            x.kind
-          ] +=
-            1;
-        }
-      }
-    );
-
-    document
-      .querySelectorAll(
-        '[data-unified-filter]'
-      )
-      .forEach(
-        btn => {
-          const key =
-            btn.dataset
-              .unifiedFilter;
-
-          const count =
-            counts[key] ||
-            0;
-
-          const countEl =
-            btn.querySelector(
-              '[data-count]'
-            );
-
-          if (
-            countEl
-          ) {
-            countEl.textContent =
-              count;
-          }
-
-          btn.classList.toggle(
-            'active',
-            key ===
-              activeFilter
-          );
-        }
-      );
-  }
-
-  // =========================================================
   // RECHERCHE
   // =========================================================
 
-  async function search(
-    query
-  ) {
+  async function search(query) {
     const q =
       String(
-        query ||
-        ''
+        query || ''
       ).trim();
 
-    if (
-      q.length <
-      3
-    ) {
-      const input =
-        $(
-          '#hubSearch'
-        );
-
-      input?.focus();
-
-      const status =
-        $(
-          '#unifiedSearchStatus'
-        );
+    if (q.length < 3) {
+      $('#hubSearch')?.focus();
 
       const section =
-        $(
-          '#unifiedSearchResults'
-        );
+        $('#unifiedSearchResults');
+
+      const status =
+        $('#unifiedSearchStatus');
+
+      const list =
+        $('#unifiedResultsList');
 
       if (
         section &&
@@ -2257,11 +2150,6 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
           t(
             'unified_min_chars',
             'Saisissez au moins 3 caractères pour lancer la recherche.'
-          );
-
-        const list =
-          $(
-            '#unifiedResultsList'
           );
 
         if (list) {
@@ -2332,8 +2220,7 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
         8500
       );
 
-    let external =
-      [];
+    let external = [];
 
     let externalError =
       false;
@@ -2345,10 +2232,10 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
             q,
             controller.signal
           );
-      } catch (err) {
+      } catch (error) {
         console.warn(
           'Semantic Scholar fallback',
-          err
+          error
         );
 
         external =
@@ -2357,10 +2244,10 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
             controller.signal
           );
       }
-    } catch (err) {
+    } catch (error) {
       console.warn(
         'Academic search unavailable',
-        err
+        error
       );
 
       externalError =
@@ -2378,6 +2265,12 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
       return;
     }
 
+    const kindWeight = {
+      nbprof: 3,
+      academic: 2,
+      tool: 1
+    };
+
     lastResults =
       dedupe(
         [
@@ -2386,54 +2279,27 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
         ]
       ).sort(
         (a, b) => {
-          const kindWeight =
-            {
-              nbprof:
-                3,
-
-              academic:
-                2,
-
-              tool:
-                1
-            };
-
-          if (
+          const kindDifference =
             (
-              kindWeight[
-                b.kind
-              ] ||
-              0
-            ) !==
-            (
-              kindWeight[
-                a.kind
-              ] ||
-              0
-            )
-          ) {
-            return (
               kindWeight[
                 b.kind
               ] ||
               0
             ) -
-              (
-                kindWeight[
-                  a.kind
-                ] ||
-                0
-              );
-          }
-
-          return (
-            b.score ||
-            0
-          ) -
             (
-              a.score ||
+              kindWeight[
+                a.kind
+              ] ||
               0
             );
+
+          return (
+            kindDifference ||
+            (
+              (b.score || 0) -
+              (a.score || 0)
+            )
+          );
         }
       );
 
@@ -2454,18 +2320,59 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
   // ÉVÉNEMENTS
   // =========================================================
 
+  function updateUrlQuery(query) {
+    const current =
+      new URL(
+        window.location.href
+      );
+
+    current.searchParams.set(
+      'q',
+      query
+    );
+
+    window.history.replaceState(
+      {},
+      '',
+      `${current.pathname}${current.search}${current.hash}`
+    );
+  }
+
+  async function runSearchFromInput() {
+    const input =
+      $('#hubSearch');
+
+    const query =
+      String(
+        input?.value || ''
+      ).trim();
+
+    if (!query) {
+      input?.focus();
+      return;
+    }
+
+    updateUrlQuery(
+      query
+    );
+
+    await search(
+      query
+    );
+  }
+
   function bind() {
     document
       .querySelectorAll(
         '[data-unified-filter]'
       )
       .forEach(
-        btn =>
-          btn.addEventListener(
+        (button) => {
+          button.addEventListener(
             'click',
             () => {
               activeFilter =
-                btn.dataset
+                button.dataset
                   .unifiedFilter ||
                 'all';
 
@@ -2477,79 +2384,96 @@ ${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
                 lastResults
               );
             }
-          )
+          );
+        }
       );
 
-    // Bouton Enregistrer
+    $('#hubSearchButton')
+      ?.addEventListener(
+        'click',
+        runSearchFromInput
+      );
+
+    $('#hubSearch')
+      ?.addEventListener(
+        'keydown',
+        (event) => {
+          if (
+            event.key ===
+            'Enter'
+          ) {
+            event.preventDefault();
+
+            runSearchFromInput();
+          }
+        }
+      );
+
     document.addEventListener(
       'click',
-      event => {
+      (event) => {
         const projectButton =
-  event.target.closest(
-    '.unified-project-button'
-  );
+          event.target.closest?.(
+            '.unified-project-button'
+          );
 
-if (projectButton) {
-  event.preventDefault();
+        if (projectButton) {
+          event.preventDefault();
 
-  const key =
-    projectButton.dataset
-      .projectKey;
+          const item =
+            lastResults.find(
+              (result) =>
+                articleKey(
+                  result
+                ) ===
+                projectButton
+                  .dataset
+                  .projectKey
+            );
 
-  const item =
-    lastResults.find(
-      result =>
-        articleKey(
-          result
-        ) === key
-    );
+          if (!item) {
+            showMessage(
+              'Article introuvable.'
+            );
 
-  if (!item) {
-    showSavedMessage(
-      'Article introuvable.'
-    );
+            return;
+          }
 
-    return;
-  }
+          openProjectPicker(
+            item
+          );
 
-  openProjectPicker(
-    item
-  );
+          return;
+        }
 
-  return;
-}
-        const button =
-          event.target.closest(
+        const saveButton =
+          event.target.closest?.(
             '.unified-save-button'
           );
 
-        if (!button) {
+        if (!saveButton) {
           return;
         }
 
         event.preventDefault();
 
-        const key =
-          button.dataset
-            .saveKey;
-
-        if (!key) {
-          return;
-        }
-
         const item =
           lastResults.find(
-            result =>
+            (result) =>
               articleKey(
                 result
               ) ===
-              key
+              saveButton
+                .dataset
+                .saveKey
           );
 
         if (!item) {
           console.warn(
             'NBProf article introuvable',
-            key
+            saveButton
+              .dataset
+              .saveKey
           );
 
           return;
@@ -2559,8 +2483,6 @@ if (projectButton) {
           item
         );
 
-        // Réaffiche pour passer de
-        // "Enregistrer" à "Enregistré"
         renderCounts(
           lastResults
         );
@@ -2597,33 +2519,56 @@ if (projectButton) {
     bind();
 
     await loadCatalogs();
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    const query =
+      String(
+        params.get('q') ||
+        ''
+      ).trim();
+
+    if (query.length >= 3) {
+      const input =
+        $('#hubSearch');
+
+      if (input) {
+        input.value =
+          query;
+      }
+
+      await search(
+        query
+      );
+    }
   }
 
   // =========================================================
   // API PUBLIQUE
   // =========================================================
 
-  window.NBProfUnifiedSearch =
-    {
-      search
-    };
+  window.NBProfUnifiedSearch = {
+    search
+  };
 
-  window.NBProfSavedArticles =
-    {
-      getAll:
-        getSavedArticles,
+  window.NBProfSavedArticles = {
+    getAll:
+      getSavedArticles,
 
-      save:
-        saveArticle,
+    save:
+      saveArticle,
 
-      remove:
-        removeSavedArticle,
+    remove:
+      removeSavedArticle,
 
-      isSaved,
+    isSaved,
 
-      key:
-        articleKey
-    };
+    key:
+      articleKey
+  };
 
   if (
     document.readyState ===
