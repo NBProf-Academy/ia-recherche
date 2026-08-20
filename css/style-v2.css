@@ -1195,3 +1195,14 @@ html[dir=rtl] .unified-result-card,html[dir=rtl] .unified-source-note{text-align
   font-size: 12px;
   font-weight: 700;
 }
+.project-reference-count {
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.project-reference-count:hover {
+  transform: translateY(-1px);
+  border-color: rgba(66, 212, 255, 0.4);
+  background: rgba(66, 212, 255, 0.12);
+}
