@@ -414,7 +414,10 @@ function saveProjects() {
         </div>
       </div>
       <p class="project-goal">${escapeHtml(project.goal || '—')}</p>
-      <div class="project-reference-count">
+      <a
+  class="project-reference-count"
+  href="literature.html?project=${encodeURIComponent(project.id)}"
+>
   📚 ${
     referenceCount === 0
       ? escapeHtml(
@@ -432,7 +435,7 @@ function saveProjects() {
           )
         )}`
   }
-</div>
+</a>
       <div class="project-meta"><span><strong>${escapeHtml(t('created_on'))}</strong> ${escapeHtml(formatDate(project.createdAt))}</span><span><strong>${escapeHtml(t('updated_on'))}</strong> ${escapeHtml(formatDate(project.updatedAt))}</span></div>
       <div class="progress-label"><strong>${progress.percent}%</strong><span>${escapeHtml(t('project_progress'))} · ${progress.done}/${progress.total} ${escapeHtml(t('tasks_done'))}</span></div>
       <div class="progress-track"><span style="width:${progress.percent}%"></span></div>
