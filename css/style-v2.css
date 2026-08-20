@@ -1177,3 +1177,21 @@ html[dir=rtl] .diagnostic-priorities{padding-right:25px;padding-left:0}
 .unified-search-results{padding:12px 0 86px;scroll-margin-top:92px}.unified-search-results[hidden]{display:none}.unified-search-heading{margin-bottom:20px}.unified-filter-bar{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:15px}.unified-filter{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 13px;color:var(--text);background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:999px;font-size:.73rem;font-weight:800;cursor:pointer}.unified-filter b{display:grid;place-items:center;min-width:22px;height:22px;padding:0 6px;color:var(--muted);background:rgba(255,255,255,.05);border-radius:999px;font:700 .6rem "Space Mono",monospace}.unified-filter.active{color:#041018;background:var(--primary);border-color:var(--primary)}.unified-filter.active b{color:#041018;background:rgba(3,4,10,.14)}.unified-search-status{display:flex;align-items:center;gap:9px;min-height:39px;margin-bottom:14px;color:var(--muted);font-size:.72rem;line-height:1.5}.unified-spinner{width:15px;height:15px;flex:0 0 15px;border:2px solid rgba(66,212,255,.18);border-top-color:var(--primary);border-radius:50%;animation:unifiedSpin .8s linear infinite}@keyframes unifiedSpin{to{transform:rotate(360deg)}}.unified-results-list{display:grid;gap:12px}.unified-result-card{position:relative;padding:20px;background:linear-gradient(145deg,rgba(17,24,39,.94),rgba(17,24,39,.59));border:1px solid var(--border);border-radius:19px}.unified-result-card--nbprof{border-color:rgba(94,234,212,.32);background:linear-gradient(145deg,rgba(94,234,212,.075),rgba(17,24,39,.72))}.unified-result-card--academic{border-color:rgba(66,212,255,.18)}.unified-result-card__top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.unified-source-badge,.unified-relevance{display:inline-flex;align-items:center;min-height:25px;padding:4px 9px;border-radius:999px;font:700 .59rem "Space Mono",monospace}.unified-source-badge{color:var(--primary);background:rgba(66,212,255,.07);border:1px solid rgba(66,212,255,.18)}.unified-result-card--nbprof .unified-source-badge{color:#a7f3d0;background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.2)}.unified-relevance{color:#c4b5fd;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2)}.unified-result-card h3{font-size:1.02rem;line-height:1.4}.unified-meta{margin-top:7px;color:var(--muted);font-size:.68rem;line-height:1.5}.unified-result-card p{max-width:1000px;margin-top:11px;color:var(--text);font-size:.78rem;line-height:1.65}.unified-result-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px}.unified-result-actions .secondary-button{min-height:38px;padding:8px 12px;font-size:.68rem}.unified-doi{color:var(--muted);font:600 .58rem "Space Mono",monospace;overflow-wrap:anywhere}.unified-empty{padding:30px;color:var(--muted);text-align:center;background:rgba(17,24,39,.55);border:1px dashed var(--border);border-radius:16px}.unified-source-note{display:flex;align-items:flex-start;gap:10px;margin-top:16px;padding:13px 15px;color:var(--muted);background:rgba(255,255,255,.022);border:1px solid var(--border);border-radius:13px;font-size:.67rem;line-height:1.55}.unified-source-note>span{flex:0 0 auto}.unified-source-note p{margin:0}
 html[dir=rtl] .unified-result-card,html[dir=rtl] .unified-source-note{text-align:right}
 @media(max-width:620px){.unified-search-hints{justify-content:flex-start;width:100%;padding:0 2px;font-size:.64rem}.unified-search-results{padding-bottom:62px}.unified-filter-bar{display:grid;grid-template-columns:1fr 1fr}.unified-filter{justify-content:space-between;width:100%}.unified-result-card{padding:16px}.unified-result-card__top{align-items:flex-start;flex-direction:column}.unified-result-actions{align-items:stretch;flex-direction:column}.unified-result-actions .secondary-button{width:100%}.unified-doi{padding-top:3px}}
+.project-reference-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  margin: 8px 0 14px;
+  padding: 7px 11px;
+
+  border-radius: 999px;
+
+  background: rgba(66, 212, 255, 0.08);
+  border: 1px solid rgba(66, 212, 255, 0.16);
+
+  color: #42d4ff;
+
+  font-size: 12px;
+  font-weight: 700;
+}
