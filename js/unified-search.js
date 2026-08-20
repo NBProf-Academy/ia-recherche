@@ -2002,39 +2002,9 @@ function openProjectPicker(
 
           ${
             url
-              ? `
-                <a
-                  class="secondary-button"
-                  href="${url}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  ${escapeHtml(
-                    t(
-                      'unified_open',
-                      'Ouvrir'
-                    )
-                  )}
-                  ↗
-                </a>
-              `
-              : ''
-          }
+              ? `${url?`<a class="secondary-button" href="${url}">${escapeHtml(t('unified_open','Ouvrir'))} ↗</a>`:''}
 
-          ${
-            pdf
-              ? `
-                <a
-                  class="secondary-button"
-                  href="${pdf}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  PDF ↗
-                </a>
-              `
-              : ''
-          }
+${pdf?`<a class="secondary-button" href="${pdf}">PDF ↗</a>`:''}
 
           ${saveButton}
           
