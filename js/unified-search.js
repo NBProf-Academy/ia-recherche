@@ -11,7 +11,7 @@
   const $ = s => document.querySelector(s);
 
   // =========================================================
-  // DONNÉES PRINCIPALES
+  // DONNÉES PRINCIPALESf
   // =========================================================
 
   let publications = [];
@@ -27,6 +27,261 @@
 
   const SAVED_ARTICLES_KEY =
     'nbprof_saved_articles_v1';
+  // =========================================================
+// INTÉGRATION AVEC MES PROJETS
+// =========================================================
+
+const PROJECTS_STORAGE_KEY =
+  'nbprof-research-projects-v1';
+
+function getResearchProjects() {
+  try {
+    const raw =
+      localStorage.getItem(
+        PROJECTS_STORAGE_KEY
+      );
+
+    if (!raw) {
+      return [];
+    }
+
+    const data =
+      JSON.parse(raw);
+
+    return Array.isArray(data)
+      ? data
+      : [];
+  } catch (error) {
+    console.warn(
+      'NBProf projects read error',
+      error
+    );
+
+    return [];
+  }
+}
+
+function saveResearchProjects(projects) {
+  try {
+    localStorage.setItem(
+      PROJECTS_STORAGE_KEY,
+      JSON.stringify(projects)
+    );
+
+    return true;
+  } catch (error) {
+    console.warn(
+      'NBProf projects write error',
+      error
+    );
+
+    return false;
+  }
+}
+
+function newProjectId() {
+  return `${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2, 8)}`;
+}
+
+function cleanProjectText(
+  value,
+  maxLength = 1000
+) {
+  return String(value || '')
+    .trim()
+    .slice(0, maxLength);
+}
+
+function articleReferenceId(item) {
+  if (item.doi) {
+    return `doi-${normalize(item.doi)}`;
+  }
+
+  return `article-${normalize(
+    item.title || ''
+  ).slice(0, 80)}`;
+}
+
+function articleToLiteratureReference(item) {
+  const timestamp =
+    new Date().toISOString();
+
+  return {
+    id:
+      articleReferenceId(item),
+
+    authors:
+      Array.isArray(item.authors)
+        ? item.authors.join(', ')
+        : '',
+
+    year:
+      item.year
+        ? String(item.year)
+        : '',
+
+    title:
+      cleanProjectText(
+        item.title,
+        1000
+      ),
+
+    source:
+      cleanProjectText(
+        item.journal ||
+        item.source ||
+        '',
+        500
+      ),
+
+    doi:
+      cleanProjectText(
+        item.doi || '',
+        500
+      ),
+
+    url:
+      cleanProjectText(
+        item.url ||
+        item.pdf ||
+        '',
+        1500
+      ),
+
+    keywords: [],
+
+    methodology: '',
+
+    sample: '',
+
+    results: '',
+
+    limitations: '',
+
+    contribution: '',
+
+    notes:
+      cleanProjectText(
+        item.abstract || '',
+        4000
+      ),
+
+    createdAt:
+      timestamp,
+
+    updatedAt:
+      timestamp
+  };
+}
+
+function sameReference(
+  existing,
+  article
+) {
+  const existingDoi =
+    normalize(
+      existing?.doi || ''
+    );
+
+  const articleDoi =
+    normalize(
+      article?.doi || ''
+    );
+
+  if (
+    existingDoi &&
+    articleDoi &&
+    existingDoi === articleDoi
+  ) {
+    return true;
+  }
+
+  const existingTitle =
+    normalize(
+      existing?.title || ''
+    );
+
+  const articleTitle =
+    normalize(
+      article?.title || ''
+    );
+
+  return (
+    existingTitle &&
+    articleTitle &&
+    existingTitle === articleTitle
+  );
+}
+
+function addArticleToProject(
+  projectId,
+  item
+) {
+  const projects =
+    getResearchProjects();
+
+  const project =
+    projects.find(
+      project =>
+        project.id === projectId
+    );
+
+  if (!project) {
+    return {
+      success: false,
+      reason: 'PROJECT_NOT_FOUND'
+    };
+  }
+
+  if (!project.literature) {
+    project.literature = {
+      references: []
+    };
+  }
+
+  if (
+    !Array.isArray(
+      project.literature.references
+    )
+  ) {
+    project.literature.references = [];
+  }
+
+  const duplicate =
+    project.literature.references.some(
+      reference =>
+        sameReference(
+          reference,
+          item
+        )
+    );
+
+  if (duplicate) {
+    return {
+      success: false,
+      reason: 'ALREADY_EXISTS',
+      project
+    };
+  }
+
+  project.literature.references.unshift(
+    articleToLiteratureReference(item)
+  );
+
+  project.updatedAt =
+    new Date().toISOString();
+
+  saveResearchProjects(
+    projects
+  );
+
+  return {
+    success: true,
+    project
+  };
+}
 
   function getSavedArticles() {
     try {
@@ -1119,7 +1374,454 @@
   // =========================================================
   // CARTE DE RÉSULTAT
   // =========================================================
+function closeProjectPicker() {
+  const dialog =
+    document.getElementById(
+      'nbprofProjectPicker'
+    );
 
+  if (!dialog) {
+    return;
+  }
+
+  if (typeof dialog.close === 'function') {
+    dialog.close();
+  }
+
+  dialog.remove();
+}
+
+function createProjectFromSearch(
+  name
+) {
+  const projectName =
+    String(name || '').trim();
+
+  if (!projectName) {
+    return null;
+  }
+
+  const projects =
+    getResearchProjects();
+
+  const createdAt =
+    new Date().toISOString();
+
+  const project = {
+    id:
+      newProjectId(),
+
+    name:
+      projectName.slice(
+        0,
+        120
+      ),
+
+    goal: '',
+
+    stage:
+      'exploration',
+
+    exploration: {
+      initialIdea: '',
+      problem: '',
+      mainQuestion: '',
+      secondaryQuestions: [],
+      generalObjective: '',
+      specificObjectives: [],
+      keywords: [],
+      population: '',
+      field: '',
+      geography: '',
+      period: '',
+      discipline: '',
+      scientificInterest: '',
+      practicalInterest: '',
+      limits: ''
+    },
+
+    literature: {
+      references: []
+    },
+
+    archived: false,
+    archivedAt: '',
+
+    milestones: [],
+
+    tasks: [],
+
+    notes: '',
+
+    createdAt,
+
+    updatedAt:
+      createdAt
+  };
+
+  projects.unshift(
+    project
+  );
+
+  saveResearchProjects(
+    projects
+  );
+
+  return project;
+}
+
+function openProjectPicker(
+  item
+) {
+  closeProjectPicker();
+
+  const projects =
+    getResearchProjects()
+      .filter(
+        project =>
+          !project.archived
+      );
+
+  const dialog =
+    document.createElement(
+      'dialog'
+    );
+
+  dialog.id =
+    'nbprofProjectPicker';
+
+  dialog.style.cssText = `
+    width:min(560px,calc(100% - 28px));
+    max-height:85vh;
+    overflow:auto;
+    padding:0;
+    border:1px solid rgba(66,212,255,.25);
+    border-radius:20px;
+    background:#111827;
+    color:#fff;
+    box-shadow:0 25px 70px rgba(0,0,0,.55);
+  `;
+
+  const projectsMarkup =
+    projects.length
+      ? projects
+          .map(
+            project => `
+              <button
+                type="button"
+                data-project-choice="${escapeHtml(
+                  project.id
+                )}"
+                style="
+                  width:100%;
+                  text-align:left;
+                  padding:14px;
+                  margin-bottom:10px;
+                  border-radius:12px;
+                  border:1px solid rgba(255,255,255,.08);
+                  background:#0b1220;
+                  color:#fff;
+                  cursor:pointer;
+                "
+              >
+                <strong>
+                  ${escapeHtml(
+                    project.name
+                  )}
+                </strong>
+
+                ${
+                  project.goal
+                    ? `
+                      <div
+                        style="
+                          margin-top:5px;
+                          color:#94a3b8;
+                          font-size:12px;
+                        "
+                      >
+                        ${escapeHtml(
+                          project.goal
+                        )}
+                      </div>
+                    `
+                    : ''
+                }
+              </button>
+            `
+          )
+          .join('')
+      : `
+          <div
+            style="
+              padding:18px;
+              text-align:center;
+              color:#94a3b8;
+            "
+          >
+            Aucun projet disponible.
+            Créez votre premier projet ci-dessous.
+          </div>
+        `;
+
+  dialog.innerHTML = `
+    <div
+      style="
+        padding:22px;
+      "
+    >
+
+      <div
+        style="
+          display:flex;
+          justify-content:space-between;
+          align-items:flex-start;
+          gap:15px;
+          margin-bottom:20px;
+        "
+      >
+
+        <div>
+          <div
+            style="
+              color:#42d4ff;
+              font-size:11px;
+              font-weight:800;
+              text-transform:uppercase;
+              letter-spacing:.08em;
+            "
+          >
+            Recherche NBProf
+          </div>
+
+          <h2
+            style="
+              margin:6px 0 0;
+              font-size:22px;
+            "
+          >
+            Ajouter au projet
+          </h2>
+        </div>
+
+        <button
+          id="nbprofCloseProjectPicker"
+          type="button"
+          style="
+            border:0;
+            background:transparent;
+            color:white;
+            font-size:25px;
+            cursor:pointer;
+          "
+        >
+          ×
+        </button>
+
+      </div>
+
+      <div
+        style="
+          margin-bottom:18px;
+          color:#cbd5e1;
+          font-size:14px;
+          line-height:1.5;
+        "
+      >
+        ${escapeHtml(
+          item.title || ''
+        )}
+      </div>
+
+      <div
+        id="nbprofProjectChoices"
+      >
+        ${projectsMarkup}
+      </div>
+
+      <div
+        style="
+          border-top:1px solid rgba(255,255,255,.08);
+          margin-top:20px;
+          padding-top:20px;
+        "
+      >
+
+        <strong>
+          Créer un nouveau projet
+        </strong>
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            margin-top:12px;
+          "
+        >
+
+          <input
+            id="nbprofNewProjectName"
+            type="text"
+            maxlength="120"
+            placeholder="Titre du nouveau projet"
+            style="
+              flex:1;
+              min-width:0;
+              padding:12px;
+              border-radius:10px;
+              border:1px solid rgba(255,255,255,.12);
+              background:#03040a;
+              color:#fff;
+              outline:none;
+            "
+          >
+
+          <button
+            id="nbprofCreateAndAdd"
+            type="button"
+            style="
+              border:0;
+              border-radius:10px;
+              padding:0 14px;
+              background:#42d4ff;
+              color:#03040a;
+              font-weight:800;
+              cursor:pointer;
+            "
+          >
+            Créer
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(
+    dialog
+  );
+
+  dialog
+    .querySelector(
+      '#nbprofCloseProjectPicker'
+    )
+    .addEventListener(
+      'click',
+      closeProjectPicker
+    );
+
+  dialog
+    .querySelectorAll(
+      '[data-project-choice]'
+    )
+    .forEach(
+      button => {
+        button.addEventListener(
+          'click',
+          () => {
+            const result =
+              addArticleToProject(
+                button.dataset
+                  .projectChoice,
+                item
+              );
+
+            if (
+              result.success
+            ) {
+              showSavedMessage(
+                `Article ajouté au projet « ${result.project.name} ».`
+              );
+
+              closeProjectPicker();
+
+              return;
+            }
+
+            if (
+              result.reason ===
+              'ALREADY_EXISTS'
+            ) {
+              showSavedMessage(
+                `Cet article existe déjà dans « ${result.project.name} ».`
+              );
+
+              return;
+            }
+
+            showSavedMessage(
+              'Impossible d’ajouter cet article au projet.'
+            );
+          }
+        );
+      }
+    );
+
+  dialog
+    .querySelector(
+      '#nbprofCreateAndAdd'
+    )
+    .addEventListener(
+      'click',
+      () => {
+        const input =
+          dialog.querySelector(
+            '#nbprofNewProjectName'
+          );
+
+        const project =
+          createProjectFromSearch(
+            input.value
+          );
+
+        if (!project) {
+          input.focus();
+          return;
+        }
+
+        const result =
+          addArticleToProject(
+            project.id,
+            item
+          );
+
+        if (
+          result.success
+        ) {
+          showSavedMessage(
+            `Projet « ${project.name} » créé et article ajouté.`
+          );
+
+          closeProjectPicker();
+        }
+      }
+    );
+
+  dialog.addEventListener(
+    'click',
+    event => {
+      if (
+        event.target === dialog
+      ) {
+        closeProjectPicker();
+      }
+    }
+  );
+
+  if (
+    typeof dialog.showModal ===
+    'function'
+  ) {
+    dialog.showModal();
+  } else {
+    dialog.setAttribute(
+      'open',
+      ''
+    );
+  }
+}
   function card(
     item
   ) {
@@ -1215,6 +1917,18 @@
             }
           </button>
         `;
+    const projectButton =
+  item.kind === 'tool'
+    ? ''
+    : `
+      <button
+        type="button"
+        class="secondary-button unified-project-button"
+        data-project-key="${key}"
+      >
+        ＋ Ajouter au projet
+      </button>
+    `;
 
     return `
       <article
@@ -1323,7 +2037,8 @@
           }
 
           ${saveButton}
-
+          
+          ${projectButton}
           ${
             item.doi
               ? `
@@ -1799,6 +2514,40 @@
     document.addEventListener(
       'click',
       event => {
+        const projectButton =
+  event.target.closest(
+    '.unified-project-button'
+  );
+
+if (projectButton) {
+  event.preventDefault();
+
+  const key =
+    projectButton.dataset
+      .projectKey;
+
+  const item =
+    lastResults.find(
+      result =>
+        articleKey(
+          result
+        ) === key
+    );
+
+  if (!item) {
+    showSavedMessage(
+      'Article introuvable.'
+    );
+
+    return;
+  }
+
+  openProjectPicker(
+    item
+  );
+
+  return;
+}
         const button =
           event.target.closest(
             '.unified-save-button'
