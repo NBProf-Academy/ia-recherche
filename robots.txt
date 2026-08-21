@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://recherche.nbprof.com/sitemap.xml
