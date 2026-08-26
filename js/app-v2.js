@@ -276,24 +276,10 @@
     return onboardingCopy[lang()]||onboardingCopy.fr;
   }
 
-  function trackOnboarding(eventName){
-    if(typeof window.plausible==='function'){
-      window.plausible(eventName);
-    }
-  }
-
   function completeOnboarding(reason='completed'){
     localStorage.setItem(ONBOARDING_KEY,'1');
     document.querySelector('.onboarding-overlay')?.remove();
     document.body.classList.remove('onboarding-open');
-
-    if(reason==='completed'){
-      trackOnboarding('onboarding_completed');
-    }
-
-    if(reason==='skipped'){
-      trackOnboarding('onboarding_skipped');
-    }
   }
 
   function showOnboarding(){
@@ -368,7 +354,6 @@
     document.body.append(overlay);
     document.body.classList.add('onboarding-open');
 
-    trackOnboarding('onboarding_started');
 
     const skip=overlay.querySelector('.onboarding-skip');
     const back=overlay.querySelector('.onboarding-back');
