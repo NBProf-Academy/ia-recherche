@@ -1,89 +1,679 @@
 <!DOCTYPE html>
 <html lang="fr" data-base-path="../">
-  <!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa--IIL0gRkmqR9IgBq8ps8Q.js"></script>
-<script>
-  window.plausible = window.plausible || function () {
-    (plausible.q = plausible.q || []).push(arguments);
-  };
-
-  plausible.init = plausible.init || function (i) {
-    plausible.o = i || {};
-  };
-
-  plausible.init();
-</script>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#03040a">
   <meta name="description" content="Tableau de bord du chercheur — NBProf Research Hub.">
+
   <title>Tableau de bord — NBProf Research Hub</title>
+
   <link rel="icon" href="../images/favicon-32.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet"
+  >
+
   <link rel="stylesheet" href="../css/style-v2.css">
+
   <script src="../js/i18n.js" defer></script>
   <script src="../js/dashboard.js" defer></script>
 </head>
+
 <body>
-  <div class="bg" aria-hidden="true"></div><div class="grid-bg" aria-hidden="true"></div>
+
+  <div class="bg" aria-hidden="true"></div>
+  <div class="grid-bg" aria-hidden="true"></div>
+
   <header class="app-header">
-    <a href="../index.html" class="brand" aria-label="Accueil NBProf Research Hub"><img src="../icon-192.png" alt="Logo NBProf Research Hub" class="brand-logo"><div class="brand-text"><strong data-i18n="app_name">NBProf Research Hub</strong><span data-i18n="app_slogan">De l’idée à la soutenance</span></div></a>
+
+    <a
+      href="../index.html"
+      class="brand"
+      aria-label="Accueil NBProf Research Hub"
+    >
+      <img
+        src="../icon-192.png"
+        alt="Logo NBProf Research Hub"
+        class="brand-logo"
+      >
+
+      <div class="brand-text">
+        <strong data-i18n="app_name">
+          NBProf Research Hub
+        </strong>
+
+        <span data-i18n="app_slogan">
+          De l’idée à la soutenance
+        </span>
+      </div>
+    </a>
+
+
     <div class="header-actions">
-      <a href="dashboard.html" class="header-button dashboard-link is-active" data-i18n="dashboard_nav" data-i18n-aria-label="dashboard_nav">Tableau de bord</a>
-      <a href="rapport.html" class="header-button report-link" data-i18n="report_nav" data-i18n-aria-label="report_nav">Rapport</a>
-      <a href="projets.html" class="header-button projects-link" data-i18n="projects_nav" data-i18n-aria-label="projects_nav">Mes projets</a>
-      <div class="language-switcher"><button type="button" class="header-button language-button" id="languageButton" aria-haspopup="true" aria-expanded="false" aria-controls="languageMenu"><span aria-hidden="true">🌍</span><span id="currentLanguageLabel">Français</span><span class="language-chevron" aria-hidden="true">▾</span></button><div class="language-menu" id="languageMenu" role="menu" hidden><button type="button" class="language-option active" data-lang="fr" role="menuitem">🇫🇷 Français</button><button type="button" class="language-option" data-lang="en" role="menuitem">🇬🇧 English</button><button type="button" class="language-option" data-lang="ar" role="menuitem">🇲🇦 العربية</button></div></div>
+
+      <a
+        href="dashboard.html"
+        class="header-button dashboard-link is-active"
+        data-i18n="dashboard_nav"
+        data-i18n-aria-label="dashboard_nav"
+      >
+        Tableau de bord
+      </a>
+
+      <a
+        href="rapport.html"
+        class="header-button report-link"
+        data-i18n="report_nav"
+        data-i18n-aria-label="report_nav"
+      >
+        Rapport
+      </a>
+
+      <a
+        href="projets.html"
+        class="header-button projects-link"
+        data-i18n="projects_nav"
+        data-i18n-aria-label="projects_nav"
+      >
+        Mes projets
+      </a>
+
+
+      <div class="language-switcher">
+
+        <button
+          type="button"
+          class="header-button language-button"
+          id="languageButton"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="languageMenu"
+        >
+          <span aria-hidden="true">🌍</span>
+          <span id="currentLanguageLabel">Français</span>
+          <span class="language-chevron" aria-hidden="true">▾</span>
+        </button>
+
+
+        <div
+          class="language-menu"
+          id="languageMenu"
+          role="menu"
+          hidden
+        >
+
+          <button
+            type="button"
+            class="language-option active"
+            data-lang="fr"
+            role="menuitem"
+          >
+            🇫🇷 Français
+          </button>
+
+          <button
+            type="button"
+            class="language-option"
+            data-lang="en"
+            role="menuitem"
+          >
+            🇬🇧 English
+          </button>
+
+          <button
+            type="button"
+            class="language-option"
+            data-lang="ar"
+            role="menuitem"
+          >
+            🇲🇦 العربية
+          </button>
+
+        </div>
+
+      </div>
+
     </div>
+
   </header>
+
+
   <main class="dashboard-main">
+
+
     <section class="dashboard-hero">
-      <div><span class="section-kicker" data-i18n="dashboard_kicker">Cockpit du chercheur</span><h1 data-i18n="dashboard_title">Tableau de bord de recherche</h1><p data-i18n="dashboard_description">Visualisez vos projets, vos priorités et vos prochaines échéances en un coup d’œil.</p></div>
-      <div class="report-actions"><a class="secondary-button" href="diagnostic-recherche.html" data-i18n="diagnostic_nav">Diagnostic</a><a class="secondary-button" href="rapport.html" data-i18n="report_nav">Rapport</a><a class="primary-button" href="projets.html" data-i18n="dashboard_open_projects">Gérer mes projets</a></div>
+
+      <div>
+
+        <span
+          class="section-kicker"
+          data-i18n="dashboard_kicker"
+        >
+          Cockpit du chercheur
+        </span>
+
+        <h1 data-i18n="dashboard_title">
+          Tableau de bord de recherche
+        </h1>
+
+        <p data-i18n="dashboard_description">
+          Visualisez vos projets, vos priorités et vos prochaines échéances en un coup d’œil.
+        </p>
+
+      </div>
+
+
+      <div class="report-actions">
+
+        <a
+          class="secondary-button"
+          href="diagnostic-recherche.html"
+          data-i18n="diagnostic_nav"
+        >
+          Diagnostic
+        </a>
+
+        <a
+          class="secondary-button"
+          href="rapport.html"
+          data-i18n="report_nav"
+        >
+          Rapport
+        </a>
+
+        <a
+          class="primary-button"
+          href="projets.html"
+          data-i18n="dashboard_open_projects"
+        >
+          Gérer mes projets
+        </a>
+
+      </div>
+
     </section>
 
-    <section class="dashboard-kpis" id="dashboardKpis" aria-label="Indicateurs de recherche"></section>
 
-    <section class="dashboard-toolbar" aria-label="Filtres et tri du tableau de bord">
+    <section
+      class="dashboard-kpis"
+      id="dashboardKpis"
+      aria-label="Indicateurs de recherche"
+    ></section>
+
+
+    <section
+      class="dashboard-toolbar"
+      aria-label="Filtres et tri du tableau de bord"
+    >
+
       <div class="dashboard-toolbar__search">
-        <label for="dashboardSearch" data-i18n="dashboard_search_label">Rechercher</label>
-        <div class="dashboard-search-field"><span aria-hidden="true">⌕</span><input id="dashboardSearch" type="search" autocomplete="off" data-i18n-placeholder="dashboard_search_placeholder" placeholder="Rechercher un projet ou une tâche…"></div>
+
+        <label
+          for="dashboardSearch"
+          data-i18n="dashboard_search_label"
+        >
+          Rechercher
+        </label>
+
+        <div class="dashboard-search-field">
+
+          <span aria-hidden="true">⌕</span>
+
+          <input
+            id="dashboardSearch"
+            type="search"
+            autocomplete="off"
+            data-i18n-placeholder="dashboard_search_placeholder"
+            placeholder="Rechercher un projet ou une tâche…"
+          >
+
+        </div>
+
       </div>
+
+
       <div class="dashboard-toolbar__controls">
-        <label><span data-i18n="dashboard_stage_filter">Étape</span><select id="dashboardStageFilter"><option value="all" data-i18n="dashboard_all_stages">Toutes les étapes</option><option value="exploration" data-i18n="stage_exploration">Exploration du sujet</option><option value="literature" data-i18n="stage_literature">Revue de littérature</option><option value="method" data-i18n="stage_method">Méthodologie</option><option value="data" data-i18n="stage_data">Collecte et analyse des données</option><option value="writing" data-i18n="stage_writing">Rédaction</option><option value="defense" data-i18n="stage_defense">Publication ou soutenance</option></select></label>
-        <label><span data-i18n="dashboard_priority_filter">Priorité</span><select id="dashboardPriorityFilter"><option value="all" data-i18n="dashboard_all_priorities">Toutes les priorités</option><option value="low" data-i18n="priority_low">Faible</option><option value="medium" data-i18n="priority_medium">Moyenne</option><option value="high" data-i18n="priority_high">Élevée</option></select></label>
-        <label><span data-i18n="dashboard_deadline_filter">Échéance</span><select id="dashboardDeadlineFilter"><option value="all" data-i18n="dashboard_all_deadlines">Toutes les échéances</option><option value="overdue" data-i18n="dashboard_filter_overdue">En retard</option><option value="dueSoon" data-i18n="dashboard_filter_due_soon">Dans les 7 jours</option><option value="scheduled" data-i18n="dashboard_filter_scheduled">Après 7 jours</option><option value="undated" data-i18n="dashboard_filter_undated">Sans échéance</option><option value="completed" data-i18n="dashboard_filter_completed">Terminées</option></select></label>
-        <label><span data-i18n="dashboard_sort_label">Trier les projets</span><select id="dashboardSort"><option value="updated" data-i18n="dashboard_sort_updated">Dernière mise à jour</option><option value="progressDesc" data-i18n="dashboard_sort_progress_desc">Progression décroissante</option><option value="progressAsc" data-i18n="dashboard_sort_progress_asc">Progression croissante</option><option value="deadline" data-i18n="dashboard_sort_deadline">Prochaine échéance</option><option value="name" data-i18n="dashboard_sort_name">Nom du projet</option></select></label>
+
+        <label>
+          <span data-i18n="dashboard_stage_filter">
+            Étape
+          </span>
+
+          <select id="dashboardStageFilter">
+
+            <option
+              value="all"
+              data-i18n="dashboard_all_stages"
+            >
+              Toutes les étapes
+            </option>
+
+            <option
+              value="exploration"
+              data-i18n="stage_exploration"
+            >
+              Exploration du sujet
+            </option>
+
+            <option
+              value="literature"
+              data-i18n="stage_literature"
+            >
+              Revue de littérature
+            </option>
+
+            <option
+              value="method"
+              data-i18n="stage_method"
+            >
+              Méthodologie
+            </option>
+
+            <option
+              value="data"
+              data-i18n="stage_data"
+            >
+              Collecte et analyse des données
+            </option>
+
+            <option
+              value="writing"
+              data-i18n="stage_writing"
+            >
+              Rédaction
+            </option>
+
+            <option
+              value="defense"
+              data-i18n="stage_defense"
+            >
+              Publication ou soutenance
+            </option>
+
+          </select>
+        </label>
+
+
+        <label>
+          <span data-i18n="dashboard_priority_filter">
+            Priorité
+          </span>
+
+          <select id="dashboardPriorityFilter">
+
+            <option
+              value="all"
+              data-i18n="dashboard_all_priorities"
+            >
+              Toutes les priorités
+            </option>
+
+            <option
+              value="low"
+              data-i18n="priority_low"
+            >
+              Faible
+            </option>
+
+            <option
+              value="medium"
+              data-i18n="priority_medium"
+            >
+              Moyenne
+            </option>
+
+            <option
+              value="high"
+              data-i18n="priority_high"
+            >
+              Élevée
+            </option>
+
+          </select>
+        </label>
+
+
+        <label>
+          <span data-i18n="dashboard_deadline_filter">
+            Échéance
+          </span>
+
+          <select id="dashboardDeadlineFilter">
+
+            <option
+              value="all"
+              data-i18n="dashboard_all_deadlines"
+            >
+              Toutes les échéances
+            </option>
+
+            <option
+              value="overdue"
+              data-i18n="dashboard_filter_overdue"
+            >
+              En retard
+            </option>
+
+            <option
+              value="dueSoon"
+              data-i18n="dashboard_filter_due_soon"
+            >
+              Dans les 7 jours
+            </option>
+
+            <option
+              value="scheduled"
+              data-i18n="dashboard_filter_scheduled"
+            >
+              Après 7 jours
+            </option>
+
+            <option
+              value="undated"
+              data-i18n="dashboard_filter_undated"
+            >
+              Sans échéance
+            </option>
+
+            <option
+              value="completed"
+              data-i18n="dashboard_filter_completed"
+            >
+              Terminées
+            </option>
+
+          </select>
+        </label>
+
+
+        <label>
+          <span data-i18n="dashboard_sort_label">
+            Trier les projets
+          </span>
+
+          <select id="dashboardSort">
+
+            <option
+              value="updated"
+              data-i18n="dashboard_sort_updated"
+            >
+              Dernière mise à jour
+            </option>
+
+            <option
+              value="progressDesc"
+              data-i18n="dashboard_sort_progress_desc"
+            >
+              Progression décroissante
+            </option>
+
+            <option
+              value="progressAsc"
+              data-i18n="dashboard_sort_progress_asc"
+            >
+              Progression croissante
+            </option>
+
+            <option
+              value="deadline"
+              data-i18n="dashboard_sort_deadline"
+            >
+              Prochaine échéance
+            </option>
+
+            <option
+              value="name"
+              data-i18n="dashboard_sort_name"
+            >
+              Nom du projet
+            </option>
+
+          </select>
+        </label>
+
       </div>
-      <div class="dashboard-toolbar__footer"><span id="dashboardFilterSummary" class="dashboard-filter-summary" aria-live="polite"></span><button type="button" class="secondary-button dashboard-reset" id="dashboardResetFilters" data-i18n="dashboard_reset_filters">Réinitialiser</button></div>
+
+
+      <div class="dashboard-toolbar__footer">
+
+        <span
+          id="dashboardFilterSummary"
+          class="dashboard-filter-summary"
+          aria-live="polite"
+        ></span>
+
+        <button
+          type="button"
+          class="secondary-button dashboard-reset"
+          id="dashboardResetFilters"
+          data-i18n="dashboard_reset_filters"
+        >
+          Réinitialiser
+        </button>
+
+      </div>
+
     </section>
+
 
     <section class="dashboard-layout">
+
+
       <article class="dashboard-panel dashboard-panel--wide">
-        <div class="dashboard-panel__heading"><div><span class="section-kicker" data-i18n="dashboard_portfolio_kicker">Portefeuille</span><h2 data-i18n="dashboard_portfolio_title">Vue globale des projets</h2></div><p data-i18n="dashboard_portfolio_description">Suivez l’avancement de chaque projet et reprenez rapidement votre travail.</p></div>
-        <div id="dashboardProjects" class="dashboard-projects"></div>
+
+        <div class="dashboard-panel__heading">
+
+          <div>
+
+            <span
+              class="section-kicker"
+              data-i18n="dashboard_portfolio_kicker"
+            >
+              Portefeuille
+            </span>
+
+            <h2 data-i18n="dashboard_portfolio_title">
+              Vue globale des projets
+            </h2>
+
+          </div>
+
+          <p data-i18n="dashboard_portfolio_description">
+            Suivez l’avancement de chaque projet et reprenez rapidement votre travail.
+          </p>
+
+        </div>
+
+        <div
+          id="dashboardProjects"
+          class="dashboard-projects"
+        ></div>
+
       </article>
 
-      <article class="dashboard-panel">
-        <div class="dashboard-panel__heading"><div><span class="section-kicker" data-i18n="dashboard_deadlines_kicker">Priorités</span><h2 data-i18n="dashboard_deadlines_title">À traiter maintenant</h2></div><p data-i18n="dashboard_deadlines_description">Les tâches urgentes, en retard ou proches de leur échéance.</p></div>
-        <div id="dashboardTasks" class="dashboard-task-list"></div>
-      </article>
 
       <article class="dashboard-panel">
-        <div class="dashboard-panel__heading"><div><span class="section-kicker" data-i18n="dashboard_stages_kicker">Parcours</span><h2 data-i18n="dashboard_stages_title">Répartition par étape</h2></div><p data-i18n="dashboard_stages_description">Repérez où se situent vos projets dans le cycle de recherche.</p></div>
-        <div id="dashboardStages" class="dashboard-stages"></div>
+
+        <div class="dashboard-panel__heading">
+
+          <div>
+
+            <span
+              class="section-kicker"
+              data-i18n="dashboard_deadlines_kicker"
+            >
+              Priorités
+            </span>
+
+            <h2 data-i18n="dashboard_deadlines_title">
+              À traiter maintenant
+            </h2>
+
+          </div>
+
+          <p data-i18n="dashboard_deadlines_description">
+            Les tâches urgentes, en retard ou proches de leur échéance.
+          </p>
+
+        </div>
+
+        <div
+          id="dashboardTasks"
+          class="dashboard-task-list"
+        ></div>
+
       </article>
 
+
       <article class="dashboard-panel">
-        <div class="dashboard-panel__heading"><div><span class="section-kicker" data-i18n="diagnostic_kicker">Pilotage méthodologique</span><h2 data-i18n="dashboard_diagnostic_title">Diagnostic méthodologique</h2></div><p data-i18n="dashboard_diagnostic_text">Visualisez la maturité méthodologique de vos projets et reprenez votre diagnostic.</p></div>
-        <div id="dashboardDiagnostic" class="dashboard-diagnostic-summary"></div>
+
+        <div class="dashboard-panel__heading">
+
+          <div>
+
+            <span
+              class="section-kicker"
+              data-i18n="dashboard_stages_kicker"
+            >
+              Parcours
+            </span>
+
+            <h2 data-i18n="dashboard_stages_title">
+              Répartition par étape
+            </h2>
+
+          </div>
+
+          <p data-i18n="dashboard_stages_description">
+            Repérez où se situent vos projets dans le cycle de recherche.
+          </p>
+
+        </div>
+
+        <div
+          id="dashboardStages"
+          class="dashboard-stages"
+        ></div>
+
       </article>
+
+
+      <article class="dashboard-panel">
+
+        <div class="dashboard-panel__heading">
+
+          <div>
+
+            <span
+              class="section-kicker"
+              data-i18n="diagnostic_kicker"
+            >
+              Pilotage méthodologique
+            </span>
+
+            <h2 data-i18n="dashboard_diagnostic_title">
+              Diagnostic méthodologique
+            </h2>
+
+          </div>
+
+          <p data-i18n="dashboard_diagnostic_text">
+            Visualisez la maturité méthodologique de vos projets et reprenez votre diagnostic.
+          </p>
+
+        </div>
+
+        <div
+          id="dashboardDiagnostic"
+          class="dashboard-diagnostic-summary"
+        ></div>
+
+      </article>
+
     </section>
 
-    <section id="dashboardEmpty" class="dashboard-empty" hidden><img src="../icon-192.png" alt=""><h2 data-i18n="dashboard_no_projects_title">Votre tableau de bord est prêt</h2><p data-i18n="dashboard_no_projects_text">Créez ou importez un projet pour commencer à suivre votre activité de recherche.</p><a href="projets.html" class="primary-button" data-i18n="dashboard_open_projects">Gérer mes projets</a></section>
+
+    <section
+      id="dashboardEmpty"
+      class="dashboard-empty"
+      hidden
+    >
+
+      <img
+        src="../icon-192.png"
+        alt=""
+      >
+
+      <h2 data-i18n="dashboard_no_projects_title">
+        Votre tableau de bord est prêt
+      </h2>
+
+      <p data-i18n="dashboard_no_projects_text">
+        Créez ou importez un projet pour commencer à suivre votre activité de recherche.
+      </p>
+
+      <a
+        href="projets.html"
+        class="primary-button"
+        data-i18n="dashboard_open_projects"
+      >
+        Gérer mes projets
+      </a>
+
+    </section>
+
+
   </main>
-  <footer class="site-footer nbprof-dashboard-footer"><div class="footer-inner"><div class="signature"><img src="../icon-192.png" alt="" class="signature-logo"><div><strong>Noamane Boulahcen — NB Prof</strong><span data-i18n="footer_status">Version 1.0 — première version majeure</span></div></div><div class="footer-actions"><a class="secondary-button" href="../index.html" data-i18n="back_home">Retour à l’accueil</a></div></div></footer>
+
+
+  <footer class="site-footer nbprof-dashboard-footer">
+
+    <div class="footer-inner">
+
+      <div class="signature">
+
+        <img
+          src="../icon-192.png"
+          alt=""
+          class="signature-logo"
+        >
+
+        <div>
+
+          <strong>
+            Noamane Boulahcen — NB Prof
+          </strong>
+
+          <span data-i18n="footer_status">
+            Version 1.0 — première version majeure
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="footer-actions">
+
+        <a
+          class="secondary-button"
+          href="../index.html"
+          data-i18n="back_home"
+        >
+          Retour à l’accueil
+        </a>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
 </body>
 </html>
