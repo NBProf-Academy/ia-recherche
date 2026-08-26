@@ -171,7 +171,6 @@
     const projectId=selectedProjectId();
     const record={projectId,workType:$('#diagnosticWorkType').value,answers,...result,updatedAt:new Date().toISOString()};
     diagnostics[projectId]=record; saveDiagnostics(); renderResults(record);
-    window.plausible?.('Diagnostic completed',{props:{score_band:record.score<35?'start':record.score<65?'building':record.score<85?'advanced':'ready'}});
     toast(t('diagnostic_saved','Diagnostic enregistré localement.'));
   }
 
