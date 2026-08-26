@@ -2195,21 +2195,6 @@
       }
     );
 
-    window.plausible?.(
-      'unified_search',
-      {
-        props: {
-          language:
-            lang(),
-
-          query_length:
-            String(
-              q.length
-            )
-        }
-      }
-    );
-
     const controller =
       new AbortController();
 
